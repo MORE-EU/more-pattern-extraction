@@ -3,12 +3,8 @@ import os
 import pickle
 import argparse
 paths = ['', '..', '../..']
-for p in paths:
-    if p not in sys.path:
-        sys.path.insert(0, p)
 import numpy as np
 import pandas as pd
-import matplotlib.pyplot as plt
 import timeit
 import numba
 import pathlib
@@ -18,7 +14,6 @@ import multiprocessing
 import math
 import glob
 import itertools
-from windrose import WindroseAxes
 from pyts.preprocessing import PowerTransformer
 import re
 import time
@@ -26,12 +21,8 @@ from pathlib import Path
 import matrixprofile
 from datetime import datetime
 from stumpy import stump, fluss, gpu_stump, mstumped, mstump, subspace, stumped
-from tqdm import tqdm
 import seaborn as sns
 from sklearn.preprocessing import MinMaxScaler
-from dtw import dtw
-from dask.distributed import Client, LocalCluster
-
 
 def load_df(path): 
     """
