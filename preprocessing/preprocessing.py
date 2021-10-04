@@ -104,7 +104,7 @@ def normalize(df):
 
 def filter_df(df, filter_dict):
     """
-    This Creates a filtered DataFrame with multiple columns.
+    Creates a filtered DataFrame with multiple columns.
         
         :param df: Date/Time DataFrame or any Given DataFrame.
         :param filter_dict: A dictionary of columns user wants to filter
@@ -121,3 +121,23 @@ def filter_df(df, filter_dict):
     f_df = df
     print(f_df.shape)
     return f_df
+
+
+def multi_corr(df, dep_column):
+    """
+    Computation of the coefficient of multiple correlation. The input consists of a dataframe and the column corresponding to the dependent variable.
+        
+        :param df: Date/Time DataFrame or any Given DataFrame.
+        :param dep_column: The corresponding the column to the dependent variable.
+        
+        """
+    
+    
+    
+    df_str_corr = df.corr(method='pearson')
+    df_str_corr_ind_temp = df_str_corr.drop(index = dep_column)
+    df_str_corr_ind = df_str_corr_ind_temp.drop(columns = dep_column)
+    df_str_corr_ind_inv = inv(df_str_corr_ind.values)
+    df_str_corr_dep = df_str_corr_ind_temp.loc[:,dep_column]
+    return np.matmul(np.matmul(np.transpose(df_str_corr_dep.values), df_str_corr_ind_inv),df_str_corr_dep.values)
+
