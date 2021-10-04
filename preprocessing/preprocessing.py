@@ -102,31 +102,6 @@ def normalize(df):
         return normalized
 
 
-def pyscamp_to_mpf(mp, mpi, motif_len, df):
-    """
-    This Creates a class of MatrixProfile for any created profile and indices.
-        
-        :param mp: Matrix Profile created by Stumpy/MatrixProfile/Pyscamp.
-        :param mpi: Matrix Profile Indexes created by Stumpy/MatrixProfile/Pyscamp.
-        :param motif_len: Window Size. 
-        :param df: Date/Time DataFrame or any DataFrame.
-        """
-
-    
-    mp_mpf = matrixprofile.utils.empty_mp()
-    mp_mpf['mp'] = np.array(mp)
-    mp_mpf['pi'] = np.array(mpi)
-    mp_mpf['metric'] = 'euclidean'
-    mp_mpf['w'] = motif_len
-    mp_mpf['ez'] = 0
-    mp_mpf['join'] = False
-    mp_mpf['sample_pct'] = 1
-    mp_mpf['data']['ts'] = np.array(df).astype('d')
-    mp_mpf['algorithm']='mpx'
-    
-    return mp_mpf
-
-
 def filter_df(df, filter_dict):
     """
     This Creates a filtered DataFrame with multiple columns.
