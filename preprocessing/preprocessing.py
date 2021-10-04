@@ -131,9 +131,6 @@ def multi_corr(df, dep_column):
         :param dep_column: The corresponding the column to the dependent variable.
         
         """
-    
-    
-    
     df_str_corr = df.corr(method='pearson')
     df_str_corr_ind_temp = df_str_corr.drop(index = dep_column)
     df_str_corr_ind = df_str_corr_ind_temp.drop(columns = dep_column)
