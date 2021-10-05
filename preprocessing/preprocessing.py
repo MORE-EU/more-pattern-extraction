@@ -6,10 +6,7 @@ paths = ['', '..', '../..']
 import numpy as np
 import pandas as pd
 import timeit
-import numba
-import pathlib
 import collections
-from numba import cuda
 import multiprocessing
 import math
 import glob
@@ -20,7 +17,6 @@ import time
 from pathlib import Path
 import matrixprofile
 from datetime import datetime
-from stumpy import stump, fluss, gpu_stump, mstumped, mstump, subspace, stumped
 import seaborn as sns
 from sklearn.preprocessing import MinMaxScaler
 
