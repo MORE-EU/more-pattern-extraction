@@ -134,3 +134,34 @@ def multi_corr(df, dep_column):
     df_str_corr_dep = df_str_corr_ind_temp.loc[:,dep_column]
     return np.matmul(np.matmul(np.transpose(df_str_corr_dep.values), df_str_corr_ind_inv),df_str_corr_dep.values)
 
+def chunker(seq, size):
+    """
+    Dividing a file/DataFrame etc into pieces for better hadling of RAM. 
+        
+        :param seq: Sequence, Folder, Date/Time DataFrame or any Given DataFrame.
+        :param size: The size/chunks we want to divide our Seq/Folder/DataFrame.
+        
+        """
+    return (seq[pos:pos + size] for pos in range(0, len(seq), size))
+
+
+def light_interpolation(df,size=10**7,interpolate=True): ##TODO passing from interpolate to args of pandas interpolation
+    """
+    After Chunker makes the pieces according to index, we Interpolate them with *args* of pandas.interpolate() and then we Merge them back together.
+    This step is crucial for the complete data interpolation without RAM problems especially in large DataSets.
+    
+        :param df: Date/Time DataFrame or any Given DataFrame.
+        :param size: The size/chunks we want to divide our /DataFrame according to the global index of the set. The Default price is 10 million.
+        
+        """
+    group=[]
+    for g in chunker(df,size):
+        group.append(g)
+    
+    if interpolate==True:
+        for i in range(len(group)):
+            group[i].interpolate(method='linear', limit_direction='both', inplace=True)
+        df_int=pd.concat(group[i] for i in range(len(group)))
+    df_int=pd.concat(group[i] for i in range(len(group)))
+    
+    return df_int
