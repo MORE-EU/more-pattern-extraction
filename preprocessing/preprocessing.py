@@ -15,9 +15,7 @@ from pyts.preprocessing import PowerTransformer
 import re
 import time
 from pathlib import Path
-import matrixprofile
 from datetime import datetime
-import seaborn as sns
 from sklearn.preprocessing import MinMaxScaler
 
 def load_df(path): 
