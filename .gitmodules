@@ -1,0 +1,3 @@
+[submodule "matrixprofile"]
+	path = matrixprofile
+	url = https://github.com/MORE-EU/matrixprofile.git
