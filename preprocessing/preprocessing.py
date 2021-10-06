@@ -1,3 +1,4 @@
+   
 import sys
 import os
 import pickle
@@ -69,21 +70,20 @@ def filter_col(df, col, less_than=None, bigger_than=None):
 
 
 def normalize(df):
-      """
+    """ 
         :param df: Date/Time DataFrame or any DataFrame given with a specific column to Normalize. 
         """
-        
-        values=[]
+    values=[]
         # prepare data for normalization
-        values = df.values
-        values = values.reshape((len(values), 1))
+    values = df.values
+    values = values.reshape((len(values), 1))
         # train the normalization
-        scaler = MinMaxScaler(feature_range=(0, 1))
-        scaler = scaler.fit(values)
-        print('Min: %f, Max: %f' % (scaler.data_min_, scaler.data_max_))
+    scaler = MinMaxScaler(feature_range=(0, 1))
+    scaler = scaler.fit(values)
+    print('Min: %f, Max: %f' % (scaler.data_min_, scaler.data_max_))
         # normalize the dataset and print the first 5 rows
-        normalized = scaler.transform(values)
-        return normalized
+    normalized = scaler.transform(values)
+    return normalized
 
 
 def filter_df(df, filter_dict):
@@ -152,5 +152,6 @@ def chunk_interpolate(df,size=10**6,interpolate=True, method="linear", axis=0,li
             group[i].interpolate(method=method,axis=axis,limit_direction = limit_direction, limit = limit, inplace=True)
             df_int=pd.concat(group[i] for i in range(len(group)))
             df_int=pd.concat(group[i] for i in range(len(group)))
-     print('Chunk Interpolate Done')
-     return df_int
+    print('Chunk Interpolate Done')
+    return df_int
+
