@@ -1,4 +1,3 @@
-   
 import sys
 import os
 import pickle
@@ -155,3 +154,27 @@ def chunk_interpolate(df,size=10**6,interpolate=True, method="linear", axis=0,li
     print('Chunk Interpolate Done')
     return df_int
 
+def is_stable(*args, epsilon):
+   """
+    Returns 
+    
+        :param epsilon: A small value in order to avoid dividing with Zero.
+      
+        """
+    #implemented using the index of dispersion (or Fano factor)
+    dis = np.var(np.array(args),axis = 1)/np.mean(np.array(args),axis = 1)
+    return np.all(np.logical_or((dis < epsilon),np.isnan(dis)))
+
+
+def filter_dispersed(df, window, eps):
+   """
+    The aforementioned should be implemented for a selection of columns. We are looking consecutive rows
+    and calculates mean and variance. If they are less than our threshold we keep the last row window
+    
+        :param df: Date/Time DataFrame or any Given DataFrame.
+        :param window: A small value in order to avoid dividing with Zero.
+        :param eps: A small value in order to avoid dividing with Zero (See is_stable)
+      
+        """
+   df_tmp = df[rolling_apply(is_stable, window, *df.transpose().values, epsilon= eps)]
+   return df_tmp[window:]
