@@ -143,7 +143,8 @@ def chunker(seq, size):
     return (seq[pos:pos + size] for pos in range(0, len(seq), size))
 
 
-def light_interpolation(df,size=10**7,interpolate=True): ##TODO passing from interpolate to args of pandas interpolation
+def chunk_interpolate(df,size=10**6,interpolate=True, method="linear", axis=0,limit_direction="both", limit=1):
+
     """
     After Chunker makes the pieces according to index, we Interpolate them with *args* of pandas.interpolate() and then we Merge them back together.
     This step is crucial for the complete data interpolation without RAM problems especially in large DataSets.
@@ -152,13 +153,14 @@ def light_interpolation(df,size=10**7,interpolate=True): ##TODO passing from int
         :param size: The size/chunks we want to divide our /DataFrame according to the global index of the set. The Default price is 10 million.
         
         """
+    
     group=[]
     for g in chunker(df,size):
         group.append(g)
     
     if interpolate==True:
         for i in range(len(group)):
-            group[i].interpolate(method='linear', limit_direction='both', inplace=True)
+            group[i].interpolate(method=method,axis=axis,limit_direction = limit_direction, limit = limit, inplace=True)
         df_int=pd.concat(group[i] for i in range(len(group)))
     df_int=pd.concat(group[i] for i in range(len(group)))
     
