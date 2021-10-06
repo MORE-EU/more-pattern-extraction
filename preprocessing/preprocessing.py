@@ -156,7 +156,7 @@ def chunk_interpolate(df,size=10**6,interpolate=True, method="linear", axis=0,li
 
 def is_stable(*args, epsilon):
    """
-    Returns 
+    Returns a boolean vector from the division of variance with mean of a column.
     
         :param epsilon: A small value in order to avoid dividing with Zero.
       
@@ -168,8 +168,8 @@ def is_stable(*args, epsilon):
 
 def filter_dispersed(df, window, eps):
    """
-    The aforementioned should be implemented for a selection of columns. We are looking consecutive rows
-    and calculates mean and variance. If they are less than our threshold we keep the last row window
+    We are looking at windows of consecutive row and calculate the mean and variance. For each window if the index of disperse or given column is in the given threshhold
+    then the last row will remain in the data frame.
     
         :param df: Date/Time DataFrame or any Given DataFrame.
         :param window: A small value in order to avoid dividing with Zero.
