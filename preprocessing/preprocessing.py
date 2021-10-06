@@ -35,32 +35,21 @@ def load_df(path):
         df.set_index(df.index, inplace=True)
     return df
 
-
-def change_granularity(df, granularity='30s',interpolate=False,method='linear',noise=False): 
-
+def change_granularity(df,granularity='30s',size=10**7,chunk=True): 
     """
         :param df: Date/Time DataFrame. 
-        :param granularity: The desired time to resample our DataFrame.
-        :param interpolate: If set True, the DataFrame interpolates with a 'method'.
-                            in order to fill the NaN dates.
-        :param method: Param of pandas.interpolate.
-        :param noise: If set True, It applies a power transform to make data Gaussian with the method 'yeo-johnson'.
+        :param size: The size/chunks we want to divide our /DataFrame according to the global index of the set. The Default price is 10 million.       .
+        :param granularity: The offset user wants to resample the Time Series                  
+        :param chunk: If set True, It applies the chunk_interpolation
         """
 
-
-
     df = df.resample(granularity).mean()
-    if interpolate==True: #Getting rid of NaN occurances.
-        if method=='linear':
-            df= df.interpolate(method=method)
-        else:
-            df=df.interpolate(method=method,order=2)
-            
-    if noise==True:  #Apply a power transform sample-wise to make data more Gaussian-like.
-        pt = PowerTransformer(method='yeo-johnson', standardize=False)
-        df = pd.DataFrame (pt.transform(df), columns= df.columns)
-    
+    print('Resample Complete')
+    if chunk==True: #Getting rid of NaN occurances.
+        df=chunk_interpolate(df,size=size,interpolate=True, method="linear", axis=0,limit_direction="both", limit=1)
+        print('Interpolate Complete')
     return df
+
 
 def filter_col(df, col, less_than=None, bigger_than=None): 
     """
@@ -75,6 +64,7 @@ def filter_col(df, col, less_than=None, bigger_than=None):
         df=df.drop(df[df.iloc[:,col] < less_than].index)
     if(bigger_than is not None):
         df=df.drop(df[df.iloc[:,col] > bigger_than].index)
+    print('Filter Complete')
     return df
 
 
@@ -157,11 +147,10 @@ def chunk_interpolate(df,size=10**6,interpolate=True, method="linear", axis=0,li
     group=[]
     for g in chunker(df,size):
         group.append(g)
-    
-    if interpolate==True:
-        for i in range(len(group)):
+    print('Groupping Complete')
+    for i in range(len(group)):
             group[i].interpolate(method=method,axis=axis,limit_direction = limit_direction, limit = limit, inplace=True)
-        df_int=pd.concat(group[i] for i in range(len(group)))
-    df_int=pd.concat(group[i] for i in range(len(group)))
-    
-    return df_int
+            df_int=pd.concat(group[i] for i in range(len(group)))
+            df_int=pd.concat(group[i] for i in range(len(group)))
+     print('Chunk Interpolate Done')
+     return df_int
