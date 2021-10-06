@@ -36,7 +36,7 @@ def load_df(path):
         df.set_index(df.index, inplace=True)
     return df
 
-def change_granularity(df,granularity='30s',size=10**7,chunk=True): 
+def change_granularity(df,granularity='30s',size=10**7,chunk=True): ##TODO Look for one Nan in the dataset and then perform interpolate
     """
         :param df: Date/Time DataFrame. 
         :param size: The size/chunks we want to divide our /DataFrame according to the global index of the set. The Default price is 10 million.       .
