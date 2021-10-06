@@ -25,6 +25,18 @@ import warnings
 from matrixprofile.algorithms.mass2 import mass2
 
 def save_mdmp_as_h5(dir_path, name, mps, idx, k=0):
+    """Save a multidimensional matrix profile as a pair of hdf5 files. Input is based on the output of (https://stumpy.readthedocs.io/en/latest/api.html#mstump)
+    :param dir_path: Path of the directory where the file will be saved.
+    :param name: Name that will be appended to the file after a default prefix. (i.e. mp_multivariate_<name>.h5)
+    :param mps: The multi-dimensional matrix profile. Each row of the array corresponds to each matrix profile for a given dimension 
+                (i.e., the first row is the 1-D matrix profile and the second row is the 2-D matrix profile).
+    :param idx: The multi-dimensional matrix profile index where each row of the array corresponds to each matrix profile index for a given dimension.
+    :param k: If mps and idx are one-dimensional k can be used to specify the given dimension of the matrix profile. The default value specifies the 1-D matrix profile.
+              If mps and idx are multi-dimensional, k is ignored.
+    """
+    if mps.ndim != idx.ndim:
+        err = 'Dimensions of mps and idx should match'
+        raise ValueError(f"{err}")
     if mps.ndim == 1:
         mps = mps[None, :]
         idx = idx[None, :]
@@ -49,6 +61,12 @@ def save_mdmp_as_h5(dir_path, name, mps, idx, k=0):
     return
 
 def load_mdmp_from_h5(dir_path, name, k):
+    """Load a multidimensional matrix profile that has been saved as a pair of hdf5 files.
+    :param dir_path: Path of the directory where the file is located.
+    :param name: Name that follows the default prefix. (i.e. mp_multivariate_<name>.h5)
+    :param k: Specifies which K-dimensional matrix profile to load. 
+              (i.e. k=2 loads the 2-D matrix profile)
+    """
     # Load MP from disk
     
     h5f = h5py.File(dir_path + 'mp_multivariate_' + name + '.h5','r')
@@ -61,6 +79,12 @@ def load_mdmp_from_h5(dir_path, name, k):
     return mp, index
 
 def add_noise_to_series(series, noise_max=0.00009):
+    
+    """ Add uniform noise to series.
+    :param series: The time series to be added noise.
+    :param noise_max: The upper limit of the amount of noise that can be added to a time series point
+    """
+    
     if not core.is_array_like(series):
         raise ValueError('series is not array like!')
 
@@ -71,16 +95,36 @@ def add_noise_to_series(series, noise_max=0.00009):
     return temp
 
 def add_noise_to_series_md(df, noise_max=0.00009):
+    
+    """ Add uniform noise to a multidimensional time series that is given as a pandas DataFrame.
+    :param df: The DataFrame that contains the multidimensional time series.
+    :param noise_max: The upper limit of the amount of noise that can be added to a time series point.
+    """
+    
     for col in df.columns:
         df[col] = add_noise_to_series(df[col].values, noise_max)
     return df
     
 def filter_dates(df, start, end):
+    """ Remove rows of the dataframe that are not in the [start, end] interval.
+    :param df:DataFrame that has a datetime index.
+    :param start: Date that signifies the start of the interval.
+    :param end: Date that signifies the end of the interval.
+    """
     date_range = (df.index >= start) & (df.index <= end)
     df = df[date_range]
     return df
 
 def plot_knee(mps, save_plot=False, filename='knee.png'):
+    
+    """ Plot the minimum value of the matrix profile for each dimension. This plot is used to visually look for a 'knee' or 'elbow' that
+    can be used to find the optimal number of dimensions to use.
+    :param mps: The multi-dimensional matrix profile. Each row of the array corresponds to each matrix profile for a given dimension 
+                (i.e., the first row is the 1-D matrix profile and the second row is the 2-D matrix profile).
+    :param save_plot: If save_plot is True then the figure will be saved. Otherwise it will just be shown.
+    :param filename: Used if save_plot=True, the name of the file to be saved.
+    """
+    
     motifs_idx = np.argsort(mps, axis=1)[:, :2]
     mp_len = mps.shape[0]
     plt.figure(figsize=(15, 5), dpi=80)
@@ -94,14 +138,26 @@ def plot_knee(mps, save_plot=False, filename='knee.png'):
         plt.show()
     return
 
-def pick_subspace_columns(df, mps, mpi, k, m, include):
+def pick_subspace_columns(df, mps, idx, k, m, include):
+    
+    """ Given a multi-dimensional time series as a pandas Dataframe, keep only the columns that have been used for the creation of the k-dimensional matrix profile.
+    :param df: The DataFrame that contains the multidimensional time series.
+    :param mps: The multi-dimensional matrix profile. Each row of the array corresponds to each matrix profile for a given dimension 
+                (i.e., the first row is the 1-D matrix profile and the second row is the 2-D matrix profile).
+    :param idx: The multi-dimensional matrix profile index where each row of the array corresponds to each matrix profile index for a given dimension.
+    :param k: If mps and idx are one-dimensional k can be used to specify the given dimension of the matrix profile. The default value specifies the 1-D matrix profile.
+              If mps and idx are multi-dimensional, k is ignored.
+    :param m: The subsequence window size. Should be the same as the one used to create the multidimensional matrix profile that is the input.
+    :param include: A list of the column names that must be included in the constrained multidimensional motif search.
+    """
+    
     motifs_idx = np.argsort(mps, axis=1)[:, :2]
     col_indexes = []
     for n in include:
         col_indexes.append(df.columns.get_loc(n))
     
     print(f'Include dimensions: {include}, indexes in df = {col_indexes}')
-    S = subspace(df, m, motifs_idx[k][0], mpi[k][motifs_idx[k][0]], k, include=col_indexes)
+    S = subspace(df, m, motifs_idx[k][0], idx[k][motifs_idx[k][0]], k, include=col_indexes)
     print(f"For k = {k}, the {k + 1}-dimensional subspace includes subsequences from {df.columns[S].values}")
     subspace_cols = list(df.columns[S].values)
     df = df[subspace_cols]
@@ -109,6 +165,15 @@ def pick_subspace_columns(df, mps, mpi, k, m, include):
 
 
 def to_mpf(mp, index, window, ts):
+    """ Using a matrix profile, a matrix profile index, the window size and the timeseries used to calculate the previous, create a matrix profile object that
+        is compatible with the matrix profile foundation library (https://github.com/matrix-profile-foundation/matrixprofile). This is useful for cases where another               library was used to generate the matrix profile.
+    :param mp: A matrix profile.
+    :param index: The matrix profile index that accompanies the matrix profile.
+    :param window: The subsequence window size.
+    :param ts: The timeseries that was used to calculate the matrix profile.
+    """
+    
+    
     mp_mpf = mpf.utils.empty_mp()
     mp_mpf['mp'] = np.array(mp)
     mp_mpf['pi'] = np.array(index)
@@ -124,6 +189,16 @@ def to_mpf(mp, index, window, ts):
 
 def compute_mp_av(mp, index, m, df, k):
     
+    """ Given a matrix profile, a matrix profile index, the window size and the DataFrame that contains the timeseries.
+        Create a matrix profile object and add the corrected matrix profile after applying the complexity av.
+        Uses an extended version of the apply_av function from matrixprofile foundation that is compatible with multi-dimensional timeseries.
+        The implementation can be found here (https://github.com/MORE-EU/matrixprofile/blob/master/matrixprofile/transform.py)
+    :param mp: A matrix profile.
+    :param index: The matrix profile index that accompanies the matrix profile.
+    :param window: The subsequence window size.
+    :param ts: The timeseries that was used to calculate the matrix profile.
+    """
+    
     # Apply the annotation vector
     m  = m # window size
     mp = np.nan_to_num(mp, np.nanmax(mp)) # remove nan values
@@ -134,32 +209,60 @@ def compute_mp_av(mp, index, m, df, k):
     return profile
 
 
-def motif_loc(start, end, mask):
+def pattern_loc(start, end, mask, segment_labels):
     
-    loc = ''
-    start = start - 1
-    end = end - 1
+    """ Considering that a time series is characterized by regions belonging to two different labels.
+        Return the label name of the region that the pattern is contained in.
+    :param start: The starting index of the pattern.
+    :param end: The ending index of the pattern. 
+    :param mask: Binary mask used to annotate the time series.
+    :param segment_labels: List of the two labels that characterize the time series.
+    """
+    
+    if len(segment_labels) != 2:
+        raise ValueError('segment_labels must contain exactly 2 labels')
+    
+    start = start
+    end = end
+    
+    # the first label in the list will be assigned to for the True regions in the mask
+    true_label = segment_labels[0]
+    
+    # the second label in the list will be assigned to for the False regions in the mask
+    false_label = segment_labels[1]
+    
     if mask[start] == mask[end]:
         if mask[start] == True:
-            loc = 'aligned'
+            loc = true_label
         else:
-            loc = 'misaligned'
+            loc = false_label
     else:
+        # if a pattern spans both regions return the label 'both'
         loc = 'both'
         
     return loc
 
-def calc_cost(m_len, a_len, num_m, num_a):
+def calc_cost(cl1_len, cl2_len, num_cl1, num_cl2):
     
-    if (num_m + num_a <= 2):
+    """ Assign a cost to a pattern based on if the majority of its occurances are observed
+        in regions of a time series that are annotated with the same binary label.
+        The cost calculation takes into account a possible difference in the total lengths of the segments.
+        Return the label name of the region that the pattern is contained in, as well as the normalized number of occurences.
+    :param cl1_len: Total length of the time series that belong to the class 1.
+    :param cl2_len: Total length of the time series that belong to the class 2.
+    :param num_cl1: Number of occurances of the pattern in regions that belong to cl1.
+    :param num_cl2: Number of occurances of the pattern in regions that belong to cl2.
+    """
+    
+    if (num_cl1 + num_cl2 <= 2):
         return 1.0, None, None
-    if (m_len == 0 or a_len == 0):
+    if (cl1_len == 0 or cl2_len == 0):
         return 1.0, None, None
-    f = m_len / a_len
-    norm_m = num_m / f
-    norm_a = num_a
-    cost = 1 - (abs(norm_m - norm_a ) / (norm_a + norm_m))
-    return cost, norm_a, norm_m
+    f = cl1_len / cl2_len
+    norm_cl1 = num_cl1 / f
+    norm_cl2 = num_cl2
+    cost = 1 - (abs(norm_cl1 - norm_cl2 ) / (norm_cl1 + norm_cl2))
+    return cost, norm_cl1, norm_cl2
 
 def calculate_motif_stats(p, mask, k, m, ez, radius):
     
