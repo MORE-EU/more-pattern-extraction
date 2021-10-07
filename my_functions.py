@@ -25,7 +25,8 @@ import warnings
 from matrixprofile.algorithms.mass2 import mass2
 
 def save_mdmp_as_h5(dir_path, name, mps, idx, k=0):
-    """Save a multidimensional matrix profile as a pair of hdf5 files. Input is based on the output of (https://stumpy.readthedocs.io/en/latest/api.html#mstump)
+    """Save a multidimensional matrix profile as a pair of hdf5 files. Input is based on the output of 
+       (https://stumpy.readthedocs.io/en/latest/api.html#mstump)
     :param dir_path: Path of the directory where the file will be saved.
     :param name: Name that will be appended to the file after a default prefix. (i.e. mp_multivariate_<name>.h5)
     :param mps: The multi-dimensional matrix profile. Each row of the array corresponds to each matrix profile for a given dimension 
@@ -264,12 +265,31 @@ def calc_cost(cl1_len, cl2_len, num_cl1, num_cl2):
     cost = 1 - (abs(norm_cl1 - norm_cl2 ) / (norm_cl1 + norm_cl2))
     return cost, norm_cl1, norm_cl2
 
-def calculate_motif_stats(p, mask, k, m, ez, radius):
+def calculate_motif_stats(p, mask, k, m, ez, radius, segment_labels):
+    
+    """ Calculate some useful statistics for the motifs found.
+    :param p: A profile object as it is defined in the matrixprofile foundation python library.
+    :param mask: Binary mask used to annotate the time series.
+    :param m: The window size (length of the motif).
+    :param ez: The exclusion zone used.
+    :param radius: The radius that has been used in the experiment.
+    :param segment_labels: List of the two labels that characterize the time series.
+    """
+    
+    if len(segment_labels) != 2:
+        raise ValueError('segment_labels must contain exactly 2 labels')
+    
+    
+    # the first label in the list will be assigned to for the True regions in the mask
+    true_label = segment_labels[0]
+    
+    # the second label in the list will be assigned to for the False regions in the mask
+    false_label = segment_labels[1]
     
     output_list = []
     
-    a_len = np.count_nonzero(mask)
-    m_len = abs(mask.shape[0] - a_len)
+    cls1_len = np.count_nonzero(mask)
+    cls2_len = abs(mask.shape[0] - cls1_len)
     
     for i in range(0, len(p['motifs'])):
         idx, nn1 = p['motifs'][i]['motifs']
@@ -280,49 +300,63 @@ def calculate_motif_stats(p, mask, k, m, ez, radius):
         nn_idx_start = []
         nn_idx_end = []
         for neighbor in neighbors:
-            nn_idx_start.append(neighbor + 1)
+            nn_idx_start.append(neighbor)
             nn_idx_end.append(neighbor + m)
-        aligned_count = 0
-        misaligned_count  = 0
+        cls1_count = 0
+        cls2_count  = 0
         spanning_both = 0
         for nn_start, nn_end in zip(nn_idx_start, nn_idx_end):
-            location_in_ts = motif_loc(nn_start, nn_end, mask)
-            if location_in_ts == 'aligned':
-                aligned_count += 1
-            elif location_in_ts == 'misaligned':
-                misaligned_count += 1
+            location_in_ts = pattern_loc(nn_start, nn_end, mask, segment_labels)
+            if location_in_ts == true_label:
+                cls1_count += 1
+            elif location_in_ts == false_label:
+                cls2_count += 1
             else:
                 spanning_both += 1
                 
-        motif_location = motif_loc(start, end, mask)
-        if motif_location == 'aligned':
-            aligned_count += 1
-        elif motif_location == 'misaligned':
-            misaligned_count += 1
+        motif_location = pattern_loc(start, end, mask, segment_labels)
+        if motif_location == true_label:
+            cls1_count += 1
+        elif motif_location == false_label:
+            cls2_count += 1
             
-        nearest_neighbor_location = motif_loc(nn1, nn1+m, mask)
-        if motif_location == 'aligned':
-            aligned_count += 1
-        elif motif_location == 'misaligned':
-            misaligned_count += 1
+        nearest_neighbor_location = pattern_loc(nn1, nn1+m, mask, segment_labels)
+        if motif_location == true_label:
+            cls1_count += 1
+        elif motif_location == false_label:
+            cls2_count += 1
             
-        cost, norm_a, norm_m = calc_cost(m_len, a_len, misaligned_count, aligned_count)
+        cost, norm_cls1, norm_cls2 = calc_cost(cls1_len, cls2_len, cls1_count, cls2_count)
         
         maj = ''
-        if norm_a == norm_m:
+        if norm_cls1 == norm_cls2:
             maj = 'None'
-        elif norm_a is None and norm_m is None:
+        elif norm_cls1 is None and norm_cls2 is None:
             maj = 'None'
-        elif norm_a > norm_m:
-            maj = 'aligned'
-        elif norm_a < norm_m:
-            maj = 'misaligned'
+        elif norm_cls1 > norm_cls2:
+            maj = true_label
+        elif norm_cls1 < norm_cls2:
+            maj = false_label
             
-        output_list.append([i+1, motif_location, nearest_neighbor_location, aligned_count, misaligned_count, cost, m, ez, radius, motif_pair, maj])
+        output_list.append([i+1, motif_location, nearest_neighbor_location, cls1_count, cls2_count, cost, m, ez, radius, motif_pair, maj])
         
     return output_list
 
 def get_top_k_motifs(df, mp, index, m, ez, radius, k, max_neighbors=50):
+    
+    """ Given a matrix profile, a matrix profile index, the window size and the DataFrame that contains a multi-dimensional timeseries,
+        Find the top k motifs in the timeseries, as well as neighbors that are within the range <radius * min_mp_value> of each of the top k motifs.
+        Uses an extended version of the top_k_motifs function from matrixprofile foundation library that is compatible with multi-dimensional                 timeseries.
+        The implementation can be found here (https://github.com/MORE-EU/matrixprofile/blob/master/matrixprofile/algorithms/top_k_motifs.py)
+    :param df: DataFrame that contains the multi-dimensional timeseries that was used to calculate the matrix profile.
+    :param mp: A multi-dimensional matrix profile.
+    :param index: The matrix profile index that accompanies the matrix profile.
+    :param m: The subsequence window size.
+    :param ez: The exclusion zone to use.
+    :param radius: The radius to use.
+    :param k: The number of the top motifs that were found.
+    :param max_neighbors: The maximum amount of neighbors to find for each of the top k motifs.
+    """
     
     np_df = df.to_numpy()
 
@@ -332,9 +366,27 @@ def get_top_k_motifs(df, mp, index, m, ez, radius, k, max_neighbors=50):
     
     exclusion_zone = int(np.floor(m * ez))
     p = top_k_motifs.top_k_motifs(profile, k=k, radius=radius, exclusion_zone=exclusion_zone,  max_neighbors=max_neighbors)
+    
     return p
 
 def save_results(results_dir, sub_dir_name, p, df_stats, m, radius, ez, k, max_neighbors):
+    """ Save the results of a specific run in the directory specified by the results_dir and sub_dir_name.
+        The results contain some figures that are created with an adaptation of the matrix profile foundation visualize() function.
+        The adaptation works for multi dimensional timeseries and can be found at 
+        (https://github.com/MORE-EU/matrixprofile/blob/master/matrixprofile/visualize.py) as visualize_md()
+    
+    :param results: Path of the directory where the results will be saved.
+    :param sub_directory: Path of the sub directory where the results will be saved.
+    :param p: A profile object as it is defined in the matrixprofile foundation python library.
+    :param df_stats: DataFrame with the desired statistics that need to be saved.
+    :param m: The subsequence window size.
+    :param ez: The exclusion zone to use.
+    :param radius: The radius to use.
+    :param k: The number of the top motifs that were calculated.
+    :param max_neighbors: The maximum amount of neighbors to find for each of the top k motifs.
+    """
+    
+    
 
     path = os.path.join(results_dir, sub_dir_name)
     
@@ -355,7 +407,7 @@ def save_results(results_dir, sub_dir_name, p, df_stats, m, radius, ez, k, max_n
     plt.close('all')
     gc.collect() 
     
-    df_stats.to_csv(path + '/counts.csv')
+    df_stats.to_csv(path + '/stats.csv')
 
     lines = [f'Window size (m): {m}',
              f'Radius: {radius} (radius * min_dist)',
@@ -370,7 +422,21 @@ def save_results(results_dir, sub_dir_name, p, df_stats, m, radius, ez, k, max_n
             
 def find_neighbors(query, ts, w, min_dist, exclusion_zone=None, max_neighbors=100, radius=3):
     
-    # find subsequences of ts that are similar to query
+    """ Given a query of length w, search for similar patterns in the timeseries ts. Patterns with a distance less than (radius * min_dist) 
+        from the query are considered similar(neighbors). This function supports multi-dimensional queries and time series. 
+        The distance is calculated based on the multi-dimensional distance profile as described at 
+        (https://www.cs.ucr.edu/~eamonn/Motif_Discovery_ICDM.pdf). This function is implemented based on the univariate 
+        apporaches ofthe matrix profile foundation library.
+    
+    :param query: The query that will be compared against the time series. Can be univariate or multi-dimensional.
+    :param ts: A time series. Can be univariate or multi-dimensional.
+    :param w: The subsequence window size (should be the length of the query).
+    :param min_dist: The minimum distance that will be multiplied with radius to compute
+                     maximum distance allowed for a subsequence to be considered similar.
+    :param exclusion_zone: The exclusion zone to use.
+    :param max_neighbors: The maximum amount of neighbors to find for each of the top k motifs.
+    :param radius: The radius to multiply min_dist with in order to create the maximum distance allowed for a subsequence to be considered similar.
+    """
     
     window_size = w
     ts = ts.T
@@ -381,8 +447,6 @@ def find_neighbors(query, ts, w, min_dist, exclusion_zone=None, max_neighbors=10
     
     if exclusion_zone is None:
         exclusion_zone = 0
-        #print('No exculsion zone given.')
-
 
     # compute distance profile using mass2 for first appearance
     # create the multi dimensional distance profile
@@ -431,6 +495,12 @@ def find_neighbors(query, ts, w, min_dist, exclusion_zone=None, max_neighbors=10
     return neighbors, n_dists
 
 def pairwise_dist(q1, q2):
+    
+    """ Calculates the distance between two time series sequences q1, q2. The distance is calculated based on the multi-dimensional distance profile.
+        This function allows for the comparison of univariate and multi-dimensional sequences.
+    :param q1: A time series sequence.
+    :param q2: A time series sequence.
+    """
     min_dist = float('inf')
     m = len(q1)
     _, nn_dist = find_neighbors(q1, q2, m, exclusion_zone=None, min_dist = min_dist, max_neighbors=1)
@@ -438,9 +508,32 @@ def pairwise_dist(q1, q2):
     return pair_dist
 
 
-def calculate_nn_stats(nn, mask, m, ez, maj_other):
-    a_len = np.count_nonzero(mask)
-    m_len = abs(mask.shape[0] - a_len)
+def calculate_nn_stats(nn, mask, m, ez, segment_labels, maj_other):
+    
+    """ Calculate some useful statistics for a pattern based on its nearest neighbors. That pattern is supposed to be found 
+        in another time series and is examined based on its neighbors on the current time series.
+    :param nn: The indices of the nearest neighbors in the time series at hand.
+    :param mask: Binary mask used to annotate the time series at hand.
+    :param m: The window size (length of the motif).
+    :param ez: The exclusion zone used.
+    :param segment_labels: List of the two labels that characterize the time series.
+    :param maj_other: The labels of the majority of neighbors the pattern had in the initial time series it was extracted from.
+    """
+    
+    
+    if len(segment_labels) != 2:
+        raise ValueError('segment_labels must contain exactly 2 labels')
+    
+    
+    # the first label in the list will be assigned to for the True regions in the mask
+    true_label = segment_labels[0]
+    
+    # the second label in the list will be assigned to for the False regions in the mask
+    false_label = segment_labels[1]
+    
+    cls1_len = np.count_nonzero(mask)
+    cls2_len = abs(mask.shape[0] - cls1_len)
+    
     neighbors = nn
     nn_idx_start = []
     nn_idx_end = []
@@ -448,28 +541,30 @@ def calculate_nn_stats(nn, mask, m, ez, maj_other):
         nn_idx_start.append(neighbor)
         nn_idx_end.append(neighbor + m)
         
-    aligned_count = 0
-    misaligned_count  = 0
+    cls1_count = 0
+    cls2_count  = 0
     spanning_both = 0
-    
     for nn_start, nn_end in zip(nn_idx_start, nn_idx_end):
-        location_in_ts = motif_loc(nn_start, nn_end, mask)
-        if location_in_ts == 'aligned':
-            aligned_count += 1
-        elif location_in_ts == 'misaligned':
-            misaligned_count += 1
+        location_in_ts = pattern_loc(nn_start, nn_end, mask, segment_labels)
+        if location_in_ts == true_label:
+            cls1_count += 1
+        elif location_in_ts == false_label:
+            cls2_count += 1
         else:
             spanning_both += 1
-    cost, norm_a, norm_m = calc_cost(m_len, a_len, misaligned_count, aligned_count)
+        
+    cost, norm_cls1, norm_cls2 = calc_cost(cls1_len, cls2_len, cls1_count, cls2_count)
 
     maj = ''
-    if norm_a == norm_m:
+    if norm_cls1 == norm_cls2:
         maj = 'None'
-    elif norm_a is None and norm_m is None:
+    elif norm_cls1 is None and norm_cls2 is None:
         maj = 'None'
-    elif norm_a > norm_m:
-        maj = 'aligned'
-    elif norm_a < norm_m:
-        maj = 'misaligned'
+    elif norm_cls1 > norm_cls2:
+        maj = true_label
+    elif norm_cls1 < norm_cls2:
+        maj = false_label
+
+
     matching_maj = (maj_other == maj)
-    return [nn, aligned_count, misaligned_count, ez, cost, matching_maj]
+    return [nn, cls1_count, cls2_count, ez, cost, matching_maj]
