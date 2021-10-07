@@ -18,6 +18,7 @@ from pathlib import Path
 from datetime import datetime
 from sklearn.preprocessing import MinMaxScaler
 
+
 def load_df(path): 
     """
         :param path: Path of the under loading DataFrame.
@@ -34,6 +35,7 @@ def load_df(path):
         df.index = pd.to_datetime(df.index)
         df.set_index(df.index, inplace=True)
     return df
+
 
 def change_granularity(df,granularity='30s',size=10**7,chunk=True): ##TODO Look for one Nan in the dataset and then perform interpolate
     """
@@ -68,6 +70,17 @@ def filter_col(df, col, less_than=None, bigger_than=None):
     return df
 
 
+def filter_dates(df, start, end):
+    """ Remove rows of the dataframe that are not in the [start, end] interval.
+    :param df:DataFrame that has a datetime index.
+    :param start: Date that signifies the start of the interval.
+    :param end: Date that signifies the end of the interval.
+    """
+    date_range = (df.index >= start) & (df.index <= end)
+    df = df[date_range]
+    return df
+
+
 def normalize(df):
     """ 
         :param df: Date/Time DataFrame or any DataFrame given with a specific column to Normalize. 
@@ -83,6 +96,35 @@ def normalize(df):
         # normalize the dataset and print the first 5 rows
     normalized = scaler.transform(values)
     return normalized
+
+
+def add_noise_to_series(series, noise_max=0.00009):
+    
+    """ Add uniform noise to series.
+    :param series: The time series to be added noise.
+    :param noise_max: The upper limit of the amount of noise that can be added to a time series point
+    """
+    
+    if not core.is_array_like(series):
+        raise ValueError('series is not array like!')
+
+    temp = np.copy(core.to_np_array(series))
+    noise = np.random.uniform(0, noise_max, size=len(temp))
+    temp = temp + noise
+
+    return temp
+
+
+def add_noise_to_series_md(df, noise_max=0.00009):
+    
+    """ Add uniform noise to a multidimensional time series that is given as a pandas DataFrame.
+    :param df: The DataFrame that contains the multidimensional time series.
+    :param noise_max: The upper limit of the amount of noise that can be added to a time series point.
+    """
+    
+    for col in df.columns:
+        df[col] = add_noise_to_series(df[col].values, noise_max)
+    return df
 
 
 def filter_df(df, filter_dict):
@@ -121,6 +163,7 @@ def multi_corr(df, dep_column):
     df_str_corr_dep = df_str_corr_ind_temp.loc[:,dep_column]
     return np.matmul(np.matmul(np.transpose(df_str_corr_dep.values), df_str_corr_ind_inv),df_str_corr_dep.values)
 
+
 def chunker(seq, size):
     """
     Dividing a file/DataFrame etc into pieces for better hadling of RAM. 
@@ -153,6 +196,7 @@ def chunk_interpolate(df,size=10**6,interpolate=True, method="linear", axis=0,li
             df_int=pd.concat(group[i] for i in range(len(group)))
     print('Chunk Interpolate Done')
     return df_int
+
 
 def is_stable(*args, epsilon):
    """
