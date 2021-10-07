@@ -262,7 +262,9 @@ def calc_cost(cl1_len, cl2_len, num_cl1, num_cl2):
     norm_cl2 = num_cl2
     cost = 1 - (abs(norm_cl1 - norm_cl2 ) / (norm_cl1 + norm_cl2))
     return cost, norm_cl1, norm_cl2
-  def get_top_k_motifs(df, mp, index, m, ez, radius, k, max_neighbors=50):
+
+
+def get_top_k_motifs(df, mp, index, m, ez, radius, k, max_neighbors=50):
     
     np_df = df.to_numpy()
 
