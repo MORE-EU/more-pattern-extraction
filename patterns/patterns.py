@@ -308,16 +308,9 @@ def save_results(results_dir, sub_dir_name, p, df_stats, m, radius, ez, k, max_n
         for ln in lines:
             f.write(ln + '\n')
             
-def pairwise_dist(q1, q2):
-    min_dist = float('inf')
-    m = len(q1)
-    _, nn_dist = find_neighbors(q1, q2, m, exclusion_zone=None, min_dist = min_dist, max_neighbors=1)
-    pair_dist = nn_dist[0]
-    return pair_dist
-  
-  
+
 def compute_change_points(mpi, L,change_points=4,path):
-    """ Calculation of total change points we want to divide our region. 
+    """ Calculation of total change points we want to divide our region with respect to.
         In return we provide the locations(indexes) of change_points and the arc-curve which are contained in a specific L.
         
     :param mpi: The one-dimensional matrix profile index where the array corresponds to the matrix profile index for a given dimension.
@@ -326,7 +319,6 @@ def compute_change_points(mpi, L,change_points=4,path):
     :param change_points: Number of segments that our space is going to be divided.
     :param path: Path of the directory where the file will be saved.
     """
-    #global files
     regimes = [change_points]
     output = dict()
     print("Computing regimes..")
