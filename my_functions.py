@@ -23,6 +23,7 @@ from matrixprofile.algorithms import top_k_motifs
 from matrixprofile.visualize import visualize_md
 import warnings
 from matrixprofile.algorithms.mass2 import mass2
+from sklearn.preprocessing import MinMaxScaler
 
 def save_mdmp_as_h5(dir_path, name, mps, idx, k=0):
     """Save a multidimensional matrix profile as a pair of hdf5 files. Input is based on the output of 
@@ -161,8 +162,7 @@ def pick_subspace_columns(df, mps, idx, k, m, include):
     S = subspace(df, m, motifs_idx[k][0], idx[k][motifs_idx[k][0]], k, include=col_indexes)
     print(f"For k = {k}, the {k + 1}-dimensional subspace includes subsequences from {df.columns[S].values}")
     subspace_cols = list(df.columns[S].values)
-    df = df[subspace_cols]
-    return df
+    return subspace_cols
 
 
 def to_mpf(mp, index, window, ts):
@@ -296,12 +296,12 @@ def calculate_motif_stats(p, mask, k, m, ez, radius, segment_labels):
         neighbors = p['motifs'][i]['neighbors']
         motif_pair = p['motifs'][i]['motifs']
         start = idx
-        end = idx + m
+        end = idx + m - 1
         nn_idx_start = []
         nn_idx_end = []
         for neighbor in neighbors:
             nn_idx_start.append(neighbor)
-            nn_idx_end.append(neighbor + m)
+            nn_idx_end.append(neighbor + m - 1)
         cls1_count = 0
         cls2_count  = 0
         spanning_both = 0
@@ -320,7 +320,7 @@ def calculate_motif_stats(p, mask, k, m, ez, radius, segment_labels):
         elif motif_location == false_label:
             cls2_count += 1
             
-        nearest_neighbor_location = pattern_loc(nn1, nn1+m, mask, segment_labels)
+        nearest_neighbor_location = pattern_loc(nn1, nn1+m-1, mask, segment_labels)
         if motif_location == true_label:
             cls1_count += 1
         elif motif_location == false_label:
@@ -539,7 +539,7 @@ def calculate_nn_stats(nn, mask, m, ez, segment_labels, maj_other):
     nn_idx_end = []
     for neighbor in neighbors:
         nn_idx_start.append(neighbor)
-        nn_idx_end.append(neighbor + m)
+        nn_idx_end.append(neighbor + m - 1)
         
     cls1_count = 0
     cls2_count  = 0
@@ -568,3 +568,11 @@ def calculate_nn_stats(nn, mask, m, ez, segment_labels, maj_other):
 
     matching_maj = (maj_other == maj)
     return [nn, cls1_count, cls2_count, ez, cost, matching_maj]
+
+def scale_df(df):
+    """ Scale each column of a dataframe to the [0, 1] range performing the min max scaling
+    :param df: The DataFrame to be scaled.
+    """
+    min_max_scaler = MinMaxScaler()
+    df[df.columns] = min_max_scaler.fit_transform(df)
+    return df
