@@ -81,21 +81,21 @@ def filter_col(df, col, less_than=None, bigger_than=None):
 
 
 def normalize(df):
-      """
-        :param df: Date/Time DataFrame or any DataFrame given with a specific column to Normalize. 
-        """
+    """
+    :param df: Date/Time DataFrame or any DataFrame given with a specific column to Normalize. 
+    """
         
-        values=[]
-        # prepare data for normalization
-        values = df.values
-        values = values.reshape((len(values), 1))
-        # train the normalization
-        scaler = MinMaxScaler(feature_range=(0, 1))
-        scaler = scaler.fit(values)
-        print('Min: %f, Max: %f' % (scaler.data_min_, scaler.data_max_))
-        # normalize the dataset and print the first 5 rows
-        normalized = scaler.transform(values)
-        return normalized
+    values=[]
+    # prepare data for normalization
+    values = df.values
+    values = values.reshape((len(values), 1))
+    # train the normalization
+    scaler = MinMaxScaler(feature_range=(0, 1))
+    scaler = scaler.fit(values)
+    print('Min: %f, Max: %f' % (scaler.data_min_, scaler.data_max_))
+    # normalize the dataset and print the first 5 rows
+    normalized = scaler.transform(values)
+    return normalized
 
 
 def filter_df(df, filter_dict):
