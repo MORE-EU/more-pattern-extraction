@@ -26,12 +26,13 @@ from matrixprofile.algorithms.mass2 import mass2
 
 
 def create_mp(df, motif_len, column,path,dask=True):
-   """Create and Save a univariate/multidimensional matrix profile as a pair of npz files. Input is based on the output of (https://stumpy.readthedocs.io/en/latest/api.html#mstump)
-    :param df: The DataFrame that contains the multidimensional time series. 
-    :param motif_len: The subsequence window size. 
-    :param columns: A list of the column indexes that are included in the comptutation univariate/multidimensional profile.
-    :param path: Path of the directory where the file will be saved.
-    :param dask: A Dask Distributed client that is connected to a Dask scheduler and Dask workers
+   """ Create and Save a univariate/multidimensional matrix profile as a pair of npz files. Input is based on the output of (https://stumpy.readthedocs.io/en/latest/api.html#mstump)
+   
+       :param df: The DataFrame that contains the multidimensional time series. 
+       :param motif_len: The subsequence window size. 
+       :param columns: A list of the column indexes that are included in the comptutation univariate/multidimensional profile.
+       :param path: Path of the directory where the file will be saved.
+       :param dask: A Dask Distributed client that is connected to a Dask scheduler and Dask workers
     """
     column1=str(column)
     if len(column1)<2:
@@ -68,9 +69,11 @@ def create_mp(df, motif_len, column,path,dask=True):
 
       
 def load_mp(path):
-  Load the Univariate/Multivariate Matrix profile which was saved from Create_mp in a .npz file.
-  :param path: Path of the directory where the file is saved.
-  
+   
+     """Load the Univariate/Multivariate Matrix profile which was saved from Create_mp in a .npz file.
+
+        :param path: Path of the directory where the file is saved.
+     """
     mp={}
     mpi={}
     loaded = np.load(path + ".npz", allow_pickle=True)
@@ -79,15 +82,17 @@ def load_mp(path):
     return mp, mpi
 
 def save_mdmp_as_h5(dir_path, name, mps, idx, k=0):
-    """Save a multidimensional matrix profile as a pair of hdf5 files. Input is based on the output of (https://stumpy.readthedocs.io/en/latest/api.html#mstump)
-    :param dir_path: Path of the directory where the file will be saved.
-    :param name: Name that will be appended to the file after a default prefix. (i.e. mp_multivariate_<name>.h5)
-    :param mps: The multi-dimensional matrix profile. Each row of the array corresponds to each matrix profile for a given dimension 
-                (i.e., the first row is the 1-D matrix profile and the second row is the 2-D matrix profile).
-    :param idx: The multi-dimensional matrix profile index where each row of the array corresponds to each matrix profile index for a given dimension.
-    :param k: If mps and idx are one-dimensional k can be used to specify the given dimension of the matrix profile. The default value specifies the 1-D matrix profile.
-              If mps and idx are multi-dimensional, k is ignored.
-    """
+   
+    """ Save a multidimensional matrix profile as a pair of hdf5 files. Input is based on the output of (https://stumpy.readthedocs.io/en/latest/api.html#mstump).
+    
+       :param dir_path: Path of the directory where the file will be saved.
+       :param name: Name that will be appended to the file after a default prefix. (i.e. mp_multivariate_<name>.h5)
+       :param mps: The multi-dimensional matrix profile. Each row of the array corresponds to each matrix profile for a given dimension 
+                   (i.e., the first row is the 1-D matrix profile and the second row is the 2-D matrix profile).
+       :param idx: The multi-dimensional matrix profile index where each row of the array corresponds to each matrix profile index for a given dimension.
+       :param k: If mps and idx are one-dimensional k can be used to specify the given dimension of the matrix profile. The default value specifies the 1-D matrix profile.
+                 If mps and idx are multi-dimensional, k is ignored.
+     """
     if mps.ndim != idx.ndim:
         err = 'Dimensions of mps and idx should match'
         raise ValueError(f"{err}")
@@ -117,12 +122,14 @@ def save_mdmp_as_h5(dir_path, name, mps, idx, k=0):
   
   
 def load_mdmp_from_h5(dir_path, name, k):
+   
     """Load a multidimensional matrix profile that has been saved as a pair of hdf5 files.
-    :param dir_path: Path of the directory where the file is located.
-    :param name: Name that follows the default prefix. (i.e. mp_multivariate_<name>.h5)
-    :param k: Specifies which K-dimensional matrix profile to load. 
-              (i.e. k=2 loads the 2-D matrix profile)
-    """
+    
+       :param dir_path: Path of the directory where the file is located.
+       :param name: Name that follows the default prefix. (i.e. mp_multivariate_<name>.h5)
+       :param k: Specifies which K-dimensional matrix profile to load. 
+                 (i.e. k=2 loads the 2-D matrix profile)
+       """
     # Load MP from disk
     
     h5f = h5py.File(dir_path + 'mp_multivariate_' + name + '.h5','r')
@@ -138,14 +145,15 @@ def load_mdmp_from_h5(dir_path, name, k):
 def pick_subspace_columns(df, mps, idx, k, m, include):
     
     """ Given a multi-dimensional time series as a pandas Dataframe, keep only the columns that have been used for the creation of the k-dimensional matrix profile.
-    :param df: The DataFrame that contains the multidimensional time series.
-    :param mps: The multi-dimensional matrix profile. Each row of the array corresponds to each matrix profile for a given dimension 
-                (i.e., the first row is the 1-D matrix profile and the second row is the 2-D matrix profile).
-    :param idx: The multi-dimensional matrix profile index where each row of the array corresponds to each matrix profile index for a given dimension.
-    :param k: If mps and idx are one-dimensional k can be used to specify the given dimension of the matrix profile. The default value specifies the 1-D matrix profile.
-              If mps and idx are multi-dimensional, k is ignored.
-    :param m: The subsequence window size. Should be the same as the one used to create the multidimensional matrix profile that is the input.
-    :param include: A list of the column names that must be included in the constrained multidimensional motif search.
+    
+       :param df: The DataFrame that contains the multidimensional time series.
+       :param mps: The multi-dimensional matrix profile. Each row of the array corresponds to each matrix profile for a given dimension 
+                   (i.e., the first row is the 1-D matrix profile and the second row is the 2-D matrix profile).
+       :param idx: The multi-dimensional matrix profile index where each row of the array corresponds to each matrix profile index for a given dimension.
+       :param k: If mps and idx are one-dimensional k can be used to specify the given dimension of the matrix profile. The default value specifies the 1-D matrix profile.
+                 If mps and idx are multi-dimensional, k is ignored.
+       :param m: The subsequence window size. Should be the same as the one used to create the multidimensional matrix profile that is the input.
+       :param include: A list of the column names that must be included in the constrained multidimensional motif search.
     """
     
     motifs_idx = np.argsort(mps, axis=1)[:, :2]
@@ -163,11 +171,13 @@ def pick_subspace_columns(df, mps, idx, k, m, include):
 
 def to_mpf(mp, index, window, ts):
     """ Using a matrix profile, a matrix profile index, the window size and the timeseries used to calculate the previous, create a matrix profile object that
-        is compatible with the matrix profile foundation library (https://github.com/matrix-profile-foundation/matrixprofile). This is useful for cases where another               library was used to generate the matrix profile.
-    :param mp: A matrix profile.
-    :param index: The matrix profile index that accompanies the matrix profile.
-    :param window: The subsequence window size.
-    :param ts: The timeseries that was used to calculate the matrix profile.
+        is compatible with the matrix profile foundation library (https://github.com/matrix-profile-foundation/matrixprofile). This is useful for cases where another
+        library was used to generate the matrix profile.
+        
+       :param mp: A matrix profile.
+       :param index: The matrix profile index that accompanies the matrix profile.
+       :param window: The subsequence window size.
+       :param ts: The timeseries that was used to calculate the matrix profile.
     """
     
     
@@ -191,10 +201,11 @@ def compute_mp_av(mp, index, m, df, k):
         Create a matrix profile object and add the corrected matrix profile after applying the complexity av.
         Uses an extended version of the apply_av function from matrixprofile foundation that is compatible with multi-dimensional timeseries.
         The implementation can be found here (https://github.com/MORE-EU/matrixprofile/blob/master/matrixprofile/transform.py)
-    :param mp: A matrix profile.
-    :param index: The matrix profile index that accompanies the matrix profile.
-    :param window: The subsequence window size.
-    :param ts: The timeseries that was used to calculate the matrix profile.
+        
+       :param mp: A matrix profile.
+       :param index: The matrix profile index that accompanies the matrix profile.
+       :param window: The subsequence window size.
+       :param ts: The timeseries that was used to calculate the matrix profile.
     """
     
     # Apply the annotation vector
@@ -211,10 +222,11 @@ def pattern_loc(start, end, mask, segment_labels):
     
     """ Considering that a time series is characterized by regions belonging to two different labels.
         Return the label name of the region that the pattern is contained in.
-    :param start: The starting index of the pattern.
-    :param end: The ending index of the pattern. 
-    :param mask: Binary mask used to annotate the time series.
-    :param segment_labels: List of the two labels that characterize the time series.
+        
+       :param start: The starting index of the pattern.
+       :param end: The ending index of the pattern. 
+       :param mask: Binary mask used to annotate the time series.
+       :param segment_labels: List of the two labels that characterize the time series.
     """
     
     if len(segment_labels) != 2:
@@ -247,10 +259,11 @@ def calc_cost(cl1_len, cl2_len, num_cl1, num_cl2):
         in regions of a time series that are annotated with the same binary label.
         The cost calculation takes into account a possible difference in the total lengths of the segments.
         Return the label name of the region that the pattern is contained in, as well as the normalized number of occurences.
-    :param cl1_len: Total length of the time series that belong to the class 1.
-    :param cl2_len: Total length of the time series that belong to the class 2.
-    :param num_cl1: Number of occurances of the pattern in regions that belong to cl1.
-    :param num_cl2: Number of occurances of the pattern in regions that belong to cl2.
+        
+       :param cl1_len: Total length of the time series that belong to the class 1.
+       :param cl2_len: Total length of the time series that belong to the class 2.
+       :param num_cl1: Number of occurances of the pattern in regions that belong to cl1.
+       :param num_cl2: Number of occurances of the pattern in regions that belong to cl2.
     """
     
     if (num_cl1 + num_cl2 <= 2):
@@ -266,6 +279,21 @@ def calc_cost(cl1_len, cl2_len, num_cl1, num_cl2):
 
 def get_top_k_motifs(df, mp, index, m, ez, radius, k, max_neighbors=50):
     
+    """ Given a matrix profile, a matrix profile index, the window size and the DataFrame that contains a multi-dimensional timeseries,
+        Find the top k motifs in the timeseries, as well as neighbors that are within the range <radius * min_mp_value> of each of the top k motifs.
+        Uses an extended version of the top_k_motifs function from matrixprofile foundation library that is compatible with multi-dimensional                 timeseries.
+        The implementation can be found here (https://github.com/MORE-EU/matrixprofile/blob/master/matrixprofile/algorithms/top_k_motifs.py)
+        
+       :param df: DataFrame that contains the multi-dimensional timeseries that was used to calculate the matrix profile.
+       :param mp: A multi-dimensional matrix profile.
+       :param index: The matrix profile index that accompanies the matrix profile.
+       :param m: The subsequence window size.
+       :param ez: The exclusion zone to use.
+       :param radius: The radius to use.
+       :param k: The number of the top motifs that were found.
+       :param max_neighbors: The maximum amount of neighbors to find for each of the top k motifs.
+    """
+    
     np_df = df.to_numpy()
 
     mp = np.nan_to_num(mp, nan=np.nanmax(mp)) # remove nan values
@@ -274,11 +302,27 @@ def get_top_k_motifs(df, mp, index, m, ez, radius, k, max_neighbors=50):
     
     exclusion_zone = int(np.floor(m * ez))
     p = top_k_motifs.top_k_motifs(profile, k=k, radius=radius, exclusion_zone=exclusion_zone,  max_neighbors=max_neighbors)
+    
     return p
 
 
 def save_results(results_dir, sub_dir_name, p, df_stats, m, radius, ez, k, max_neighbors):
-
+   
+    """ Save the results of a specific run in the directory specified by the results_dir and sub_dir_name.
+        The results contain some figures that are created with an adaptation of the matrix profile foundation visualize() function.
+        The adaptation works for multi dimensional timeseries and can be found at 
+        (https://github.com/MORE-EU/matrixprofile/blob/master/matrixprofile/visualize.py) as visualize_md().
+    
+       :param results: Path of the directory where the results will be saved.
+       :param sub_directory: Path of the sub directory where the results will be saved.
+       :param p: A profile object as it is defined in the matrixprofile foundation python library.
+       :param df_stats: DataFrame with the desired statistics that need to be saved.
+       :param m: The subsequence window size.
+       :param ez: The exclusion zone to use.
+       :param radius: The radius to use.
+       :param k: The number of the top motifs that were calculated.
+       :param max_neighbors: The maximum amount of neighbors to find for each of the top k motifs.
+    """
     path = os.path.join(results_dir, sub_dir_name)
     
     print(path)
@@ -298,7 +342,7 @@ def save_results(results_dir, sub_dir_name, p, df_stats, m, radius, ez, k, max_n
     plt.close('all')
     gc.collect() 
     
-    df_stats.to_csv(path + '/counts.csv')
+    df_stats.to_csv(path + '/stats.csv')
 
     lines = [f'Window size (m): {m}',
              f'Radius: {radius} (radius * min_dist)',
@@ -310,22 +354,30 @@ def save_results(results_dir, sub_dir_name, p, df_stats, m, radius, ez, k, max_n
         for ln in lines:
             f.write(ln + '\n')
             
+            
 
-def compute_change_points(mpi, L,change_points=4,path):
-    """ Calculation of total change points we want to divide our region with respect to.
+def change_points(mpi, L, excl_factor=5, change_points=4,path):
+   
+    """ Calculation of total change points(segments) we want to divide our region with respect to a computed Univariate Matrix Profile. 
+        This procedure is illustated through the Fluss Algorithm (https://stumpy.readthedocs.io/en/latest/_modules/stumpy/floss.html#fluss).
+        We input a L which is a list of integers. The L is a factor which excludes change point detection. It replaces the Arc Curve with 1 depending 
+        of the size of L multiplied with an exclusion Factor (excl_factor).
+        This algorithm can work for a multidimensional DataFrames. User need just to specify the column in mpi. eg mpi[3] so we look
+        for change_points in  the 3rd column.
         In return we provide the locations(indexes) of change_points and the arc-curve which are contained in a specific L.
         
-    :param mpi: The one-dimensional matrix profile index where the array corresponds to the matrix profile index for a given dimension.
-    :param L: The subsequence length that is set roughly to be one period length. This is likely to be the same value as the motif_len, 
-              used to compute the matrix profile and matrix profile index.
-    :param change_points: Number of segments that our space is going to be divided.
-    :param path: Path of the directory where the file will be saved.
+       :param mpi: The one-dimensional matrix profile index where the array corresponds to the matrix profile index for a given dimension.
+       :param L: The subsequence length that is set roughly to be one period length. This is likely to be the same value as the motif_len, 
+                 used to compute the matrix profile and matrix profile index.
+       :param excl_factor: The multiplying factor for the regime exclusion zone.       
+       :param change_points: Number of segments that our space is going to be divided.
+       :param path: Path of the directory where the file will be saved.
     """
     regimes = [change_points]
     output = dict()
     print("Computing regimes..")
     for l in tqdm(L):
-        output[l] = [fluss(mpi, L=int(l), n_regimes=int(r), excl_factor=5) for r in regimes] 
+        output[l] = [fluss(mpi, L=int(l), n_regimes=int(r), excl_factor=excl_factor) for r in regimes] 
     if(path):
         np.save(path, output)
         
@@ -333,47 +385,54 @@ def compute_change_points(mpi, L,change_points=4,path):
     return output
   
  
-def change_points_md(mpi,k_optimal,L=[100,200],change_points=4,paths): ##TODO
-  """ Calculation of total change points we want to divide our region and build it with respect up to optimal dimensions given from elbow_method.
-      In return we provide the locations(indexes) of change_points and the arc-curve which are contained in a specific L.
+def change_points_md(mpi,k_optimal,L=[100,200],change_points=4,excl_factor=5,paths):
+ 
+     """ Calculation of total change points(segments) we want to divide our region with respect to a computed Multivariate Matrix Profile. 
+         This procedure is illustated through the Modified Fluss Algorithm (https://stumpy.readthedocs.io/en/latest/_modules/stumpy/floss.html#fluss).
+         We input a L which is a list of integers. The L is a factor which excludes change point detection. It replaces the Arc Curve with 1 depending 
+         of the size of L multiplied with an exclusion Factor (excl_factor). It alterates because we built it through optimal dimensions given from elbow_method.
+         So in the end we will receive locations(indexes) of change_points and the arc-curve which are contained in a specific L for each column/dimension. 
         
-    :param mpi: The one-dimensional matrix profile index where the array corresponds to the matrix profile index for a given dimension.
-    :param k_optimal: Choose optimal dimension(s) given from the elbow method
-    :param L: The subsequence length that is set roughly to be one period length. This is likely to be the same value as the motif_len, 
-              used to compute the matrix profile and matrix profile index.
-    :param change_points: Number of segments that our space is going to be divided.
-    :param path: Path of the directory where the file will be saved.
-    """
-    no_cols = np.arange(1, k_optimal + 1, 1)
+        :param mpi: The multi-dimensional matrix profile index where the array corresponds to the matrix profile index for a given dimension.
+        :param k_optimal: Choose optimal dimension(s) given from the elbow method. Or all of the DataFrame Dimension
+        :param L: The subsequence length that is set roughly to be one period length. This is likely to be the same value as the motif_len, 
+                 used to compute the matrix profile and matrix profile index.
+        :param change_points: Number of segments that our space is going to be divided.
+        :param excl_factor: The multiplying factor for the regime exclusion zone.
+        :param path: Path of the directory where the file will be saved.
+      """
+    
+      no_cols = np.arange(1, k_optimal + 1, 1)
     if(L == None):
         L = np.arange(1000,50000, 1000).astype(int)
     regimes = [change_points]
     output = dict()
     for c in tqdm(no_cols):
-        output[c] = [fluss(mpi[c - 1], L=int(l), n_regimes=int(r), excl_factor=5) for r in regimes for l in L]
+        output[c] = [fluss(mpi[c - 1], L=int(l), n_regimes=int(r), excl_factor=excl_factor) for r in regimes for l in L]
     if(path):
         np.save(path, output)
     return output
   
-  def compute_regimes_for_optimal_dim(mpi,k_optimal, L=[100,200], change_points=4,path):
-    """ Calculation of total change points we want to divide our region and build it with respect up to *the* optimal dimension given from elbow_method.
-      In return we provide the locations(indexes) of change_points and the arc-curve which are contained in a specific L.
-        
-    :param mpi: The one-dimensional matrix profile index where the array corresponds to the matrix profile index for a given dimension.
-    :param k_optimal: Choose *the* optimal dimension from the elbow method
-    :param L: The subsequence length that is set roughly to be one period length. This is likely to be the same value as the motif_len, 
-              used to compute the matrix profile and matrix profile index.
-    :param change_points: Number of segments that our space is going to be divided.
-    :param path: Path of the directory where the file will be saved.
-    """
+#   def compute_regimes_for_optimal_dim(mpi,k_optimal, L=[100,200], change_points=4,path):
    
-    if(L == None):
-        L = np.arange(1000,50000, 1000).astype(int)
+#     """ Calculation of total change points we want to divide our region and build it with respect up to *the* optimal dimension given from elbow_method.
+#         In return we provide the locations(indexes) of change_points and the arc-curve which are contained in a specific L.
+
+#        :param mpi: The one-dimensional matrix profile index where the array corresponds to the matrix profile index for a given dimension.
+#        :param k_optimal: Choose *the* optimal dimension from the elbow method
+#        :param L: The subsequence length that is set roughly to be one period length. This is likely to be the same value as the motif_len, 
+#                  used to compute the matrix profile and matrix profile index.
+#        :param change_points: Number of segments that our space is going to be divided.
+#        :param path: Path of the directory where the file will be saved.
+#     """
+   
+#     if(L == None):
+#         L = np.arange(1000,50000, 1000).astype(int)
         
-    regimes = [change_points]
-    output = dict()
-    for l in tqdm(L):
-        output[l] = [fluss(mpi[k_optimal - 1], L=int(l), n_regimes=int(r), excl_factor=5) for r in regimes]
-    if(path):
-        np.save(path, output)
-    return output
+#     regimes = [change_points]
+#     output = dict()
+#     for l in tqdm(L):
+#         output[l] = [fluss(mpi[k_optimal - 1], L=int(l), n_regimes=int(r), excl_factor=5) for r in regimes]
+#     if(path):
+#         np.save(path, output)
+#     return output
