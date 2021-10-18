@@ -20,7 +20,8 @@ from sklearn.preprocessing import MinMaxScaler
 
 
 def load_df(path): 
-    """
+    """ Loading a parquet file to a pandas DataFrame. Return this pandas DataFrame.
+        Return: pandas DataFrame.
         :param path: Path of the under loading DataFrame.
         
         """
@@ -37,8 +38,9 @@ def load_df(path):
     return df
 
 
-def change_granularity(df,granularity='30s',size=10**7,chunk=True): ##TODO Look for one Nan in the dataset and then perform interpolate
-    """
+def change_granularity(df,granularity='30s',size=10**7,chunk=True): 
+    """ Changing the offset of a TimeSeries. We do this procedure by using chunk_interpolate. We divide our TimeSeries into pieces in order to interpolate them.
+        Return: The interpolated DataFrame/TimeSeries
         :param df: Date/Time DataFrame. 
         :param size: The size/chunks we want to divide our /DataFrame according to the global index of the set. The Default price is 10 million.       .
         :param granularity: The offset user wants to resample the Time Series                  
@@ -54,7 +56,8 @@ def change_granularity(df,granularity='30s',size=10**7,chunk=True): ##TODO Look 
 
 
 def filter_col(df, col, less_than=None, bigger_than=None): 
-    """
+    """ Remove rows of the dataframe that they are under, over/both from a specific/two different input price/prices.
+        Return: The Filtrated TimeSeries/DataFrame
         :param df: Date/Time DataFrame. 
         :param col: The desired column to work on our DataFrame. 
         :param less_than: Filtering the column dropping values below that price.
@@ -128,8 +131,7 @@ def add_noise_to_series_md(df, noise_max=0.00009):
 
 
 def filter_df(df, filter_dict):
-    """
-    Creates a filtered DataFrame with multiple columns.
+    """ Creates a filtered DataFrame with multiple columns.
         
         :param df: Date/Time DataFrame or any Given DataFrame.
         :param filter_dict: A dictionary of columns user wants to filter
