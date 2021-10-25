@@ -6,7 +6,14 @@ fixed_dates = [
     '2018-12-11 00:00:00',
 ]
 
-def predefined_labels(axs, df): #Ok gia  fig, axs = plt.subplots(1, sharex=True, gridspec_kw={'hspace': 0.1}, figsize=(20, 3))
+def predefined_labels(axs, df):
+    """
+    
+    Args:
+    
+    Return:
+    
+    """
 
     ids = []
     for d in fixed_dates:
@@ -16,6 +23,12 @@ def predefined_labels(axs, df): #Ok gia  fig, axs = plt.subplots(1, sharex=True,
 
 
 def convert_labels_to_dt(labels, df): 
+    """
+    
+    Args:
+    
+    Returns:
+    """
     l = []
     for label in labels:
         if(len(df) >= round(label)):
@@ -27,7 +40,15 @@ def convert_labels_to_dt(labels, df):
 
 
 
-def get_fixed_dates(df): #for sorted data
+def get_fixed_dates(df):
+    """
+    For sorted data
+    
+    Args:
+    
+    Return:
+    
+    """
     dates = []
     for date_point in fixed_dates:
         date_point = datetime.strptime(date_point, '%Y-%m-%d %H:%M:%S')
@@ -40,12 +61,17 @@ def get_fixed_dates(df): #for sorted data
 
 def plot_knee(mps, save_plot=False, filename='knee.png'):
     
-    """ Plot the minimum value of the matrix profile for each dimension. This plot is used to visually look for a 'knee' or 'elbow' that
+    """ 
+    Plot the minimum value of the matrix profile for each dimension. This plot is used to visually look for a 'knee' or 'elbow' that
     can be used to find the optimal number of dimensions to use.
-    :param mps: The multi-dimensional matrix profile. Each row of the array corresponds to each matrix profile for a given dimension 
+    
+    Args:
+        mps: The multi-dimensional matrix profile. Each row of the array corresponds to each matrix profile for a given dimension 
                 (i.e., the first row is the 1-D matrix profile and the second row is the 2-D matrix profile).
-    :param save_plot: If save_plot is True then the figure will be saved. Otherwise it will just be shown.
-    :param filename: Used if save_plot=True, the name of the file to be saved.
+        save_plot: If save_plot is True then the figure will be saved. Otherwise it will just be shown.
+        filename: Used if save_plot=True, the name of the file to be saved.
+    
+    Return:
     """
     
     motifs_idx = np.argsort(mps, axis=1)[:, :2]
@@ -69,13 +95,13 @@ def visualize_md(profile):
     many plots are created. For example, when a MatrixProfile is passed with
     corresponding motifs and discords, the matrix profile, discords and motifs
     will be plotted.
-    Parameters
-    ----------
-    profile : dict_like
+    
+    Args:
+        profile : dict_like
         A MatrixProfile, Pan-MatrixProfile or Statistics data structure.
-    Returns
-    -------
-    list : figures
+    
+    Returns:
+        list : figures
         A list of matplotlib figures.
     """
     figures = []
@@ -99,17 +125,17 @@ def visualize_md(profile):
     return figures
 
 
-def plot_profile(df, mp, col_name): #TODO
+def plot_profile(df, mp, col_name): 
     """
     Plot the 'Column_name' graph and the corresponding Profile. We denote with the black arrow to top motif in our set
-    Parameters
-    ----------
-    df : A pandas DataFrame/Time Series
-    mp : matrix profile distances
-    col_name: 
-    Returns
-    -------
-    list : figures
+    
+    Args:
+        df : A pandas DataFrame/Time Series
+        mp : matrix profile distances
+        col_name: 
+    
+    Returns:
+        list : figures
         A list of matplotlib figures.
     """
     motifs_idx = np.argsort(mp)[:2]
@@ -130,15 +156,15 @@ def plot_profile(df, mp, col_name): #TODO
         
 def plot_profile_md(df,col_name,mp): ##TODO
     """
-    Plot the 'Column_name' graph and the corresponding Profile. We denote with the black arrow to top motif in our set
-    Parameters
-    ----------
-    df : A pandas DataFrame/Time Series
-    mp : matrix profile distances
-    col_name: 
-    Returns
-    -------
-    list : figures
+    Plot the 'Column_name' graph and the corresponding Profile. We denote with the black arrow to top motif in our set.
+    
+    Args:
+        df : A pandas DataFrame/Time Series
+        mp : matrix profile distances
+        col_name:
+        
+    Returns:
+        list : figures
         A list of matplotlib figures.
     """
     
@@ -159,7 +185,13 @@ def plot_profile_md(df,col_name,mp): ##TODO
         axs2[k].plot(motifs_idx[k, 1], mp['BEBEZE01'][k, motifs_idx[k, 1]] + 1, marker="v", markersize=10, color='black')
         
         
-def segmforeachcolumn(df,output,column_name): 
+def plot_segmentation_multi(df,output,column_name): 
+    """
+    
+    Args:
+    
+    Return:
+    """
     with sns.axes_style('ticks'):
     fig, axs = plt.subplots(1, sharex=True, gridspec_kw={'hspace': 0}, figsize=(20, 3))
     df['column_name'].plot(ax=axs, x_compat=True)
@@ -185,4 +217,49 @@ def segmforeachcolumn(df,output,column_name):
     
         plt.suptitle(f'{k}-dimension', fontsize=20)
         
-def plotregimes univariate: # TODO
+def plot_segmentation(df, path, output, top_seg=3):
+    """
+    
+    Args:
+    
+    Return:
+    """
+    best = []
+    with sns.axes_style('ticks'): 
+        figs = []
+        for l, v in output.items():
+            sz = len(df)
+            threshold = sz / 1000
+            ids = get_fixed_dates(df)
+            fig, axs = plt.subplots(1, sharex=True, gridspec_kw={'hspace': 0.1}, figsize=(20, 3))
+            diff = 0
+            for idx, (cac, regime_locations) in enumerate(v):
+                axs.plot(np.arange(0, cac.shape[0]), cac, color='C1')
+                filtered_regimes = regime_locations[(regime_locations > ids[0] - threshold) & (regime_locations < ids[- 1] + threshold)]
+                if len(filtered_regimes) == 0:
+                    filtered_regimes = regime_locations
+                manhattan_distance = lambda x, y: np.abs(x - y)
+                diff = dtw( regime_locations, ids, dist=manhattan_distance)[0]
+                axs.set_ylabel(f'L:{str(l)}', fontsize=18)
+                axs.set_title(f'{file_name}-{diff}')
+                for regime in regime_locations:
+                    axs.axvline(x=regime, linestyle=":")
+                plt.minorticks_on()
+                
+            ids = predefined_labels(axs, df)
+            labels = [item for item in axs.get_xticks()]
+            visible = convert_labels_to_dt(labels[-1:1], df)
+            locs, _ = plt.xticks()
+            plt.xticks(ticks=locs[1:-1], labels=visible, rotation=30)
+            name = f'{path}segmentation-{str(l)}-'
+            config = {"L": {l}, "regime": {regime}}
+            figs.append([fig, diff, name, config])
+        sorted_figs = sorted(figs, key=lambda tup: tup[1])
+        if(len(sorted_figs) < top_seg):
+            top_seg = len(sorted_figs)
+        for i in range(0, top_seg, 1):
+            fig, diff, name, config = sorted_figs[i]
+            best.append(config)
+            fig.savefig(name + "_" + str(i))
+    return best
+
