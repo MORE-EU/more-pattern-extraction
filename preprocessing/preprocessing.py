@@ -18,12 +18,12 @@ from pathlib import Path
 from datetime import datetime
 from sklearn.preprocessing import MinMaxScaler
 
-
 def load_df(path): 
     """ Loading a parquet file to a pandas DataFrame. Return this pandas DataFrame.
-        Return: pandas DataFrame.
-        :param path: Path of the under loading DataFrame.
-        
+        Args:
+            path: Path of the under loading DataFrame.
+        Return: 
+            pandas DataFrame.
         """
    
     df = pd.DataFrame()
@@ -39,13 +39,19 @@ def load_df(path):
 
 
 def change_granularity(df,granularity='30s',size=10**7,chunk=True): 
-    """ Changing the offset of a TimeSeries. We do this procedure by using chunk_interpolate. We divide our TimeSeries into pieces in order to interpolate them.
-        Return: The interpolated DataFrame/TimeSeries
-        :param df: Date/Time DataFrame. 
-        :param size: The size/chunks we want to divide our /DataFrame according to the global index of the set. The Default price is 10 million.       .
-        :param granularity: The offset user wants to resample the Time Series                  
-        :param chunk: If set True, It applies the chunk_interpolation
-        """
+    """ 
+        Changing the offset of a TimeSeries. 
+        We do this procedure by using chunk_interpolate. 
+        We divide our TimeSeries into pieces in order to interpolate them.
+        
+        Args:
+            df: Date/Time DataFrame. 
+            size: The size/chunks we want to divide our /DataFrame according to the global index of the set. The Default price is 10 million.       .
+            granularity: The offset user wants to resample the Time Series                  
+            chunk: If set True, It applies the chunk_interpolation
+        Return: 
+            The interpolated DataFrame/TimeSeries
+     """
 
     df = df.resample(granularity).mean()
     print('Resample Complete')
@@ -57,14 +63,15 @@ def change_granularity(df,granularity='30s',size=10**7,chunk=True):
 
 def filter_col(df, col, less_than=None, bigger_than=None): 
     """ Remove rows of the dataframe that they are under, over/both from a specific/two different input price/prices.
-        Return: The Filtrated TimeSeries/DataFrame
-        :param df: Date/Time DataFrame. 
-        :param col: The desired column to work on our DataFrame. 
-        :param less_than: Filtering the column dropping values below that price.
-        :param bigger_than: Filtering the column dropping values above that price.
+        
+        Args:
+            df: Date/Time DataFrame. 
+            col: The desired column to work on our DataFrame. 
+            less_than: Filtering the column dropping values below that price.
+            bigger_than: Filtering the column dropping values above that price.
+        Return: 
+            The Filtrated TimeSeries/DataFrame
         """
-
-
     if(less_than is not None):
         df=df.drop(df[df.iloc[:,col] < less_than].index)
     if(bigger_than is not None):
@@ -74,10 +81,14 @@ def filter_col(df, col, less_than=None, bigger_than=None):
 
 
 def filter_dates(df, start, end):
-    """ Remove rows of the dataframe that are not in the [start, end] interval.
-    :param df:DataFrame that has a datetime index.
-    :param start: Date that signifies the start of the interval.
-    :param end: Date that signifies the end of the interval.
+    """ 
+        Remove rows of the dataframe that are not in the [start, end] interval.
+        Args:
+            df:DataFrame that has a datetime index.
+            start: Date that signifies the start of the interval.
+            end: Date that signifies the end of the interval.
+        Returns:
+            The Filtrared TimeSeries/DataFrame
     """
     date_range = (df.index >= start) & (df.index <= end)
     df = df[date_range]
@@ -86,7 +97,10 @@ def filter_dates(df, start, end):
 
 def normalize(df):
     """ 
-        :param df: Date/Time DataFrame or any DataFrame given with a specific column to Normalize. 
+        Args:
+            df: Date/Time DataFrame or any DataFrame given with a specific column to Normalize. 
+        Return:
+            Normalized Array
         """
     values=[]
         # prepare data for normalization
@@ -104,8 +118,11 @@ def normalize(df):
 def add_noise_to_series(series, noise_max=0.00009):
     
     """ Add uniform noise to series.
-    :param series: The time series to be added noise.
-    :param noise_max: The upper limit of the amount of noise that can be added to a time series point
+        Args:
+            series: The time series to be added noise.
+            noise_max: The upper limit of the amount of noise that can be added to a time series point
+        Return: 
+            DataFrame with noise
     """
     
     if not core.is_array_like(series):
@@ -121,8 +138,11 @@ def add_noise_to_series(series, noise_max=0.00009):
 def add_noise_to_series_md(df, noise_max=0.00009):
     
     """ Add uniform noise to a multidimensional time series that is given as a pandas DataFrame.
-    :param df: The DataFrame that contains the multidimensional time series.
-    :param noise_max: The upper limit of the amount of noise that can be added to a time series point.
+        Args:
+            df: The DataFrame that contains the multidimensional time series.
+            noise_max: The upper limit of the amount of noise that can be added to a time series point.
+        Return:
+            The DataFrame with noise to all the columns
     """
     
     for col in df.columns:
@@ -133,9 +153,10 @@ def add_noise_to_series_md(df, noise_max=0.00009):
 def filter_df(df, filter_dict):
     """ Creates a filtered DataFrame with multiple columns.
         
-        :param df: Date/Time DataFrame or any Given DataFrame.
-        :param filter_dict: A dictionary of columns user wants to filter
-        
+        Args:
+            df: Date/Time DataFrame or any Given DataFrame.
+            filter_dict: A dictionary of columns user wants to filter
+        Return:
         """
 
     mask = np.ones(df.shape[0]).astype(bool)
@@ -152,12 +173,15 @@ def filter_df(df, filter_dict):
 
 def multi_corr(df, dep_column):
     """
-    Computation of the coefficient of multiple correlation. The input consists of a dataframe and the column corresponding to the dependent variable.
+        Computation of the coefficient of multiple correlation. 
+        The input consists of a dataframe and the column corresponding to the dependent variable.
+        Args:
+            df: Date/Time DataFrame or any Given DataFrame.
+            dep_column: The corresponding the column to the dependent variable.
+        Return: 
+            
         
-        :param df: Date/Time DataFrame or any Given DataFrame.
-        :param dep_column: The corresponding the column to the dependent variable.
-        
-        """
+     """
     df_str_corr = df.corr(method='pearson')
     df_str_corr_ind_temp = df_str_corr.drop(index = dep_column)
     df_str_corr_ind = df_str_corr_ind_temp.drop(columns = dep_column)
@@ -169,9 +193,10 @@ def multi_corr(df, dep_column):
 def chunker(seq, size):
     """
     Dividing a file/DataFrame etc into pieces for better hadling of RAM. 
-        
-        :param seq: Sequence, Folder, Date/Time DataFrame or any Given DataFrame.
-        :param size: The size/chunks we want to divide our Seq/Folder/DataFrame.
+        Args:
+            seq: Sequence, Folder, Date/Time DataFrame or any Given DataFrame.
+            size: The size/chunks we want to divide our Seq/Folder/DataFrame.
+        Return:
         
         """
     return (seq[pos:pos + size] for pos in range(0, len(seq), size))
@@ -182,10 +207,10 @@ def chunk_interpolate(df,size=10**6,interpolate=True, method="linear", axis=0,li
     """
     After Chunker makes the pieces according to index, we Interpolate them with *args* of pandas.interpolate() and then we Merge them back together.
     This step is crucial for the complete data interpolation without RAM problems especially in large DataSets.
-    
-        :param df: Date/Time DataFrame or any Given DataFrame.
-        :param size: The size/chunks we want to divide our /DataFrame according to the global index of the set. The Default price is 10 million.
-        
+        Args:
+            df: Date/Time DataFrame or any Given DataFrame.
+            size: The size/chunks we want to divide our /DataFrame according to the global index of the set. The Default price is 10 million.
+        Return:
         """
     
     group=[]
@@ -202,10 +227,10 @@ def chunk_interpolate(df,size=10**6,interpolate=True, method="linear", axis=0,li
 
 def is_stable(*args, epsilon):
    """
-    Returns a boolean vector from the division of variance with mean of a column.
     
-        :param epsilon: A small value in order to avoid dividing with Zero.
-      
+        Args:
+            epsilon: A small value in order to avoid dividing with Zero.
+        Return: A boolean vector from the division of variance with mean of a column.
         """
     #implemented using the index of dispersion (or Fano factor)
     dis = np.var(np.array(args),axis = 1)/np.mean(np.array(args),axis = 1)
@@ -216,11 +241,11 @@ def filter_dispersed(df, window, eps):
    """
     We are looking at windows of consecutive row and calculate the mean and variance. For each window if the index of disperse or given column is in the given threshhold
     then the last row will remain in the data frame.
-    
-        :param df: Date/Time DataFrame or any Given DataFrame.
-        :param window: A small value in order to avoid dividing with Zero.
-        :param eps: A small value in order to avoid dividing with Zero (See is_stable)
-      
+        Args:
+            df: Date/Time DataFrame or any Given DataFrame.
+            window: A small value in order to avoid dividing with Zero.
+            eps: A small value in order to avoid dividing with Zero (See is_stable)
+        Return:
         """
    df_tmp = df[rolling_apply(is_stable, window, *df.transpose().values, epsilon= eps)]
    return df_tmp[window:]
