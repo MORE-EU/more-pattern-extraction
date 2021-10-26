@@ -6,18 +6,23 @@ from matrixprofile.algorithms.mass2 import mass2
 
 def get_top_k_motifs(df, mp, index, m, ez, radius, k, max_neighbors=50):
 
-    """ Given a matrix profile, a matrix profile index, the window size and the DataFrame that contains a multi-dimensional timeseries,
-        Find the top k motifs in the timeseries, as well as neighbors that are within the range <radius * min_mp_value> of each of the top k motifs.
-        Uses an extended version of the top_k_motifs function from matrixprofile foundation library that is compatible with multi-dimensional                 timeseries.
-        The implementation can be found here (https://github.com/MORE-EU/matrixprofile/blob/master/matrixprofile/algorithms/top_k_motifs.py)
-    :param df: DataFrame that contains the multi-dimensional timeseries that was used to calculate the matrix profile.
-    :param mp: A multi-dimensional matrix profile.
-    :param index: The matrix profile index that accompanies the matrix profile.
-    :param m: The subsequence window size.
-    :param ez: The exclusion zone to use.
-    :param radius: The radius to use.
-    :param k: The number of the top motifs that were found.
-    :param max_neighbors: The maximum amount of neighbors to find for each of the top k motifs.
+    """ 
+    Given a matrix profile, a matrix profile index, the window size and the DataFrame that contains a multi-dimensional timeseries,
+    Find the top k motifs in the timeseries, as well as neighbors that are within the range <radius * min_mp_value> of each of the top k motifs.
+    Uses an extended version of the top_k_motifs function from matrixprofile foundation library that is compatible with multi-dimensional timeseries.
+    The implementation can be found here (https://github.com/MORE-EU/matrixprofile/blob/master/matrixprofile/algorithms/top_k_motifs.py)
+    
+    Args:
+        df: DataFrame that contains the multi-dimensional timeseries that was used to calculate the matrix profile.
+        mp: A multi-dimensional matrix profile.
+        index: The matrix profile index that accompanies the matrix profile.
+        m: The subsequence window size.
+        ez: The exclusion zone to use.
+        radius: The radius to use.
+        k: The number of the top motifs that were found.
+        max_neighbors: The maximum amount of neighbors to find for each of the top k motifs.
+    
+    Return: An array of the top found motifs
     """
 
     np_df = df.to_numpy()
@@ -30,20 +35,27 @@ def get_top_k_motifs(df, mp, index, m, ez, radius, k, max_neighbors=50):
 
 def find_neighbors(query, ts, w, min_dist, exclusion_zone=None, max_neighbors=100, radius=3):
 
-    """ Given a query of length w, search for similar patterns in the timeseries ts. Patterns with a distance less than (radius * min_dist)
-        from the query are considered similar(neighbors). This function supports multi-dimensional queries and time series. 
-        The distance is calculated based on the multi-dimensional distance profile as described at 
-        (https://www.cs.ucr.edu/~eamonn/Motif_Discovery_ICDM.pdf). This function is implemented based on the univariate 
-        apporaches ofthe matrix profile foundation library.
+    """ 
+    Given a query of length w, search for similar patterns in the timeseries ts. Patterns with a distance less than (radius * min_dist)
+    from the query are considered similar(neighbors). This function supports multi-dimensional queries and time series. 
+    The distance is calculated based on the multi-dimensional distance profile as described at 
+    (https://www.cs.ucr.edu/~eamonn/Motif_Discovery_ICDM.pdf). This function is implemented based on the univariate 
+    apporaches ofthe matrix profile foundation library.
     
-    :param query: The query that will be compared against the time series. Can be univariate or multi-dimensional.
-    :param ts: A time series. Can be univariate or multi-dimensional.
-    :param w: The subsequence window size (should be the length of the query).
-    :param min_dist: The minimum distance that will be multiplied with radius to compute
+    
+    Args:
+        query: The query that will be compared against the time series. Can be univariate or multi-dimensional.
+        ts: A time series. Can be univariate or multi-dimensional.
+        w: The subsequence window size (should be the length of the query).
+        min_dist: The minimum distance that will be multiplied with radius to compute
                      maximum distance allowed for a subsequence to be considered similar.
-    :param exclusion_zone: The exclusion zone to use.
-    :param max_neighbors: The maximum amount of neighbors to find for each of the top k motifs.
-    :param radius: The radius to multiply min_dist with in order to create the maximum distance allowed for a subsequence to be considered similar.
+        exclusion_zone: The exclusion zone to use.
+        max_neighbors: The maximum amount of neighbors to find for each of the top k motifs.
+        radius: The radius to multiply min_dist with in order to create the maximum distance allowed for a subsequence to be considered similar.
+    
+    Return:
+        neighbors: The list of neighbor indices
+        n_dists: The respective distances
     """
     
     window_size = w
@@ -105,10 +117,16 @@ def find_neighbors(query, ts, w, min_dist, exclusion_zone=None, max_neighbors=10
 
 def pairwise_dist(q1, q2):
     
-    """ Calculates the distance between two time series sequences q1, q2. The distance is calculated based on the multi-dimensional distance profile.
-        This function allows for the comparison of univariate and multi-dimensional sequences.
-    :param q1: A time series sequence.
-    :param q2: A time series sequence.
+    """ 
+    Calculates the distance between two time series sequences q1, q2. The distance is calculated based on the multi-dimensional distance profile.
+    This function allows for the comparison of univariate and multi-dimensional sequences.
+    
+    Args:
+        q1: A time series sequence.
+        q2: A time series sequence.
+    
+    Return:
+        pair_dist: The distance of the time series
     """
     min_dist = float('inf')
     m = len(q1)
