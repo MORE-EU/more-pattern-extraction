@@ -11,6 +11,7 @@ def plot_knee(mps, save_plot=False, filename='knee.png'):
         filename: Used if save_plot=True, the name of the file to be saved.
     
     Return:
+        Figure
     """
     
     motifs_idx = np.argsort(mps, axis=1)[:, :2]
@@ -27,12 +28,16 @@ def plot_knee(mps, save_plot=False, filename='knee.png'):
     return
 
   
-def predefined_labels(axs, df):
+def predefined_labels(axs, df, fixed_dates):
     """
+    Given a df and a list of dates we find the index of those dates in a dataset
     
     Args:
-    
+        axs: axes
+        df: DateTime DataFrame
+        fixed_dates: a list of dates (sorted)
     Return:
+        ids: indexes of the dates 
     
     """
 
@@ -60,13 +65,16 @@ def convert_labels_to_dt(labels, df):
     return l
 
 
-def get_fixed_dates(df,fixed_dates=[]):
+def get_fixed_dates(df,fixed_dates):
     """
-    For sorted data
+    For sorted data we get the array of indexes of those dates
     
     Args:
-    
+        df: DateTime dataframe
+        fixed_dates: a list of dates (sorted)
+         
     Return:
+        array of indexes of the dates 
     
     """
     dates = []
@@ -81,12 +89,12 @@ def get_fixed_dates(df,fixed_dates=[]):
   
 def plot_profile(df, mp, col_name): 
     """
-    Plot the 'Column_name' graph and the corresponding Profile. We denote with the black arrow to top motif in our set
+    Plot the 'Column_name' graph and the corresponding MatrixProfile. We denote with the black arrow to top motif in our set
     
     Args:
         df : A pandas DataFrame/Time Series
         mp : matrix profile distances
-        col_name: 
+        col_name: name of a column
     
     Returns:
         list : figures
@@ -109,14 +117,14 @@ def plot_profile(df, mp, col_name):
         axs2.plot(motifs_idx, mp[motifs_idx] + 1, marker="v", markersize=10, color='black')
         
         
-def plot_profile_md(df,col_name,mp): ##TODO
+def plot_profile_md(df,col_name,mp): 
     """
     Plot the 'Column_name' graph and the corresponding Profile. We denote with the black arrow to top motif in our set.
     
     Args:
         df : A pandas DataFrame/Time Series
         mp : matrix profile distances
-        col_name:
+        col_name: name of the column
         
     Returns:
         list : figures
@@ -142,10 +150,15 @@ def plot_profile_md(df,col_name,mp): ##TODO
         
 def plot_segmentation_multi(df,output,column_name): 
     """
+    Plotting the Changepoints/Regimes we found with change_point_md
     
     Args:
+        df: DateTime DataFrame
+        outpout: output from change_points_md
+        column_name: Specific column name 
     
     Return:
+        list of Figures
     """
     with sns.axes_style('ticks'):
     fig, axs = plt.subplots(1, sharex=True, gridspec_kw={'hspace': 0}, figsize=(20, 3))
@@ -173,12 +186,19 @@ def plot_segmentation_multi(df,output,column_name):
         plt.suptitle(f'{k}-dimension', fontsize=20)
       
         
-def plot_segmentation(df, path, output, top_seg=3):
+def plot_segmentation(df, path, output, fixed_dates, top_seg=3):
     """
+    Plotting the Change points
     
     Args:
+        df: DateTime DataFrame
+        path: path to be saved the figures
+        output: output from change_points
+        top_seg: number of the best plots we want to save
+        fixed_dates: list of sorted dates
     
     Return:
+        List of figures, we are saving up to top_seg
     """
     best = []
     with sns.axes_style('ticks'): 
