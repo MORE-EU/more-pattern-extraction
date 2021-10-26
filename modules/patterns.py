@@ -405,6 +405,7 @@ def change_points_md(mpi,k_optimal,L=[100,200],change_points=4,excl_factor=5,pat
         path: Path of the directory where the file will be saved.
      
      Return:
+        The locations(indexes) of change_points and the arc-curve which are contained in a specific L for each dimension of the DataFrame
      """
     
       no_cols = np.arange(1, k_optimal + 1, 1)
