@@ -304,7 +304,7 @@ def calculate_nn_stats(nn, mask, m, ez, segment_labels, maj_other):
     return [nn, cls1_count, cls2_count, ez, cost, matching_maj]
 
    
-def create_mp(df, motif_len, column,path,dask=True):
+def create_mp(df, motif_len, column, path, dask=True):
    """ 
    Create and Save a univariate/multidimensional matrix profile as a pair of npz files. Input is based on the output of (https://stumpy.readthedocs.io/en/latest/api.html#mstump)
     
@@ -353,7 +353,7 @@ def create_mp(df, motif_len, column,path,dask=True):
         return mps, indices
       
       
-def change_points(mpi, L, excl_factor=5, change_points=4,path):
+def change_points(mpi, L, path, excl_factor=5, change_points=4):
    
     """ 
     Calculation of total change points(segments) we want to divide our region with respect to a computed Univariate Matrix Profile. 
@@ -386,7 +386,7 @@ def change_points(mpi, L, excl_factor=5, change_points=4,path):
     return output
   
  
-def change_points_md(mpi,k_optimal,L=[100,200],change_points=4,excl_factor=5,paths):
+def change_points_md(mpi, k_optimal, path, L=[100,200], change_points=4, excl_factor=5):
  
      """ 
      Calculation of total change points(segments) we want to divide our region with respect to a computed Multivariate Matrix Profile. 
