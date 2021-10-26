@@ -1,14 +1,20 @@
 def pick_subspace_columns(df, mps, idx, k, m, include):
     
-    """ Given a multi-dimensional time series as a pandas Dataframe, keep only the columns that have been used for the creation of the k-dimensional matrix profile.
-    :param df: The DataFrame that contains the multidimensional time series.
-    :param mps: The multi-dimensional matrix profile. Each row of the array corresponds to each matrix profile for a given dimension 
+    """ 
+    Given a multi-dimensional time series as a pandas Dataframe, keep only the columns that have been used for the creation of the k-dimensional matrix profile.
+    
+    Args:
+        df: The DataFrame that contains the multidimensional time series.
+        mps: The multi-dimensional matrix profile. Each row of the array corresponds to each matrix profile for a given dimension 
                 (i.e., the first row is the 1-D matrix profile and the second row is the 2-D matrix profile).
-    :param idx: The multi-dimensional matrix profile index where each row of the array corresponds to each matrix profile index for a given dimension.
-    :param k: If mps and idx are one-dimensional k can be used to specify the given dimension of the matrix profile. The default value specifies the 1-D matrix profile.
+        idx: The multi-dimensional matrix profile index where each row of the array corresponds to each matrix profile index for a given dimension.
+        k: If mps and idx are one-dimensional k can be used to specify the given dimension of the matrix profile. The default value specifies the 1-D matrix profile.
               If mps and idx are multi-dimensional, k is ignored.
-    :param m: The subsequence window size. Should be the same as the one used to create the multidimensional matrix profile that is the input.
-    :param include: A list of the column names that must be included in the constrained multidimensional motif search.
+        m: The subsequence window size. Should be the same as the one used to create the multidimensional matrix profile that is the input.
+        include: A list of the column names that must be included in the constrained multidimensional motif search.
+    
+    Return:
+        The list of subspace columns
     """
     
     motifs_idx = np.argsort(mps, axis=1)[:, :2]
@@ -24,16 +30,22 @@ def pick_subspace_columns(df, mps, idx, k, m, include):
 
   
 def to_mpf(mp, index, window, ts):
-    """ Using a matrix profile, a matrix profile index, the window size and the timeseries used to calculate the previous, create a matrix profile object that
-        is compatible with the matrix profile foundation library (https://github.com/matrix-profile-foundation/matrixprofile). This is useful for cases where another               library was used to generate the matrix profile.
-    :param mp: A matrix profile.
-    :param index: The matrix profile index that accompanies the matrix profile.
-    :param window: The subsequence window size.
-    :param ts: The timeseries that was used to calculate the matrix profile.
+    """ 
+    Using a matrix profile, a matrix profile index, the window size and the timeseries used to calculate the previous, create a matrix profile object that
+    is compatible with the matrix profile foundation library (https://github.com/matrix-profile-foundation/matrixprofile). This is useful for cases where another               library was used to generate the matrix profile.
+    
+    Args:
+        mp: A matrix profile.
+        index: The matrix profile index that accompanies the matrix profile.
+        window: The subsequence window size.
+        ts: The timeseries that was used to calculate the matrix profile.
+    
+    Return: 
+        The Matrixprofile structure
     """
     
     
-    mp_mpf = mpf.utils.empty_mp()
+    mp_mpf = matrixprofile.utils.empty_mp()
     mp_mpf['mp'] = np.array(mp)
     mp_mpf['pi'] = np.array(index)
     mp_mpf['metric'] = 'euclidean'
@@ -49,14 +61,20 @@ def to_mpf(mp, index, window, ts):
   
 def compute_mp_av(mp, index, m, df, k):
     
-    """ Given a matrix profile, a matrix profile index, the window size and the DataFrame that contains the timeseries.
-        Create a matrix profile object and add the corrected matrix profile after applying the complexity av.
-        Uses an extended version of the apply_av function from matrixprofile foundation that is compatible with multi-dimensional timeseries.
-        The implementation can be found here (https://github.com/MORE-EU/matrixprofile/blob/master/matrixprofile/transform.py)
-    :param mp: A matrix profile.
-    :param index: The matrix profile index that accompanies the matrix profile.
-    :param window: The subsequence window size.
-    :param ts: The timeseries that was used to calculate the matrix profile.
+    """ 
+    Given a matrix profile, a matrix profile index, the window size and the DataFrame that contains the timeseries.
+    Create a matrix profile object and add the corrected matrix profile after applying the complexity av.
+    Uses an extended version of the apply_av function from matrixprofile foundation that is compatible with multi-dimensional timeseries.
+    The implementation can be found here (https://github.com/MORE-EU/matrixprofile/blob/master/matrixprofile/transform.py)
+    
+    Args:
+        mp: A matrix profile.
+        index: The matrix profile index that accompanies the matrix profile.
+        window: The subsequence window size.
+        ts: The timeseries that was used to calculate the matrix profile.
+    
+    Return:
+        Updated profile with an annotation vector
     """
     
     # Apply the annotation vector
@@ -71,12 +89,17 @@ def compute_mp_av(mp, index, m, df, k):
 
 def pattern_loc(start, end, mask, segment_labels):
     
-    """ Considering that a time series is characterized by regions belonging to two different labels.
-        Return the label name of the region that the pattern is contained in.
-    :param start: The starting index of the pattern.
-    :param end: The ending index of the pattern. 
-    :param mask: Binary mask used to annotate the time series.
-    :param segment_labels: List of the two labels that characterize the time series.
+    """ 
+    Considering that a time series is characterized by regions belonging to two different labels.
+    
+    
+    Args:
+        start: The starting index of the pattern.
+        end: The ending index of the pattern. 
+        mask: Binary mask used to annotate the time series.
+        segment_labels: List of the two labels that characterize the time series.
+    
+    Return: The label name of the region that the pattern is contained in.
     """
     
     if len(segment_labels) != 2:
@@ -105,14 +128,19 @@ def pattern_loc(start, end, mask, segment_labels):
   
 def calc_cost(cl1_len, cl2_len, num_cl1, num_cl2):
     
-    """ Assign a cost to a pattern based on if the majority of its occurances are observed
-        in regions of a time series that are annotated with the same binary label.
-        The cost calculation takes into account a possible difference in the total lengths of the segments.
-        Return the label name of the region that the pattern is contained in, as well as the normalized number of occurences.
-    :param cl1_len: Total length of the time series that belong to the class 1.
-    :param cl2_len: Total length of the time series that belong to the class 2.
-    :param num_cl1: Number of occurances of the pattern in regions that belong to cl1.
-    :param num_cl2: Number of occurances of the pattern in regions that belong to cl2.
+    """ 
+    Assign a cost to a pattern based on if the majority of its occurances are observed
+    in regions of a time series that are annotated with the same binary label.
+    The cost calculation takes into account a possible difference in the total lengths of the segments.
+    
+    
+    Args:
+        cl1_len: Total length of the time series that belong to the class 1.
+        cl2_len: Total length of the time series that belong to the class 2.
+        num_cl1: Number of occurances of the pattern in regions that belong to cl1.
+        num_cl2: Number of occurances of the pattern in regions that belong to cl2.
+    
+    Return: The label name of the region that the pattern is contained in, as well as the normalized number of occurences.
     """
     
     if (num_cl1 + num_cl2 <= 2):
@@ -128,13 +156,18 @@ def calc_cost(cl1_len, cl2_len, num_cl1, num_cl2):
   
 def calculate_motif_stats(p, mask, k, m, ez, radius, segment_labels):
     
-    """ Calculate some useful statistics for the motifs found.
-    :param p: A profile object as it is defined in the matrixprofile foundation python library.
-    :param mask: Binary mask used to annotate the time series.
-    :param m: The window size (length of the motif).
-    :param ez: The exclusion zone used.
-    :param radius: The radius that has been used in the experiment.
-    :param segment_labels: List of the two labels that characterize the time series.
+    """ 
+    Calculate some useful statistics for the motifs found.
+    
+    Args:
+        p: A profile object as it is defined in the matrixprofile foundation python library.
+        mask: Binary mask used to annotate the time series.
+        m: The window size (length of the motif).
+        ez: The exclusion zone used.
+        radius: The radius that has been used in the experiment.
+        segment_labels: List of the two labels that characterize the time series.
+    
+    Return: List of the statistics
     """
     
     if len(segment_labels) != 2:
@@ -206,14 +239,19 @@ def calculate_motif_stats(p, mask, k, m, ez, radius, segment_labels):
   
 def calculate_nn_stats(nn, mask, m, ez, segment_labels, maj_other):
     
-    """ Calculate some useful statistics for a pattern based on its nearest neighbors. That pattern is supposed to be found 
-        in another time series and is examined based on its neighbors on the current time series.
-    :param nn: The indices of the nearest neighbors in the time series at hand.
-    :param mask: Binary mask used to annotate the time series at hand.
-    :param m: The window size (length of the motif).
-    :param ez: The exclusion zone used.
-    :param segment_labels: List of the two labels that characterize the time series.
-    :param maj_other: The labels of the majority of neighbors the pattern had in the initial time series it was extracted from.
+    """ 
+    Calculate some useful statistics for a pattern based on its nearest neighbors. That pattern is supposed to be found 
+    in another time series and is examined based on its neighbors on the current time series.
+    
+    Args:
+        nn: The indices of the nearest neighbors in the time series at hand.
+        mask: Binary mask used to annotate the time series at hand.
+        m: The window size (length of the motif).
+        ez: The exclusion zone used.
+        segment_labels: List of the two labels that characterize the time series.
+        maj_other: The labels of the majority of neighbors the pattern had in the initial time series it was extracted from.
+    
+    Return: 
     """
     
     
@@ -334,7 +372,7 @@ def change_points(mpi, L, excl_factor=5, change_points=4,path):
        change_points: Number of segments that our space is going to be divided.
        path: Path of the directory where the file will be saved.
     
-    Return:
+    Return: The locations(indexes) of change_points and the arc-curve which are contained in a specific L.
     """
     regimes = [change_points]
     output = dict()
