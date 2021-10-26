@@ -161,29 +161,29 @@ def plot_segmentation_multi(df,output,column_name):
         list of Figures
     """
     with sns.axes_style('ticks'):
-    fig, axs = plt.subplots(1, sharex=True, gridspec_kw={'hspace': 0}, figsize=(20, 3))
-    df['column_name'].plot(ax=axs, x_compat=True)
+        fig, axs = plt.subplots(1, sharex=True, gridspec_kw={'hspace': 0}, figsize=(20, 3))
+        df['column_name'].plot(ax=axs, x_compat=True)
 
-    for k, val in output.items():
-        fig, axs = plt.subplots(len(L), sharex=True, gridspec_kw={'hspace': 0.1}, figsize=(20, 3 * len(L)))    
-        for idx, (cac, regime_locations) in enumerate(val):
-            axs[idx].plot(np.arange(0, cac.shape[0]), cac, color='C1')
-            
-            axs[idx].set_ylabel(f'{str(L[idx])} ', fontsize=18)
-            for regime in regime_locations:
-                axs[idx].axvline(x=regime, linestyle=":")
+        for k, val in output.items():
+            fig, axs = plt.subplots(len(L), sharex=True, gridspec_kw={'hspace': 0.1}, figsize=(20, 3 * len(L)))    
+            for idx, (cac, regime_locations) in enumerate(val):
+                axs[idx].plot(np.arange(0, cac.shape[0]), cac, color='C1')
 
-            plt.minorticks_on()
+                axs[idx].set_ylabel(f'{str(L[idx])} ', fontsize=18)
+                for regime in regime_locations:
+                    axs[idx].axvline(x=regime, linestyle=":")
 
-            predefined_labels(axs[idx], df)
+                plt.minorticks_on()
 
-        labels = [item for item in axs[len(L) - 1].get_xticks()]
-        #visible = convert_labels_to_dt(labels[1:-1], df[start_date:end_date].resample(offset).mean())
-        locs, _ = plt.xticks()
-        #plt.xticks(ticks=locs[1:-1], labels=visible, rotation=30)
-        #ax.set_xticklabels(labels)
-    
-        plt.suptitle(f'{k}-dimension', fontsize=20)
+                predefined_labels(axs[idx], df)
+
+            labels = [item for item in axs[len(L) - 1].get_xticks()]
+            #visible = convert_labels_to_dt(labels[1:-1], df[start_date:end_date].resample(offset).mean())
+            locs, _ = plt.xticks()
+            #plt.xticks(ticks=locs[1:-1], labels=visible, rotation=30)
+            #ax.set_xticklabels(labels)
+
+            plt.suptitle(f'{k}-dimension', fontsize=20)
       
         
 def plot_segmentation(df, path, output, fixed_dates, top_seg=3):
