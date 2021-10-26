@@ -1,4 +1,16 @@
 def enumerate2(start, end, step=1):
+    """ 
+    
+        
+    Args:
+        start: starting point
+        end: ending point    .
+        step: step of the process                   
+        
+        
+    Return: 
+        The interpolated DataFrame/TimeSeries
+     """
     i=0
     while start < pd.to_datetime(end):
         yield (i, start)
@@ -136,7 +148,8 @@ def filter_df(df, filter_dict):
         df: Date/Time DataFrame or any Given DataFrame.
         filter_dict: A dictionary of columns user wants to filter
     
-    Return:
+    Return: 
+        Filtered DataFrame
     """
 
     mask = np.ones(df.shape[0]).astype(bool)
@@ -159,6 +172,7 @@ def chunker(seq, size):
         size: The size/chunks we want to divide our Seq/Folder/DataFrame.
     
     Return:
+        The divided groups
         
     """
     return (seq[pos:pos + size] for pos in range(0, len(seq), size))
@@ -175,6 +189,7 @@ def chunk_interpolate(df,size=10**6,interpolate=True, method="linear", axis=0,li
         size: The size/chunks we want to divide our /DataFrame according to the global index of the set. The Default price is 10 million.
     
     Return:
+        The Interpolated DataFrame
     """
     
     group=[]
@@ -212,15 +227,20 @@ def filter_dispersed(df, window, eps):
         window: A small value in order to avoid dividing with Zero.
         eps: A small value in order to avoid dividing with Zero (See is_stable)
     
-    Return:
+    Return: The Filtered DataFrame
     """
     df_tmp = df[rolling_apply(is_stable, window, *df.transpose().values, epsilon= eps)]
     return df_tmp[window:]
   
   
 def scale_df(df):
-    """ Scale each column of a dataframe to the [0, 1] range performing the min max scaling
-    :param df: The DataFrame to be scaled.
+    """ 
+    Scale each column of a dataframe to the [0, 1] range performing the min max scaling
+    
+    Args:
+        df: The DataFrame to be scaled.
+    
+    Return: Scaled DataFrame
     """
     min_max_scaler = MinMaxScaler()
     df[df.columns] = min_max_scaler.fit_transform(df)
