@@ -1,5 +1,7 @@
+from sklearn.linear_model import LinearRegression, Ridge
 from sklearn.pipeline import Pipeline
-
+from sklearn.preprocessing import PolynomialFeatures
+from sklearn import metrics
 
 def predict(df_test, model, feats, target):
     """
@@ -16,9 +18,9 @@ def predict(df_test, model, feats, target):
     """
 
     df_x = df_test[feats]
-    df_y = df_test[target] #is this needed
+    df_y = df_test[target] #is this needed?
     X = df_x.values
-    y_true = df_y.values #is this needed
+    y_true = df_y.values #is this needed?
     y_pred = model.predict(X)
     return y_pred
 
