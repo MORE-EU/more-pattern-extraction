@@ -237,185 +237,184 @@ def calculate_motif_stats(p, mask, k, m, ez, radius, segment_labels):
     return output_list
   
   
-def calculate_nn_stats(nn, mask, m, ez, segment_labels, maj_other):
+    def calculate_nn_stats(nn, mask, m, ez, segment_labels, maj_other):
     
-    """ 
-    Calculate some useful statistics for a pattern based on its nearest neighbors. That pattern is supposed to be found 
-    in another time series and is examined based on its neighbors on the current time series.
+        """ 
+            Calculate some useful statistics for a pattern based on its nearest neighbors. That pattern is supposed to be found 
+            in another time series and is examined based on its neighbors on the current time series.
+
+            Args:
+                nn: The indices of the nearest neighbors in the time series at hand.
+                mask: Binary mask used to annotate the time series at hand.
+                m: The window size (length of the motif).
+                ez: The exclusion zone used.
+                segment_labels: List of the two labels that characterize the time series.
+                maj_other: The labels of the majority of neighbors the pattern had in the initial time series it was extracted from.
+
+            Return: 
+
+        """
     
-    Args:
-        nn: The indices of the nearest neighbors in the time series at hand.
-        mask: Binary mask used to annotate the time series at hand.
-        m: The window size (length of the motif).
-        ez: The exclusion zone used.
-        segment_labels: List of the two labels that characterize the time series.
-        maj_other: The labels of the majority of neighbors the pattern had in the initial time series it was extracted from.
     
-    Return: 
-    """
-    
-    
-    if len(segment_labels) != 2:
-        raise ValueError('segment_labels must contain exactly 2 labels')
+        if len(segment_labels) != 2:
+            raise ValueError('segment_labels must contain exactly 2 labels')
     
     
     # the first label in the list will be assigned to for the True regions in the mask
-    true_label = segment_labels[0]
+        true_label = segment_labels[0]
     
     # the second label in the list will be assigned to for the False regions in the mask
-    false_label = segment_labels[1]
+        false_label = segment_labels[1]
     
-    cls1_len = np.count_nonzero(mask)
-    cls2_len = abs(mask.shape[0] - cls1_len)
+        cls1_len = np.count_nonzero(mask)
+        cls2_len = abs(mask.shape[0] - cls1_len)
     
-    neighbors = nn
-    nn_idx_start = []
-    nn_idx_end = []
-    for neighbor in neighbors:
-        nn_idx_start.append(neighbor)
-        nn_idx_end.append(neighbor + m - 1)
+        neighbors = nn
+        nn_idx_start = []
+        nn_idx_end = []
+        for neighbor in neighbors:
+            nn_idx_start.append(neighbor)
+            nn_idx_end.append(neighbor + m - 1)
         
-    cls1_count = 0
-    cls2_count  = 0
-    spanning_both = 0
-    for nn_start, nn_end in zip(nn_idx_start, nn_idx_end):
-        location_in_ts = pattern_loc(nn_start, nn_end, mask, segment_labels)
-        if location_in_ts == true_label:
-            cls1_count += 1
-        elif location_in_ts == false_label:
-            cls2_count += 1
+        cls1_count = 0
+        cls2_count  = 0
+        spanning_both = 0
+        for nn_start, nn_end in zip(nn_idx_start, nn_idx_end):
+            location_in_ts = pattern_loc(nn_start, nn_end, mask, segment_labels)
+            if location_in_ts == true_label:
+                cls1_count += 1
+            elif location_in_ts == false_label:
+                cls2_count += 1
+            else:
+                spanning_both += 1
+        
+        cost, norm_cls1, norm_cls2 = calc_cost(cls1_len, cls2_len, cls1_count, cls2_count)
+
+        maj = ''
+        if norm_cls1 == norm_cls2:
+            maj = 'None'
+        elif norm_cls1 is None and norm_cls2 is None:
+            maj = 'None'
+        elif norm_cls1 > norm_cls2:
+            maj = true_label
+        elif norm_cls1 < norm_cls2:
+            maj = false_label
+
+
+        matching_maj = (maj_other == maj)
+        return [nn, cls1_count, cls2_count, ez, cost, matching_maj]
+
+   
+    def create_mp(df, motif_len, column, path, dask=True):
+        """
+           Create and Save a univariate/multidimensional matrix profile as a pair of npz files. Input is based on the output of (https://stumpy.readthedocs.io/en/latest/api.html#mstump)
+
+           Args:
+              df: The DataFrame that contains the multidimensional time series. 
+              motif_len: The subsequence window size. 
+              columns: A list of the column indexes that are included in the comptutation univariate/multidimensional profile.
+              path: Path of the directory where the file will be saved.
+              dask: A Dask Distributed client that is connected to a Dask scheduler and Dask workers
+
+           Return: 
+               Matrix profile distances, matrix profile indexes
+        """
+   
+        column1=str(column)
+        if len(column1)<2:
+            if dask==True:
+                from dask.distributed import Client, LocalCluster
+                with Client(scheduler_port=8782, dashboard_address=None, processes=False, n_workers=4, threads_per_worker=2, memory_limit='50GB') as dask_client:
+                    mps=stumped(dask_client, df.iloc[:,column], motif_len)# Note that a dask client is needed
+                    if(path):
+                        np.savez_compressed(path,mp=mps[:,0],mpi=mps[:,1] )
+                    print('Univariate with Dask')
+                    return mps[:,0],mps[:,1]
+
+            mps = stump(df.iloc[:,column], motif_len)
+            if(path):
+                np.savez_compressed(path, mp=mps[:,0],mpi=mps[:,1])
+            print('Uvivariate without Dask')
+            return mps[:,0],mps[:,1]
+
         else:
-            spanning_both += 1
-        
-    cost, norm_cls1, norm_cls2 = calc_cost(cls1_len, cls2_len, cls1_count, cls2_count)
+            if dask==True:
+                from dask.distributed import Client, LocalCluster
+                with Client(scheduler_port=8782, dashboard_address=None, processes=False, n_workers=4, threads_per_worker=2, memory_limit='50GB') as dask_client:
+                    mps,indices = mstumped(dask_client, df.iloc[:,column], motif_len)  # Note that a dask client is needed
+                    if(path):
+                        np.savez_compressed(path, mp=mps, mpi=indices)
+                print('Multivariate with Dask')
+                return mps, indices
 
-    maj = ''
-    if norm_cls1 == norm_cls2:
-        maj = 'None'
-    elif norm_cls1 is None and norm_cls2 is None:
-        maj = 'None'
-    elif norm_cls1 > norm_cls2:
-        maj = true_label
-    elif norm_cls1 < norm_cls2:
-        maj = false_label
-
-
-    matching_maj = (maj_other == maj)
-    return [nn, cls1_count, cls2_count, ez, cost, matching_maj]
-
-   
-def create_mp(df, motif_len, column, path, dask=True):
-   """ 
-   Create and Save a univariate/multidimensional matrix profile as a pair of npz files. Input is based on the output of (https://stumpy.readthedocs.io/en/latest/api.html#mstump)
-    
-   Args:
-      df: The DataFrame that contains the multidimensional time series. 
-      motif_len: The subsequence window size. 
-      columns: A list of the column indexes that are included in the comptutation univariate/multidimensional profile.
-      path: Path of the directory where the file will be saved.
-      dask: A Dask Distributed client that is connected to a Dask scheduler and Dask workers
-    
-   Return: 
-       Matrix profile distances, matrix profile indexes
-   """
-   
-    column1=str(column)
-    if len(column1)<2:
-        if dask==True:
-            from dask.distributed import Client, LocalCluster
-            with Client(scheduler_port=8782, dashboard_address=None, processes=False, n_workers=4, threads_per_worker=2, memory_limit='50GB') as dask_client:
-                mps=stumped(dask_client, df.iloc[:,column], motif_len)# Note that a dask client is needed
-                if(path):
-                    np.savez_compressed(path,mp=mps[:,0],mpi=mps[:,1] )
-                print('Univariate with Dask')
-                return mps[:,0],mps[:,1]
-        
-        mps = stump(df.iloc[:,column], motif_len)
-        if(path):
-            np.savez_compressed(path, mp=mps[:,0],mpi=mps[:,1])
-        print('Uvivariate without Dask')
-        return mps[:,0],mps[:,1]
-
-    else:
-        if dask==True:
-            from dask.distributed import Client, LocalCluster
-            with Client(scheduler_port=8782, dashboard_address=None, processes=False, n_workers=4, threads_per_worker=2, memory_limit='50GB') as dask_client:
-                mps,indices = mstumped(dask_client, df.iloc[:,column], motif_len)  # Note that a dask client is needed
-                if(path):
-                    np.savez_compressed(path, mp=mps, mpi=indices)
-            print('Multivariate with Dask')
+            mps,indices = mstump(df.iloc[:,column], motif_len) 
+            if(path):
+                np.savez_compressed(path, mp=mps, mpi=indices)
+            print('Multivariate without Dask')
             return mps, indices
-        
-        mps,indices = mstump(df.iloc[:,column], motif_len) 
-        if(path):
-            np.savez_compressed(path, mp=mps, mpi=indices)
-        print('Multivariate without Dask')
-        return mps, indices
+
       
-      
-def change_points(mpi, L, path, excl_factor=5, change_points=4):
+    def change_points(mpi, L, path, excl_factor=5, change_points=4):
    
-    """ 
-    Calculation of total change points(segments) we want to divide our region with respect to a computed Univariate Matrix Profile. 
-    This procedure is illustated through the Fluss Algorithm (https://stumpy.readthedocs.io/en/latest/_modules/stumpy/floss.html#fluss).
-    We input a L which is a list of integers. The L is a factor which excludes change point detection. It replaces the Arc Curve with 1 depending 
-    of the size of L multiplied with an exclusion Factor (excl_factor).
-    This algorithm can work for a multidimensional DataFrames. User need just to specify the column in mpi. eg mpi[3] so we look
-    for change_points in  the 3rd column.
-    In return we provide the locations(indexes) of change_points and the arc-curve which are contained in a specific L.
-    
-    Args:
-       mpi: The one-dimensional matrix profile index where the array corresponds to the matrix profile index for a given dimension.
-       L: The subsequence length that is set roughly to be one period length. This is likely to be the same value as the motif_len, 
-                 used to compute the matrix profile and matrix profile index.
-       excl_factor: The multiplying factor for the regime exclusion zone.       
-       change_points: Number of segments that our space is going to be divided.
-       path: Path of the directory where the file will be saved.
-    
-    Return: The locations(indexes) of change_points and the arc-curve which are contained in a specific L.
-    """
-    regimes = [change_points]
-    output = dict()
-    print("Computing regimes..")
-    for l in tqdm(L):
-        output[l] = [fluss(mpi, L=int(l), n_regimes=int(r), excl_factor=excl_factor) for r in regimes] 
-    if(path):
-        np.save(path, output)
-        
-    print("Done")
-    return output
+        """ 
+        Calculation of total change points(segments) we want to divide our region with respect to a computed Univariate Matrix Profile. 
+        This procedure is illustated through the Fluss Algorithm (https://stumpy.readthedocs.io/en/latest/_modules/stumpy/floss.html#fluss).
+        We input a L which is a list of integers. The L is a factor which excludes change point detection. It replaces the Arc Curve with 1 depending 
+        of the size of L multiplied with an exclusion Factor (excl_factor).
+        This algorithm can work for a multidimensional DataFrames. User need just to specify the column in mpi. eg mpi[3] so we look
+        for change_points in  the 3rd column.
+        In return we provide the locations(indexes) of change_points and the arc-curve which are contained in a specific L.
+
+        Args:
+           mpi: The one-dimensional matrix profile index where the array corresponds to the matrix profile index for a given dimension.
+           L: The subsequence length that is set roughly to be one period length. This is likely to be the same value as the motif_len, 
+                     used to compute the matrix profile and matrix profile index.
+           excl_factor: The multiplying factor for the regime exclusion zone.       
+           change_points: Number of segments that our space is going to be divided.
+           path: Path of the directory where the file will be saved.
+
+        Return: The locations(indexes) of change_points and the arc-curve which are contained in a specific L.
+        """
+        regimes = [change_points]
+        output = dict()
+        print("Computing regimes..")
+        for l in tqdm(L):
+            output[l] = [fluss(mpi, L=int(l), n_regimes=int(r), excl_factor=excl_factor) for r in regimes] 
+        if(path):
+            np.save(path, output)
+
+        print("Done")
+        return output
   
  
-def change_points_md(mpi, k_optimal, path, L=[100,200], change_points=4, excl_factor=5):
- 
-     """ 
-     Calculation of total change points(segments) we want to divide our region with respect to a computed Multivariate Matrix Profile. 
-     This procedure is illustated through the Modified Fluss Algorithm (https://stumpy.readthedocs.io/en/latest/_modules/stumpy/floss.html#fluss).
-     We input a L which is a list of integers. The L is a factor which excludes change point detection. It replaces the Arc Curve with 1 depending 
-     of the size of L multiplied with an exclusion Factor (excl_factor). It alterates because we built it through optimal dimensions given from elbow_method.
-     So in the end we will receive locations(indexes) of change_points and the arc-curve which are contained in a specific L for each column/dimension. 
-     
-     Args:
-        mpi: The multi-dimensional matrix profile index where the array corresponds to the matrix profile index for a given dimension.
-        k_optimal: Choose optimal dimension(s) given from the elbow method. Or all of the DataFrame Dimension
-        L: The subsequence length that is set roughly to be one period length. This is likely to be the same value as the motif_len, 
-                 used to compute the matrix profile and matrix profile index.
-        change_points: Number of segments that our space is going to be divided.
-        excl_factor: The multiplying factor for the regime exclusion zone.
-        path: Path of the directory where the file will be saved.
-     
-     Return:
-        The locations(indexes) of change_points and the arc-curve which are contained in a specific L for each dimension of the DataFrame
-     """
-    
-      no_cols = np.arange(1, k_optimal + 1, 1)
-    if(L == None):
-        L = np.arange(1000,50000, 1000).astype(int)
-    regimes = [change_points]
-    output = dict()
-    for c in tqdm(no_cols):
-        output[c] = [fluss(mpi[c - 1], L=int(l), n_regimes=int(r), excl_factor=excl_factor) for r in regimes for l in L]
-    if(path):
-        np.save(path, output)
-    return output
+    def change_points_md(mpi, k_optimal, path, L=[100,200], change_points=4, excl_factor=5):
+        """ 
+        Calculation of total change points(segments) we want to divide our region with respect to a computed Multivariate Matrix Profile. 
+        This procedure is illustated through the Modified Fluss Algorithm (https://stumpy.readthedocs.io/en/latest/_modules/stumpy/floss.html#fluss).
+        We input a L which is a list of integers. The L is a factor which excludes change point detection. It replaces the Arc Curve with 1 depending 
+        of the size of L multiplied with an exclusion Factor (excl_factor). It alterates because we built it through optimal dimensions given from elbow_method.
+        So in the end we will receive locations(indexes) of change_points and the arc-curve which are contained in a specific L for each column/dimension. 
+
+         Args:
+            mpi: The multi-dimensional matrix profile index where the array corresponds to the matrix profile index for a given dimension.
+            k_optimal: Choose optimal dimension(s) given from the elbow method. Or all of the DataFrame Dimension
+            L: The subsequence length that is set roughly to be one period length. This is likely to be the same value as the motif_len, 
+                     used to compute the matrix profile and matrix profile index.
+            change_points: Number of segments that our space is going to be divided.
+            excl_factor: The multiplying factor for the regime exclusion zone.
+            path: Path of the directory where the file will be saved.
+
+         Return:
+            The locations(indexes) of change_points and the arc-curve which are contained in a specific L for each dimension of the DataFrame
+         """
+        no_cols = np.arange(1, k_optimal + 1, 1)
+        if(L == None):
+            L = np.arange(1000,50000, 1000).astype(int)
+        regimes = [change_points]
+        output = dict()
+        for c in tqdm(no_cols):
+            output[c] = [fluss(mpi[c - 1], L=int(l), n_regimes=int(r), excl_factor=excl_factor) for r in regimes for l in L]
+        if(path):
+            np.save(path, output)
+        return output
   
