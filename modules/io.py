@@ -30,6 +30,8 @@ def load_mp(path):
       path: Path of the directory where the file is saved.
      
      Return:
+        mp: Matrixprofile Distances
+        mpi: Matrixprofile Indices
      """
     mp={}
     mpi={}
@@ -53,7 +55,8 @@ def save_mdmp_as_h5(dir_path, name, mps, idx, k=0):
        k: If mps and idx are one-dimensional k can be used to specify the given dimension of the matrix profile. The default value specifies the 1-D matrix profile.
                  If mps and idx are multi-dimensional, k is ignored.
     
-    Return:        
+    Return:
+        
     """
     if mps.ndim != idx.ndim:
         err = 'Dimensions of mps and idx should match'
@@ -94,6 +97,10 @@ def load_mdmp_from_h5(dir_path, name, k):
                  (i.e. k=2 loads the 2-D matrix profile
     
     Return:
+        mp: matrixprofile/stumpy distances
+        index: matrixprofile/stumpy indexes
+            
+          
         
     """
     # Load MP from disk
@@ -127,6 +134,7 @@ def save_results(results_dir, sub_dir_name, p, df_stats, m, radius, ez, k, max_n
         max_neighbors: The maximum amount of neighbors to find for each of the top k motifs.
     
     Return:
+        None
         
     """
     
