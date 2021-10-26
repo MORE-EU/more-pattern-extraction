@@ -109,21 +109,27 @@ def load_mdmp_from_h5(dir_path, name, k):
   
   
 def save_results(results_dir, sub_dir_name, p, df_stats, m, radius, ez, k, max_neighbors):
-    """ Save the results of a specific run in the directory specified by the results_dir and sub_dir_name.
-        The results contain some figures that are created with an adaptation of the matrix profile foundation visualize() function.
-        The adaptation works for multi dimensional timeseries and can be found at 
-        (https://github.com/MORE-EU/matrixprofile/blob/master/matrixprofile/visualize.py) as visualize_md()
+    """ 
+    Save the results of a specific run in the directory specified by the results_dir and sub_dir_name.
+    The results contain some figures that are created with an adaptation of the matrix profile foundation visualize() function.
+    The adaptation works for multi dimensional timeseries and can be found at 
+    (https://github.com/MORE-EU/matrixprofile/blob/master/matrixprofile/visualize.py) as visualize_md()
     
-    :param results: Path of the directory where the results will be saved.
-    :param sub_directory: Path of the sub directory where the results will be saved.
-    :param p: A profile object as it is defined in the matrixprofile foundation python library.
-    :param df_stats: DataFrame with the desired statistics that need to be saved.
-    :param m: The subsequence window size.
-    :param ez: The exclusion zone to use.
-    :param radius: The radius to use.
-    :param k: The number of the top motifs that were calculated.
-    :param max_neighbors: The maximum amount of neighbors to find for each of the top k motifs.
+    Args:
+        results: Path of the directory where the results will be saved.
+        sub_directory: Path of the sub directory where the results will be saved.
+        p: A profile object as it is defined in the matrixprofile foundation python library.
+        df_stats: DataFrame with the desired statistics that need to be saved.
+        m: The subsequence window size.
+        ez: The exclusion zone to use.
+        radius: The radius to use.
+        k: The number of the top motifs that were calculated.
+        max_neighbors: The maximum amount of neighbors to find for each of the top k motifs.
+    
+    Return:
+        
     """
+    
     
     
 
