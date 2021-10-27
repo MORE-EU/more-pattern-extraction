@@ -84,6 +84,8 @@ def filter_dates(df, start, end):
 
 def normalize(df):
     """ 
+    This function transforms an input dataframe by rescaling values to the range [0,1]. 
+    
     Args:
         df: Date/Time DataFrame or any DataFrame given with a specific column to Normalize. 
    
