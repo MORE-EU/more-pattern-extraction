@@ -1,7 +1,6 @@
 import pandas as pd
 import numpy as np
 import h5py
-import path
 import os
 import pathlib
 import warnings
