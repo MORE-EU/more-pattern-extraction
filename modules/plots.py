@@ -158,7 +158,9 @@ def plot_profile_md(df,column_name,mp):
         
 def plot_segmentation_multi(df,output,column_name): 
     """
-    Plotting the Changepoints/Regimes we found with change_point_md
+    Plotting the ChangePoints/ Regimes that we precomputed from change_points_md. 
+    The result would be multiple graphs up to the number of columns(dimensions) 
+    with subplots up to the number of L( subsquence list).  
     
     Args:
         df: DateTime DataFrame
