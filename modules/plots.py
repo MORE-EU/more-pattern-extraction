@@ -1,3 +1,11 @@
+import matplotlib.pyplot as plt
+import numpy as np
+import pandas as pd
+from datetime import datetime
+import seaborn as sns
+from dtw import dtw
+%matplotlib inline 
+
 def plot_knee(mps, save_plot=False, filename='knee.png'):
     
     """ 
@@ -117,14 +125,14 @@ def plot_profile(df, mp, col_name):
         axs2.plot(motifs_idx, mp[motifs_idx] + 1, marker="v", markersize=10, color='black')
         
         
-def plot_profile_md(df,col_name,mp): 
+def plot_profile_md(df,column_name,mp): 
     """
     Plot the 'Column_name' graph and the corresponding Profile. We denote with the black arrow to top motif in our set.
     
     Args:
         df : A pandas DataFrame/Time Series
         mp : matrix profile distances
-        col_name: name of the column
+        column_name: name of the column
         
     Returns:
         list : figures
@@ -134,7 +142,7 @@ def plot_profile_md(df,col_name,mp):
     motifs_idx = np.argsort(mp, axis=1)[:, :2]
     with sns.axes_style('ticks'):
         fig1, axs1 = plt.subplots(1, sharex=True, gridspec_kw={'hspace': 0}, figsize=(20, 12))
-        df['active power'].plot(ax=axs1, figsize=(20, 2))
+        df['col_name'].plot(ax=axs1, figsize=(20, 2))
 
         fig2, axs2 = plt.subplots(mp.shape[0], sharex=True, gridspec_kw={'hspace': 0}, figsize=(20, 12))
         for k, dim_name in enumerate(cols):
@@ -224,9 +232,9 @@ def plot_segmentation(df, path, output, fixed_dates, top_seg=3):
                 
             ids = predefined_labels(axs, df)
             labels = [item for item in axs.get_xticks()]
-            visible = convert_labels_to_dt(labels[-1:1], df)
+            #visible = convert_labels_to_dt(labels[-1:1], df)
             locs, _ = plt.xticks()
-            plt.xticks(ticks=locs[1:-1], labels=visible, rotation=30)
+            plt.xticks(ticks=locs[1:-1], rotation=30)
             name = f'{path}segmentation-{str(l)}-'
             config = {"L": {l}, "regime": {regime}}
             figs.append([fig, diff, name, config])
