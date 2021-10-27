@@ -198,7 +198,10 @@ def plot_segmentation_multi(df,output,column_name):
         
 def plot_segmentation(df, path, output, fixed_dates, top_seg=3):
     """
-    Plotting the Change points
+    Plotting the ChangePoints/ Regimes that we precomputed from change_points. 
+    The result would be multiple graphs up to the number of L ( subsquence list).  
+    Later we use the dtw in order to find a generalized distance between a list of dates and the precomputed change points/regimes. 
+    In the end we save the ones that have the minimum distance up to a number the user wishes. 
     
     Args:
         df: DateTime DataFrame
