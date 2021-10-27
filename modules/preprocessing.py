@@ -1,3 +1,7 @@
+import pandas as pd
+import numpy as np
+from sklearn.preprocessing import MinMaxScaler
+
 def enumerate2(start, end, step=1):
     """ 
     
