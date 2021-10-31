@@ -196,7 +196,7 @@ def plot_segmentation_multi(df,output,column_name):
             plt.suptitle(f'{k}-dimension', fontsize=20)
       
         
-def plot_segmentation(df, path, output, fixed_dates, top_seg=3):
+def plot_segmentation(df, path, output, fixed_dates, file_name, top_seg=3):
     """
     Plotting the ChangePoints/ Regimes that we precomputed from change_points. 
     The result would be multiple graphs up to the number of L ( subsquence list).  
