@@ -241,7 +241,7 @@ def plot_segmentation(df, path, output, fixed_dates, top_seg=3):
             locs, _ = plt.xticks()
             plt.xticks(ticks=locs[1:-1], rotation=30)
             name = f'{path}segmentation-{str(l)}-'
-            config = {"L": {l}, "regime": {regime}}
+            config = {"L": l, "regime": {regime}}
             figs.append([fig, diff, name, config])
         sorted_figs = sorted(figs, key=lambda tup: tup[1])
         if(len(sorted_figs) < top_seg):
