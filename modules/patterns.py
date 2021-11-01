@@ -412,13 +412,16 @@ def calculate_motif_stats(p, mask, k, m, ez, radius, segment_labels):
          Return:
             The locations(indexes) of change_points and the arc-curve which are contained in a specific L for each dimension of the DataFrame
          """
+        
         no_cols = np.arange(1, k_optimal + 1, 1)
         if(L == None):
             L = np.arange(1000,50000, 1000).astype(int)
         regimes = [change_points]
         output = dict()
         for c in tqdm(no_cols):
-            output[c] = [fluss(mpi[c - 1], L=int(l), n_regimes=int(r), excl_factor=excl_factor) for r in regimes for l in L]
+            output[c]= dict()
+            for l in L:
+                output[c][l] = [fluss(mpi[c - 1], L=int(l), n_regimes=int(r), excl_factor=excl_factor) for r in regimes]
         if(path):
             np.save(path, output)
         return output
