@@ -1,0 +1,220 @@
+
+<!DOCTYPE html>
+
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
+    <title>This is the module for Plotting &#8212; Moret  documentation</title>
+    <link rel="stylesheet" type="text/css" href="_static/pygments.css" />
+    <link rel="stylesheet" type="text/css" href="_static/nature.css" />
+    <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
+    <script src="_static/jquery.js"></script>
+    <script src="_static/underscore.js"></script>
+    <script src="_static/doctools.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="This is the module for Similarity Search" href="similarity.html" />
+    <link rel="prev" title="This is the module for Learning" href="learning.html" /> 
+  </head><body>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="similarity.html" title="This is the module for Similarity Search"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="learning.html" title="This is the module for Learning"
+             accesskey="P">previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="index.html">Moret  documentation</a> &#187;</li>
+        <li class="nav-item nav-item-this"><a href="">This is the module for Plotting</a></li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <section id="module-plots">
+<span id="this-is-the-module-for-plotting"></span><h1>This is the module for Plotting<a class="headerlink" href="#module-plots" title="Permalink to this headline">¶</a></h1>
+<dl class="py function">
+<dt class="sig sig-object py" id="plots.convert_labels_to_dt">
+<span class="sig-prename descclassname"><span class="pre">plots.</span></span><span class="sig-name descname"><span class="pre">convert_labels_to_dt</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">labels</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">df</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/plots.html#convert_labels_to_dt"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#plots.convert_labels_to_dt" title="Permalink to this definition">¶</a></dt>
+<dd><p>Args:</p>
+<p>Returns:</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="plots.get_fixed_dates">
+<span class="sig-prename descclassname"><span class="pre">plots.</span></span><span class="sig-name descname"><span class="pre">get_fixed_dates</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">df</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fixed_dates</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/plots.html#get_fixed_dates"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#plots.get_fixed_dates" title="Permalink to this definition">¶</a></dt>
+<dd><p>For sorted data we get the array of indexes of those dates</p>
+<dl class="simple">
+<dt>Args:</dt><dd><p>df: DateTime dataframe
+fixed_dates: a list of dates (sorted)</p>
+</dd>
+<dt>Return:</dt><dd><p>array of indexes of the dates</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="plots.plot_knee">
+<span class="sig-prename descclassname"><span class="pre">plots.</span></span><span class="sig-name descname"><span class="pre">plot_knee</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">mps</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">save_plot</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">filename</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'knee.png'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/plots.html#plot_knee"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#plots.plot_knee" title="Permalink to this definition">¶</a></dt>
+<dd><p>Plot the minimum value of the matrix profile for each dimension. This plot is used to visually look for a ‘knee’ or ‘elbow’ that
+can be used to find the optimal number of dimensions to use.</p>
+<dl>
+<dt>Args:</dt><dd><dl class="simple">
+<dt>mps: The multi-dimensional matrix profile. Each row of the array corresponds to each matrix profile for a given dimension </dt><dd><p>(i.e., the first row is the 1-D matrix profile and the second row is the 2-D matrix profile).</p>
+</dd>
+</dl>
+<p>save_plot: If save_plot is True then the figure will be saved. Otherwise it will just be shown.
+filename: Used if save_plot=True, the name of the file to be saved.</p>
+</dd>
+<dt>Return:</dt><dd><p>Figure</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="plots.plot_profile">
+<span class="sig-prename descclassname"><span class="pre">plots.</span></span><span class="sig-name descname"><span class="pre">plot_profile</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">df</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mp</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">col_name</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/plots.html#plot_profile"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#plots.plot_profile" title="Permalink to this definition">¶</a></dt>
+<dd><p>Plot the ‘Column_name’ graph and the corresponding MatrixProfile. We denote with the black arrow to top motif in our set</p>
+<dl class="simple">
+<dt>Args:</dt><dd><p>df : A pandas DataFrame/Time Series
+mp : matrix profile distances
+col_name: name of a column</p>
+</dd>
+<dt>Returns:</dt><dd><p>list : figures
+A list of matplotlib figures.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="plots.plot_profile_md">
+<span class="sig-prename descclassname"><span class="pre">plots.</span></span><span class="sig-name descname"><span class="pre">plot_profile_md</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">df</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">column_name</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mp</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/plots.html#plot_profile_md"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#plots.plot_profile_md" title="Permalink to this definition">¶</a></dt>
+<dd><p>Plot the ‘Column_name’ graph and the corresponding Profile. We denote with the black arrow to top motif in our set.</p>
+<dl class="simple">
+<dt>Args:</dt><dd><p>df : A pandas DataFrame/Time Series
+mp : matrix profile distances
+column_name: name of the column</p>
+</dd>
+<dt>Returns:</dt><dd><p>list : figures
+A list of matplotlib figures.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="plots.plot_segmentation">
+<span class="sig-prename descclassname"><span class="pre">plots.</span></span><span class="sig-name descname"><span class="pre">plot_segmentation</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">df</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">path</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">output</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fixed_dates</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">top_seg</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">3</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/plots.html#plot_segmentation"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#plots.plot_segmentation" title="Permalink to this definition">¶</a></dt>
+<dd><p>Plotting the Change points</p>
+<dl class="simple">
+<dt>Args:</dt><dd><p>df: DateTime DataFrame
+path: path to be saved the figures
+output: output from change_points
+top_seg: number of the best plots we want to save
+fixed_dates: list of sorted dates</p>
+</dd>
+<dt>Return:</dt><dd><p>List of figures, we are saving up to top_seg</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="plots.plot_segmentation_multi">
+<span class="sig-prename descclassname"><span class="pre">plots.</span></span><span class="sig-name descname"><span class="pre">plot_segmentation_multi</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">df</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">output</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">column_name</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/plots.html#plot_segmentation_multi"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#plots.plot_segmentation_multi" title="Permalink to this definition">¶</a></dt>
+<dd><p>Plotting the Changepoints/Regimes we found with change_point_md</p>
+<dl class="simple">
+<dt>Args:</dt><dd><p>df: DateTime DataFrame
+outpout: output from change_points_md
+column_name: Specific column name</p>
+</dd>
+<dt>Return:</dt><dd><p>list of Figures</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="plots.predefined_labels">
+<span class="sig-prename descclassname"><span class="pre">plots.</span></span><span class="sig-name descname"><span class="pre">predefined_labels</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">axs</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">df</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fixed_dates</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/plots.html#predefined_labels"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#plots.predefined_labels" title="Permalink to this definition">¶</a></dt>
+<dd><p>Given a df and a list of dates we find the index of those dates in a dataset</p>
+<dl class="simple">
+<dt>Args:</dt><dd><p>axs: axes
+df: DateTime DataFrame
+fixed_dates: a list of dates (sorted)</p>
+</dd>
+<dt>Return:</dt><dd><p>ids: indexes of the dates</p>
+</dd>
+</dl>
+</dd></dl>
+
+</section>
+
+
+            <div class="clearer"></div>
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="learning.html"
+                        title="previous chapter">This is the module for Learning</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="similarity.html"
+                        title="next chapter">This is the module for Similarity Search</a></p>
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="_sources/plots.rst.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"/>
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script>$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="similarity.html" title="This is the module for Similarity Search"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="learning.html" title="This is the module for Learning"
+             >previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="index.html">Moret  documentation</a> &#187;</li>
+        <li class="nav-item nav-item-this"><a href="">This is the module for Plotting</a></li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+        &#169; Copyright 2021, Ioannis.
+      Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 4.2.0.
+    </div>
+  </body>
+</html>

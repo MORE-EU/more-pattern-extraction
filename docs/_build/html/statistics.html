@@ -1,0 +1,181 @@
+
+<!DOCTYPE html>
+
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
+    <title>This is the module for Statistics &#8212; Moret  documentation</title>
+    <link rel="stylesheet" type="text/css" href="_static/pygments.css" />
+    <link rel="stylesheet" type="text/css" href="_static/nature.css" />
+    <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
+    <script src="_static/jquery.js"></script>
+    <script src="_static/underscore.js"></script>
+    <script src="_static/doctools.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="This is the module for Input Output" href="inpout.html" />
+    <link rel="prev" title="This is the module for Similarity Search" href="similarity.html" /> 
+  </head><body>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="inpout.html" title="This is the module for Input Output"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="similarity.html" title="This is the module for Similarity Search"
+             accesskey="P">previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="index.html">Moret  documentation</a> &#187;</li>
+        <li class="nav-item nav-item-this"><a href="">This is the module for Statistics</a></li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <section id="module-statistics">
+<span id="this-is-the-module-for-statistics"></span><h1>This is the module for Statistics<a class="headerlink" href="#module-statistics" title="Permalink to this headline">¶</a></h1>
+<dl class="py function">
+<dt class="sig sig-object py" id="statistics.get_top_deviations">
+<span class="sig-prename descclassname"><span class="pre">statistics.</span></span><span class="sig-name descname"><span class="pre">get_top_deviations</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">scores</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">metric</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'mpe'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">n</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">5</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/statistics.html#get_top_deviations"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#statistics.get_top_deviations" title="Permalink to this definition">¶</a></dt>
+<dd><p>Given a matrix that each row contains scores of how well a segment fits a model, find the indices of the top most deviant segments.</p>
+<dl class="simple">
+<dt>Args:</dt><dd><p>scores: A 2-D numpy array (NxM) that contains M scores for each one of the N segments.
+metric: A string that specifies which score to consider.</p>
+</dd>
+<dt>Return: </dt><dd><p>The indices of the segments.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="statistics.mape1">
+<span class="sig-prename descclassname"><span class="pre">statistics.</span></span><span class="sig-name descname"><span class="pre">mape1</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">y_true</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">y_pred</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/statistics.html#mape1"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#statistics.mape1" title="Permalink to this definition">¶</a></dt>
+<dd><p>Computes the Mean Absolute Percentage Error between the 2 given time series
+Args:</p>
+<blockquote>
+<div><p>y_true: A numpy array that contains the actual values of the time series.
+y_pred: A numpy array that contains the predicted values of the time series.</p>
+</div></blockquote>
+<dl class="simple">
+<dt>Return: </dt><dd><p>Mean Absolute Percentage Error value.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="statistics.mpe1">
+<span class="sig-prename descclassname"><span class="pre">statistics.</span></span><span class="sig-name descname"><span class="pre">mpe1</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">y_true</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">y_pred</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/statistics.html#mpe1"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#statistics.mpe1" title="Permalink to this definition">¶</a></dt>
+<dd><p>Computes the Mean Percentage Error between the 2 given time series.
+Args:</p>
+<blockquote>
+<div><p>y_true: A numpy array that contains the actual values of the time series.
+y_pred: A numpy array that contains the predicted values of the time series.</p>
+</div></blockquote>
+<dl class="simple">
+<dt>Return: </dt><dd><p>Mean Absolute Error value.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="statistics.multi_corr">
+<span class="sig-prename descclassname"><span class="pre">statistics.</span></span><span class="sig-name descname"><span class="pre">multi_corr</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">df</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dep_column</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/statistics.html#multi_corr"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#statistics.multi_corr" title="Permalink to this definition">¶</a></dt>
+<dd><p>Computation of the coefficient of multiple correlation.
+The input consists of a dataframe and the column corresponding to the dependent variable.</p>
+<dl class="simple">
+<dt>Args:</dt><dd><p>df: Date/Time DataFrame or any Given DataFrame.
+dep_column: The corresponding the column to the dependent variable.</p>
+</dd>
+<dt>Return: </dt><dd><p>The coefficient of multiple correlation between the dependant column and the rest.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="statistics.score">
+<span class="sig-prename descclassname"><span class="pre">statistics.</span></span><span class="sig-name descname"><span class="pre">score</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">y_true</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">y_pred</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/statistics.html#score"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#statistics.score" title="Permalink to this definition">¶</a></dt>
+<dd><p>Computes a set of values that measure how well a predicted time series matches the actual time series.
+Args:</p>
+<blockquote>
+<div><p>y_true: A numpy array that contains the actual values of the time series.
+y_pred: A numpy array that contains the predicted values of the time series.</p>
+</div></blockquote>
+<dl class="simple">
+<dt>Return: </dt><dd><p>Returns a value for each of the following measures: 
+r-squared, mean absolute error, mean error, mean absolute percentage error, mean percentage error</p>
+</dd>
+</dl>
+</dd></dl>
+
+</section>
+
+
+            <div class="clearer"></div>
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="similarity.html"
+                        title="previous chapter">This is the module for Similarity Search</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="inpout.html"
+                        title="next chapter">This is the module for Input Output</a></p>
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="_sources/statistics.rst.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"/>
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script>$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="inpout.html" title="This is the module for Input Output"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="similarity.html" title="This is the module for Similarity Search"
+             >previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="index.html">Moret  documentation</a> &#187;</li>
+        <li class="nav-item nav-item-this"><a href="">This is the module for Statistics</a></li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+        &#169; Copyright 2021, Ioannis.
+      Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 4.2.0.
+    </div>
+  </body>
+</html>

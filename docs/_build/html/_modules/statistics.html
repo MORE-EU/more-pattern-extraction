@@ -1,0 +1,153 @@
+
+<!DOCTYPE html>
+
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>statistics &#8212; Moret  documentation</title>
+    <link rel="stylesheet" type="text/css" href="../_static/pygments.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/haiku.css" />
+    <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
+    <script src="../_static/jquery.js"></script>
+    <script src="../_static/underscore.js"></script>
+    <script src="../_static/doctools.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" /> 
+  </head><body>
+      <div class="header" role="banner"><h1 class="heading"><a href="../index.html">
+          <span>Moret  documentation</span></a></h1>
+        <h2 class="heading"><span>statistics</span></h2>
+      </div>
+      <div class="topnav" role="navigation" aria-label="top navigation">
+      
+        <p>
+        <a class="uplink" href="../index.html">Contents</a>
+        </p>
+
+      </div>
+      <div class="content" role="main">
+        
+        
+  <h1>Source code for statistics</h1><div class="highlight"><pre>
+<span></span><span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
+<span class="kn">from</span> <span class="nn">sklearn.linear_model</span> <span class="kn">import</span> <span class="n">LinearRegression</span><span class="p">,</span> <span class="n">Ridge</span>
+<span class="kn">from</span> <span class="nn">sklearn</span> <span class="kn">import</span> <span class="n">metrics</span>
+
+
+<div class="viewcode-block" id="mape1"><a class="viewcode-back" href="../statistics.html#statistics.mape1">[docs]</a><span class="k">def</span> <span class="nf">mape1</span><span class="p">(</span><span class="n">y_true</span><span class="p">,</span> <span class="n">y_pred</span><span class="p">):</span>
+
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Computes the Mean Absolute Percentage Error between the 2 given time series</span>
+<span class="sd">    Args:</span>
+<span class="sd">        y_true: A numpy array that contains the actual values of the time series.</span>
+<span class="sd">        y_pred: A numpy array that contains the predicted values of the time series.</span>
+<span class="sd">    </span>
+<span class="sd">    Return: </span>
+<span class="sd">        Mean Absolute Percentage Error value.</span>
+<span class="sd">            </span>
+<span class="sd">        </span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">mape1</span> <span class="o">=</span> <span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">y_true</span><span class="o">-</span><span class="n">y_pred</span><span class="p">)</span><span class="o">/</span><span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">y_true</span><span class="p">)))</span>
+    <span class="k">return</span> <span class="n">mape1</span></div>
+
+
+<div class="viewcode-block" id="mpe1"><a class="viewcode-back" href="../statistics.html#statistics.mpe1">[docs]</a><span class="k">def</span> <span class="nf">mpe1</span><span class="p">(</span><span class="n">y_true</span><span class="p">,</span> <span class="n">y_pred</span><span class="p">):</span>
+
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Computes the Mean Percentage Error between the 2 given time series.</span>
+<span class="sd">    Args:</span>
+<span class="sd">        y_true: A numpy array that contains the actual values of the time series.</span>
+<span class="sd">        y_pred: A numpy array that contains the predicted values of the time series.</span>
+<span class="sd">    </span>
+<span class="sd">    Return: </span>
+<span class="sd">        Mean Absolute Error value.</span>
+<span class="sd">            </span>
+<span class="sd">        </span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">mpe1</span> <span class="o">=</span> <span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">y_true</span><span class="o">-</span><span class="n">y_pred</span><span class="p">)</span><span class="o">/</span><span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">y_true</span><span class="p">))</span>
+    <span class="k">return</span> <span class="n">mpe1</span></div>
+
+
+<div class="viewcode-block" id="score"><a class="viewcode-back" href="../statistics.html#statistics.score">[docs]</a><span class="k">def</span> <span class="nf">score</span><span class="p">(</span><span class="n">y_true</span><span class="p">,</span> <span class="n">y_pred</span><span class="p">):</span>
+
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Computes a set of values that measure how well a predicted time series matches the actual time series.</span>
+<span class="sd">    Args:</span>
+<span class="sd">        y_true: A numpy array that contains the actual values of the time series.</span>
+<span class="sd">        y_pred: A numpy array that contains the predicted values of the time series.</span>
+<span class="sd">    </span>
+<span class="sd">    Return: </span>
+<span class="sd">        Returns a value for each of the following measures: </span>
+<span class="sd">        r-squared, mean absolute error, mean error, mean absolute percentage error, mean percentage error</span>
+<span class="sd">        </span>
+<span class="sd">            </span>
+<span class="sd">        </span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">r_sq</span> <span class="o">=</span> <span class="n">metrics</span><span class="o">.</span><span class="n">r2_score</span><span class="p">(</span><span class="n">y_true</span><span class="p">,</span> <span class="n">y_pred</span><span class="p">)</span>
+    <span class="n">mae</span> <span class="o">=</span> <span class="n">metrics</span><span class="o">.</span><span class="n">mean_absolute_error</span><span class="p">(</span><span class="n">y_true</span><span class="p">,</span> <span class="n">y_pred</span><span class="p">)</span>
+    <span class="n">me</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">y_true</span><span class="o">-</span><span class="n">y_pred</span><span class="p">)</span>
+    <span class="n">mape</span> <span class="o">=</span> <span class="n">mape1</span><span class="p">(</span><span class="n">y_true</span><span class="p">,</span> <span class="n">y_pred</span><span class="p">)</span>
+    <span class="n">mpe</span> <span class="o">=</span> <span class="n">mpe1</span><span class="p">(</span><span class="n">y_true</span><span class="p">,</span> <span class="n">y_pred</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">r_sq</span><span class="p">,</span> <span class="n">mae</span><span class="p">,</span> <span class="n">me</span><span class="p">,</span> <span class="n">mape</span><span class="p">,</span> <span class="n">mpe</span></div>
+
+
+<div class="viewcode-block" id="get_top_deviations"><a class="viewcode-back" href="../statistics.html#statistics.get_top_deviations">[docs]</a><span class="k">def</span> <span class="nf">get_top_deviations</span><span class="p">(</span><span class="n">scores</span><span class="p">,</span> <span class="n">metric</span><span class="o">=</span><span class="s1">&#39;mpe&#39;</span><span class="p">,</span> <span class="n">n</span><span class="o">=</span><span class="mi">5</span><span class="p">):</span>
+
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Given a matrix that each row contains scores of how well a segment fits a model, find the indices of the top most deviant segments.</span>
+<span class="sd">    </span>
+<span class="sd">    Args:</span>
+<span class="sd">        scores: A 2-D numpy array (NxM) that contains M scores for each one of the N segments.</span>
+<span class="sd">        metric: A string that specifies which score to consider.</span>
+<span class="sd">    </span>
+<span class="sd">    Return: </span>
+<span class="sd">        The indices of the segments.</span>
+<span class="sd">            </span>
+<span class="sd">        </span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">metrics</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;mpe&#39;</span><span class="p">:</span> <span class="mi">4</span><span class="p">,</span> <span class="s1">&#39;me&#39;</span><span class="p">:</span> <span class="mi">2</span><span class="p">}</span>
+    <span class="n">score_column</span> <span class="o">=</span> <span class="n">metrics</span><span class="p">[</span><span class="n">metric</span><span class="p">]</span>
+    <span class="n">indices</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">argsort</span><span class="p">(</span><span class="n">scores</span><span class="p">[:,</span> <span class="n">score_column</span><span class="p">])[:</span><span class="n">n</span><span class="p">]</span>
+    <span class="k">return</span> <span class="n">indices</span></div>
+
+
+<div class="viewcode-block" id="multi_corr"><a class="viewcode-back" href="../statistics.html#statistics.multi_corr">[docs]</a><span class="k">def</span> <span class="nf">multi_corr</span><span class="p">(</span><span class="n">df</span><span class="p">,</span> <span class="n">dep_column</span><span class="p">):</span>
+
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Computation of the coefficient of multiple correlation.</span>
+<span class="sd">    The input consists of a dataframe and the column corresponding to the dependent variable.</span>
+<span class="sd">    </span>
+<span class="sd">    Args:</span>
+<span class="sd">        df: Date/Time DataFrame or any Given DataFrame.</span>
+<span class="sd">        dep_column: The corresponding the column to the dependent variable.</span>
+<span class="sd">    </span>
+<span class="sd">    Return: </span>
+<span class="sd">        The coefficient of multiple correlation between the dependant column and the rest.</span>
+<span class="sd">            </span>
+<span class="sd">        </span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">df_str_corr</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">corr</span><span class="p">(</span><span class="n">method</span><span class="o">=</span><span class="s1">&#39;pearson&#39;</span><span class="p">)</span>
+    <span class="n">df_str_corr_ind_temp</span> <span class="o">=</span> <span class="n">df_str_corr</span><span class="o">.</span><span class="n">drop</span><span class="p">(</span><span class="n">index</span><span class="o">=</span><span class="n">dep_column</span><span class="p">)</span>
+    <span class="n">df_str_corr_ind</span> <span class="o">=</span> <span class="n">df_str_corr_ind_temp</span><span class="o">.</span><span class="n">drop</span><span class="p">(</span><span class="n">columns</span><span class="o">=</span><span class="n">dep_column</span><span class="p">)</span>
+    <span class="n">df_str_corr_ind_inv</span> <span class="o">=</span> <span class="n">inv</span><span class="p">(</span><span class="n">df_str_corr_ind</span><span class="o">.</span><span class="n">values</span><span class="p">)</span>
+    <span class="n">df_str_corr_dep</span> <span class="o">=</span> <span class="n">df_str_corr_ind_temp</span><span class="o">.</span><span class="n">loc</span><span class="p">[:,</span> <span class="n">dep_column</span><span class="p">]</span>
+    <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">matmul</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">matmul</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">transpose</span><span class="p">(</span><span class="n">df_str_corr_dep</span><span class="o">.</span><span class="n">values</span><span class="p">),</span> <span class="n">df_str_corr_ind_inv</span><span class="p">),</span> <span class="n">df_str_corr_dep</span><span class="o">.</span><span class="n">values</span><span class="p">)</span></div>
+</pre></div>
+
+      </div>
+      <div class="bottomnav" role="navigation" aria-label="bottom navigation">
+      
+        <p>
+        <a class="uplink" href="../index.html">Contents</a>
+        </p>
+
+      </div>
+
+    <div class="footer" role="contentinfo">
+        &#169; Copyright 2021, Ioannis.
+      Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 4.2.0.
+    </div>
+  </body>
+</html>

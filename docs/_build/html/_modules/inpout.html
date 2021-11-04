@@ -1,0 +1,257 @@
+
+<!DOCTYPE html>
+
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>inpout &#8212; Moret  documentation</title>
+    <link rel="stylesheet" type="text/css" href="../_static/pygments.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/nature.css" />
+    <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
+    <script src="../_static/jquery.js"></script>
+    <script src="../_static/underscore.js"></script>
+    <script src="../_static/doctools.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" /> 
+  </head><body>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">Moret  documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="index.html" accesskey="U">Module code</a> &#187;</li>
+        <li class="nav-item nav-item-this"><a href="">inpout</a></li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <h1>Source code for inpout</h1><div class="highlight"><pre>
+<span></span><span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">import</span> <span class="nn">h5py</span>
+<span class="kn">import</span> <span class="nn">os</span>
+<span class="kn">import</span> <span class="nn">warnings</span>
+<span class="kn">import</span> <span class="nn">gc</span>
+<span class="kn">import</span> <span class="nn">matplotlib</span> <span class="k">as</span> <span class="nn">plt</span>
+
+
+<div class="viewcode-block" id="load_df"><a class="viewcode-back" href="../inpout.html#inpout.load_df">[docs]</a><span class="k">def</span> <span class="nf">load_df</span><span class="p">(</span><span class="n">paths</span><span class="p">):</span> 
+    <span class="sd">&quot;&quot;&quot; </span>
+<span class="sd">    Loading a parquet file to a pandas DataFrame. Return this pandas DataFrame.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        path: Path of the under loading DataFrame.</span>
+
+<span class="sd">    Return: </span>
+<span class="sd">        pandas DataFrame.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">()</span>
+    <span class="k">if</span> <span class="n">paths</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="s1">&#39;.parquet&#39;</span><span class="p">):</span>
+        <span class="n">df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_parquet</span><span class="p">(</span><span class="n">path</span><span class="p">)</span>
+        <span class="n">df</span><span class="o">.</span><span class="n">index</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">to_datetime</span><span class="p">(</span><span class="n">df</span><span class="o">.</span><span class="n">index</span><span class="p">)</span>
+        <span class="n">df</span><span class="o">.</span><span class="n">set_index</span><span class="p">(</span><span class="n">df</span><span class="o">.</span><span class="n">index</span><span class="p">,</span> <span class="n">inplace</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">path</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="s1">&#39;.csv&#39;</span><span class="p">):</span>
+        <span class="n">df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="n">path</span><span class="p">)</span>
+        <span class="n">df</span><span class="o">.</span><span class="n">index</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">to_datetime</span><span class="p">(</span><span class="n">df</span><span class="o">.</span><span class="n">index</span><span class="p">)</span>
+        <span class="n">df</span><span class="o">.</span><span class="n">set_index</span><span class="p">(</span><span class="n">df</span><span class="o">.</span><span class="n">index</span><span class="p">,</span> <span class="n">inplace</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">df</span></div>
+  
+  
+<div class="viewcode-block" id="load_mp"><a class="viewcode-back" href="../inpout.html#inpout.load_mp">[docs]</a><span class="k">def</span> <span class="nf">load_mp</span><span class="p">(</span><span class="n">paths</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">     Load the Univariate/Multivariate Matrix profile which was saved from Create_mp in a .npz file.</span>
+<span class="sd">     </span>
+<span class="sd">     Args:</span>
+<span class="sd">      path: Path of the directory where the file is saved.</span>
+<span class="sd">     </span>
+<span class="sd">     Return:</span>
+<span class="sd">        mp: Matrixprofile Distances</span>
+<span class="sd">        mpi: Matrixprofile Indices</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">mp</span><span class="o">=</span><span class="p">{}</span>
+    <span class="n">mpi</span><span class="o">=</span><span class="p">{}</span>
+    <span class="n">loaded</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">paths</span> <span class="o">+</span> <span class="s2">&quot;.npz&quot;</span><span class="p">,</span> <span class="n">allow_pickle</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+    <span class="n">mp</span> <span class="o">=</span> <span class="n">loaded</span><span class="p">[</span><span class="s1">&#39;mp&#39;</span><span class="p">]</span>
+    <span class="n">mpi</span> <span class="o">=</span> <span class="n">loaded</span><span class="p">[</span><span class="s1">&#39;mpi&#39;</span><span class="p">]</span>
+    <span class="k">return</span> <span class="n">mp</span><span class="p">,</span> <span class="n">mpi</span></div>
+
+  
+<div class="viewcode-block" id="save_mdmp_as_h5"><a class="viewcode-back" href="../inpout.html#inpout.save_mdmp_as_h5">[docs]</a><span class="k">def</span> <span class="nf">save_mdmp_as_h5</span><span class="p">(</span><span class="n">dir_path</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">mps</span><span class="p">,</span> <span class="n">idx</span><span class="p">,</span> <span class="n">k</span><span class="o">=</span><span class="mi">0</span><span class="p">):</span>
+
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Save a multidimensional matrix profile as a pair of hdf5 files. Input is based on the output of (https://stumpy.readthedocs.io/en/latest/api.html#mstump).</span>
+<span class="sd">    Args:</span>
+<span class="sd">       dir_path: Path of the directory where the file will be saved.</span>
+<span class="sd">       name: Name that will be appended to the file after a default prefix. (i.e. mp_multivariate_&lt;name&gt;.h5)</span>
+<span class="sd">       mps: The multi-dimensional matrix profile. Each row of the array corresponds to each matrix profile for a given dimension </span>
+<span class="sd">                   (i.e., the first row is the 1-D matrix profile and the second row is the 2-D matrix profile).</span>
+<span class="sd">       idx: The multi-dimensional matrix profile index where each row of the array corresponds to each matrix profile index for a given dimension.</span>
+<span class="sd">       k: If mps and idx are one-dimensional k can be used to specify the given dimension of the matrix profile. The default value specifies the 1-D matrix profile.</span>
+<span class="sd">                 If mps and idx are multi-dimensional, k is ignored.</span>
+<span class="sd">    Return:</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">mps</span><span class="o">.</span><span class="n">ndim</span> <span class="o">!=</span> <span class="n">idx</span><span class="o">.</span><span class="n">ndim</span><span class="p">:</span>
+        <span class="n">err</span> <span class="o">=</span> <span class="s1">&#39;Dimensions of mps and idx should match&#39;</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">err</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">mps</span><span class="o">.</span><span class="n">ndim</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+        <span class="n">mps</span> <span class="o">=</span> <span class="n">mps</span><span class="p">[</span><span class="kc">None</span><span class="p">,</span> <span class="p">:]</span>
+        <span class="n">idx</span> <span class="o">=</span> <span class="n">idx</span><span class="p">[</span><span class="kc">None</span><span class="p">,</span> <span class="p">:]</span>
+        <span class="n">h5f</span> <span class="o">=</span> <span class="n">h5py</span><span class="o">.</span><span class="n">File</span><span class="p">(</span><span class="n">dir_path</span> <span class="o">+</span> <span class="s1">&#39;mp_multivariate_&#39;</span> <span class="o">+</span> <span class="n">name</span> <span class="o">+</span> <span class="s1">&#39;.h5&#39;</span><span class="p">,</span><span class="s1">&#39;w&#39;</span><span class="p">)</span>
+        <span class="n">h5f</span><span class="o">.</span><span class="n">create_dataset</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;mp</span><span class="si">{</span><span class="n">k</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">,</span> <span class="n">data</span><span class="o">=</span><span class="n">mps</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+        <span class="n">h5f</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+
+        <span class="n">h5f</span> <span class="o">=</span> <span class="n">h5py</span><span class="o">.</span><span class="n">File</span><span class="p">(</span><span class="n">dir_path</span> <span class="o">+</span> <span class="s1">&#39;index_multivariate_&#39;</span> <span class="o">+</span> <span class="n">name</span> <span class="o">+</span> <span class="s1">&#39;.h5&#39;</span><span class="p">,</span><span class="s1">&#39;w&#39;</span><span class="p">)</span>
+        <span class="n">h5f</span><span class="o">.</span><span class="n">create_dataset</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;idx</span><span class="si">{</span><span class="n">k</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">,</span> <span class="n">data</span><span class="o">=</span><span class="n">idx</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+        <span class="n">h5f</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+        <span class="k">return</span>
+
+    <span class="n">h5f</span> <span class="o">=</span> <span class="n">h5py</span><span class="o">.</span><span class="n">File</span><span class="p">(</span><span class="n">dir_path</span> <span class="o">+</span> <span class="s1">&#39;mp_multivariate_&#39;</span> <span class="o">+</span> <span class="n">name</span> <span class="o">+</span> <span class="s1">&#39;.h5&#39;</span><span class="p">,</span><span class="s1">&#39;w&#39;</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">mps</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]):</span>
+        <span class="n">h5f</span><span class="o">.</span><span class="n">create_dataset</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;mp</span><span class="si">{</span><span class="n">i</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">,</span> <span class="n">data</span><span class="o">=</span><span class="n">mps</span><span class="p">[</span><span class="n">i</span><span class="p">])</span>
+    <span class="n">h5f</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+
+    <span class="n">h5f</span> <span class="o">=</span> <span class="n">h5py</span><span class="o">.</span><span class="n">File</span><span class="p">(</span><span class="n">dir_path</span> <span class="o">+</span> <span class="s1">&#39;index_multivariate_&#39;</span> <span class="o">+</span> <span class="n">name</span> <span class="o">+</span> <span class="s1">&#39;.h5&#39;</span><span class="p">,</span><span class="s1">&#39;w&#39;</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">mps</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]):</span>
+        <span class="n">h5f</span><span class="o">.</span><span class="n">create_dataset</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;idx</span><span class="si">{</span><span class="n">i</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">,</span> <span class="n">data</span><span class="o">=</span><span class="n">idx</span><span class="p">[</span><span class="n">i</span><span class="p">])</span>
+    <span class="n">h5f</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+    <span class="k">return</span></div>
+
+  
+<div class="viewcode-block" id="load_mdmp_from_h5"><a class="viewcode-back" href="../inpout.html#inpout.load_mdmp_from_h5">[docs]</a><span class="k">def</span> <span class="nf">load_mdmp_from_h5</span><span class="p">(</span><span class="n">dir_path</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">k</span><span class="p">):</span>
+   
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Load a multidimensional matrix profile that has been saved as a pair of hdf5 files.</span>
+<span class="sd">    </span>
+<span class="sd">    Args:</span>
+<span class="sd">      dir_path: Path of the directory where the file is located.</span>
+<span class="sd">     name: Name that follows the default prefix. (i.e. mp_multivariate_&lt;name&gt;.h5)</span>
+<span class="sd">      k: Specifies which K-dimensional matrix profile to load. </span>
+<span class="sd">                 (i.e. k=2 loads the 2-D matrix profile</span>
+<span class="sd">    </span>
+<span class="sd">    Return:</span>
+<span class="sd">        mp: matrixprofile/stumpy distances</span>
+<span class="sd">        index: matrixprofile/stumpy indexes</span>
+<span class="sd">            </span>
+<span class="sd">          </span>
+<span class="sd">        </span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c1"># Load MP from disk</span>
+    
+    <span class="n">h5f</span> <span class="o">=</span> <span class="n">h5py</span><span class="o">.</span><span class="n">File</span><span class="p">(</span><span class="n">dir_path</span> <span class="o">+</span> <span class="s1">&#39;mp_multivariate_&#39;</span> <span class="o">+</span> <span class="n">name</span> <span class="o">+</span> <span class="s1">&#39;.h5&#39;</span><span class="p">,</span><span class="s1">&#39;r&#39;</span><span class="p">)</span>
+    <span class="n">mp</span><span class="o">=</span> <span class="n">h5f</span><span class="p">[</span><span class="sa">f</span><span class="s1">&#39;mp</span><span class="si">{</span><span class="n">k</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">][:]</span>
+    <span class="n">h5f</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+
+    <span class="n">h5f</span> <span class="o">=</span> <span class="n">h5py</span><span class="o">.</span><span class="n">File</span><span class="p">(</span><span class="n">dir_path</span> <span class="o">+</span> <span class="s1">&#39;index_multivariate_&#39;</span> <span class="o">+</span> <span class="n">name</span> <span class="o">+</span> <span class="s1">&#39;.h5&#39;</span><span class="p">,</span><span class="s1">&#39;r&#39;</span><span class="p">)</span>
+    <span class="n">index</span> <span class="o">=</span> <span class="n">h5f</span><span class="p">[</span><span class="sa">f</span><span class="s1">&#39;idx</span><span class="si">{</span><span class="n">k</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">][:]</span>
+    <span class="n">h5f</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+    <span class="k">return</span> <span class="n">mp</span><span class="p">,</span> <span class="n">index</span></div>
+  
+  
+<div class="viewcode-block" id="save_results"><a class="viewcode-back" href="../inpout.html#inpout.save_results">[docs]</a><span class="k">def</span> <span class="nf">save_results</span><span class="p">(</span><span class="n">results_dir</span><span class="p">,</span> <span class="n">sub_dir_name</span><span class="p">,</span> <span class="n">p</span><span class="p">,</span> <span class="n">df_stats</span><span class="p">,</span> <span class="n">m</span><span class="p">,</span> <span class="n">radius</span><span class="p">,</span> <span class="n">ez</span><span class="p">,</span> <span class="n">k</span><span class="p">,</span> <span class="n">max_neighbors</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot; </span>
+<span class="sd">    Save the results of a specific run in the directory specified by the results_dir and sub_dir_name.</span>
+<span class="sd">    The results contain some figures that are created with an adaptation of the matrix profile foundation visualize() function.</span>
+<span class="sd">    The adaptation works for multi dimensional timeseries and can be found at </span>
+<span class="sd">    (https://github.com/MORE-EU/matrixprofile/blob/master/matrixprofile/visualize.py) as visualize_md()</span>
+<span class="sd">    Args:</span>
+<span class="sd">        results: Path of the directory where the results will be saved.</span>
+<span class="sd">        sub_directory: Path of the sub directory where the results will be saved.</span>
+<span class="sd">        p: A profile object as it is defined in the matrixprofile foundation python library.</span>
+<span class="sd">        df_stats: DataFrame with the desired statistics that need to be saved.</span>
+<span class="sd">        m: The subsequence window size.</span>
+<span class="sd">        ez: The exclusion zone to use.</span>
+<span class="sd">        radius: The radius to use.</span>
+<span class="sd">        k: The number of the top motifs that were calculated.</span>
+<span class="sd">        max_neighbors: The maximum amount of neighbors to find for each of the top k motifs.</span>
+<span class="sd">    Return:</span>
+<span class="sd">        None</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+
+
+
+    <span class="n">path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">results_dir</span><span class="p">,</span> <span class="n">sub_dir_name</span><span class="p">)</span>
+
+    <span class="nb">print</span><span class="p">(</span><span class="n">path</span><span class="p">)</span>
+
+    <span class="n">pathlib</span><span class="o">.</span><span class="n">Path</span><span class="p">(</span><span class="n">path</span><span class="p">)</span><span class="o">.</span><span class="n">mkdir</span><span class="p">(</span><span class="n">parents</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">exist_ok</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span> 
+
+
+    <span class="k">with</span> <span class="n">warnings</span><span class="o">.</span><span class="n">catch_warnings</span><span class="p">():</span>
+        <span class="n">warnings</span><span class="o">.</span><span class="n">simplefilter</span><span class="p">(</span><span class="s1">&#39;ignore&#39;</span><span class="p">)</span>
+        <span class="n">figs</span> <span class="o">=</span> <span class="n">visualize_md</span><span class="p">(</span><span class="n">p</span><span class="p">)</span>
+
+        <span class="k">for</span> <span class="n">i</span><span class="p">,</span><span class="n">f</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">figs</span><span class="p">):</span>
+            <span class="n">f</span><span class="o">.</span><span class="n">savefig</span><span class="p">(</span><span class="n">path</span> <span class="o">+</span> <span class="sa">f</span><span class="s1">&#39;/fig</span><span class="si">{</span><span class="n">i</span><span class="si">}</span><span class="s1">.png&#39;</span> <span class="p">,</span> <span class="n">facecolor</span><span class="o">=</span><span class="s1">&#39;white&#39;</span><span class="p">,</span> <span class="n">transparent</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">bbox_inches</span><span class="o">=</span><span class="s2">&quot;tight&quot;</span><span class="p">)</span>
+            <span class="n">f</span><span class="o">.</span><span class="n">clf</span><span class="p">()</span>
+
+    <span class="c1"># remove figures from memory</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">close</span><span class="p">(</span><span class="s1">&#39;all&#39;</span><span class="p">)</span>
+    <span class="n">gc</span><span class="o">.</span><span class="n">collect</span><span class="p">()</span> 
+
+    <span class="n">df_stats</span><span class="o">.</span><span class="n">to_csv</span><span class="p">(</span><span class="n">path</span> <span class="o">+</span> <span class="s1">&#39;/stats.csv&#39;</span><span class="p">)</span>
+
+    <span class="n">lines</span> <span class="o">=</span> <span class="p">[</span><span class="sa">f</span><span class="s1">&#39;Window size (m): </span><span class="si">{</span><span class="n">m</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">,</span>
+             <span class="sa">f</span><span class="s1">&#39;Radius: </span><span class="si">{</span><span class="n">radius</span><span class="si">}</span><span class="s1"> (radius * min_dist)&#39;</span><span class="p">,</span>
+             <span class="sa">f</span><span class="s1">&#39;Exclusion zone: </span><span class="si">{</span><span class="n">ez</span><span class="si">}</span><span class="s1"> * window_size&#39;</span><span class="p">,</span>
+             <span class="sa">f</span><span class="s1">&#39;Top k motifs: </span><span class="si">{</span><span class="n">k</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">,</span>
+             <span class="sa">f</span><span class="s1">&#39;Max neighbors: </span><span class="si">{</span><span class="n">max_neighbors</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">]</span>
+
+    <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">path</span><span class="o">+</span><span class="s1">&#39;/info.txt&#39;</span><span class="p">,</span> <span class="s1">&#39;w&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+        <span class="k">for</span> <span class="n">ln</span> <span class="ow">in</span> <span class="n">lines</span><span class="p">:</span>
+            <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">ln</span> <span class="o">+</span> <span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">)</span></div>
+
+            
+</pre></div>
+
+            <div class="clearer"></div>
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"/>
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script>$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">Moret  documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="index.html" >Module code</a> &#187;</li>
+        <li class="nav-item nav-item-this"><a href="">inpout</a></li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+        &#169; Copyright 2021, Ioannis.
+      Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 4.2.0.
+    </div>
+  </body>
+</html>

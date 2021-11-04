@@ -1,0 +1,258 @@
+
+<!DOCTYPE html>
+
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>learning &#8212; Moret  documentation</title>
+    <link rel="stylesheet" type="text/css" href="../_static/pygments.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/haiku.css" />
+    <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
+    <script src="../_static/jquery.js"></script>
+    <script src="../_static/underscore.js"></script>
+    <script src="../_static/doctools.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" /> 
+  </head><body>
+      <div class="header" role="banner"><h1 class="heading"><a href="../index.html">
+          <span>Moret  documentation</span></a></h1>
+        <h2 class="heading"><span>learning</span></h2>
+      </div>
+      <div class="topnav" role="navigation" aria-label="top navigation">
+      
+        <p>
+        <a class="uplink" href="../index.html">Contents</a>
+        </p>
+
+      </div>
+      <div class="content" role="main">
+        
+        
+  <h1>Source code for learning</h1><div class="highlight"><pre>
+<span></span><span class="kn">from</span> <span class="nn">sklearn.linear_model</span> <span class="kn">import</span> <span class="n">LinearRegression</span><span class="p">,</span> <span class="n">Ridge</span>
+<span class="kn">from</span> <span class="nn">sklearn.pipeline</span> <span class="kn">import</span> <span class="n">Pipeline</span>
+<span class="kn">from</span> <span class="nn">sklearn.preprocessing</span> <span class="kn">import</span> <span class="n">PolynomialFeatures</span>
+<span class="kn">from</span> <span class="nn">sklearn</span> <span class="kn">import</span> <span class="n">metrics</span>
+
+<div class="viewcode-block" id="predict"><a class="viewcode-back" href="../learning.html#learning.predict">[docs]</a><span class="k">def</span> <span class="nf">predict</span><span class="p">(</span><span class="n">df_test</span><span class="p">,</span> <span class="n">model</span><span class="p">,</span> <span class="n">feats</span><span class="p">,</span> <span class="n">target</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Applies a regression model to predict values of a dependent variable for a given dataframe and </span>
+<span class="sd">    given features.</span>
+<span class="sd">    Args:</span>
+<span class="sd">        df_test: The input dataframe.</span>
+<span class="sd">        model: The regression model. Instance of Pipeline.</span>
+<span class="sd">        feats: List of strings: each string is the name of a column of df_test.</span>
+<span class="sd">        target: The name of the column of df corresponding to the dependent variable.</span>
+<span class="sd">    Returns:</span>
+<span class="sd">        y_pred: Array of predicted values. </span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">df_x</span> <span class="o">=</span> <span class="n">df_test</span><span class="p">[</span><span class="n">feats</span><span class="p">]</span>
+    <span class="n">df_y</span> <span class="o">=</span> <span class="n">df_test</span><span class="p">[</span><span class="n">target</span><span class="p">]</span> <span class="c1">#is this needed?</span>
+    <span class="n">X</span> <span class="o">=</span> <span class="n">df_x</span><span class="o">.</span><span class="n">values</span>
+    <span class="n">y_true</span> <span class="o">=</span> <span class="n">df_y</span><span class="o">.</span><span class="n">values</span> <span class="c1">#is this needed?</span>
+    <span class="n">y_pred</span> <span class="o">=</span> <span class="n">model</span><span class="o">.</span><span class="n">predict</span><span class="p">(</span><span class="n">X</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">y_pred</span></div>
+
+<div class="viewcode-block" id="fit_linear_model"><a class="viewcode-back" href="../learning.html#learning.fit_linear_model">[docs]</a><span class="k">def</span> <span class="nf">fit_linear_model</span><span class="p">(</span><span class="n">df</span><span class="p">,</span> <span class="n">feats</span><span class="p">,</span> <span class="n">target</span><span class="p">,</span> <span class="n">a</span><span class="o">=</span><span class="mf">1e-4</span><span class="p">,</span> <span class="n">deg</span><span class="o">=</span><span class="mi">3</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Fits a regression model on a given dataframe, and returns the model, the predicted values and the associated </span>
+<span class="sd">    scores. Applies Ridge Regression with polynomial features. </span>
+<span class="sd">    Args:</span>
+<span class="sd">        df: The input dataframe.</span>
+<span class="sd">        feats: List of names of columns of df. These are the feature variables.</span>
+<span class="sd">        target: The name of a column of df corresponding to the dependent variable.</span>
+<span class="sd">        a: A positive float. Regularization strength parameter for the linear least squares function </span>
+<span class="sd">        (the loss function) where regularization is given by the l2-norm. </span>
+<span class="sd">        deg: The degree of the regression polynomial.</span>
+<span class="sd">    Returns:    </span>
+<span class="sd">        pipeline: The regression model. This is an instance of Pipeline.</span>
+<span class="sd">        y_pred: An array with the predicted values.</span>
+<span class="sd">        r_sq: The coefficient of determination “R squared”.</span>
+<span class="sd">        mae: The mean absolute error.</span>
+<span class="sd">        me: The mean error.</span>
+<span class="sd">        mape: The mean absolute percentage error.</span>
+<span class="sd">        mpe: The mean percentage error.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">df_x</span> <span class="o">=</span> <span class="n">df</span><span class="p">[</span><span class="n">feats</span><span class="p">]</span>
+    <span class="n">df_y</span> <span class="o">=</span> <span class="n">df</span><span class="p">[</span><span class="n">target</span><span class="p">]</span>
+    <span class="n">X</span> <span class="o">=</span> <span class="n">df_x</span><span class="o">.</span><span class="n">values</span>
+    <span class="n">y</span> <span class="o">=</span> <span class="n">df_y</span><span class="o">.</span><span class="n">values</span>
+
+    <span class="n">polynomial_features</span> <span class="o">=</span> <span class="n">PolynomialFeatures</span><span class="p">(</span><span class="n">degree</span><span class="o">=</span><span class="n">deg</span><span class="p">)</span>
+    <span class="n">linear_regression</span> <span class="o">=</span> <span class="n">Ridge</span><span class="p">(</span><span class="n">alpha</span><span class="o">=</span><span class="n">a</span><span class="p">)</span>
+
+    <span class="n">pipeline</span> <span class="o">=</span> <span class="n">Pipeline</span><span class="p">([(</span><span class="s2">&quot;polynomial_features&quot;</span><span class="p">,</span> <span class="n">polynomial_features</span><span class="p">),</span>
+                         <span class="p">(</span><span class="s2">&quot;linear_regression&quot;</span><span class="p">,</span> <span class="n">linear_regression</span><span class="p">)])</span>
+
+    <span class="n">pipeline</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">y</span><span class="p">)</span>
+    <span class="n">y_pred</span> <span class="o">=</span> <span class="n">pipeline</span><span class="o">.</span><span class="n">predict</span><span class="p">(</span><span class="n">X</span><span class="p">)</span>
+    <span class="n">r_sq</span><span class="p">,</span> <span class="n">mae</span><span class="p">,</span> <span class="n">me</span><span class="p">,</span> <span class="n">mape</span><span class="p">,</span> <span class="n">mpe</span> <span class="o">=</span> <span class="n">score</span><span class="p">(</span><span class="n">y</span><span class="p">,</span> <span class="n">y_pred</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">pipeline</span><span class="p">,</span> <span class="n">y_pred</span><span class="p">,</span> <span class="n">r_sq</span><span class="p">,</span> <span class="n">mae</span><span class="p">,</span> <span class="n">me</span><span class="p">,</span> <span class="n">mape</span><span class="p">,</span> <span class="n">mpe</span></div>
+
+<div class="viewcode-block" id="get_line_and_slope"><a class="viewcode-back" href="../learning.html#learning.get_line_and_slope">[docs]</a><span class="k">def</span> <span class="nf">get_line_and_slope</span><span class="p">(</span><span class="n">values</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Fits a line on the 2-dimensional graph of a regular time series, defined by a sequence of real values. </span>
+<span class="sd">    Args:</span>
+<span class="sd">        values: A list of real values.</span>
+<span class="sd">    Returns: </span>
+<span class="sd">        line: The list of values as predicted by the linear model.</span>
+<span class="sd">        slope: Slope of the line.</span>
+<span class="sd">        intercept: Intercept of the line.   </span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">ols</span> <span class="o">=</span> <span class="n">LinearRegression</span><span class="p">()</span>
+    <span class="n">X</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">values</span><span class="p">))</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">)</span>
+    <span class="n">y</span> <span class="o">=</span> <span class="n">values</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">)</span>
+    <span class="n">ols</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">y</span><span class="p">)</span>
+    <span class="n">line</span> <span class="o">=</span> <span class="n">ols</span><span class="o">.</span><span class="n">predict</span><span class="p">(</span><span class="n">X</span><span class="p">)</span>
+    <span class="n">slope</span> <span class="o">=</span> <span class="n">ols</span><span class="o">.</span><span class="n">coef_</span><span class="o">.</span><span class="n">item</span><span class="p">()</span>
+    <span class="n">intercept</span> <span class="o">=</span> <span class="n">ols</span><span class="o">.</span><span class="n">intercept_</span><span class="o">.</span><span class="n">item</span><span class="p">()</span>
+    <span class="k">return</span> <span class="n">line</span><span class="p">,</span> <span class="n">slope</span><span class="p">,</span> <span class="n">intercept</span></div>
+
+<div class="viewcode-block" id="train_on_reference_points"><a class="viewcode-back" href="../learning.html#learning.train_on_reference_points">[docs]</a><span class="k">def</span> <span class="nf">train_on_reference_points</span><span class="p">(</span><span class="n">df</span><span class="p">,</span> <span class="n">w_train</span><span class="p">,</span> <span class="n">ref_points</span><span class="p">,</span> <span class="n">feats</span><span class="p">,</span> <span class="n">target</span><span class="p">,</span> <span class="n">random_state</span><span class="o">=</span><span class="mi">0</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Trains a regression model on a training set defined by segments of a dataframe. </span>
+<span class="sd">    These segments are defined by a set of starting points and a parameter indicating their duration. </span>
+<span class="sd">    In each segment, one subset of points is randomly chosen as the training set and the remaining points </span>
+<span class="sd">    define the validation set.</span>
+<span class="sd">    </span>
+<span class="sd">    Args:</span>
+<span class="sd">        df: Input dataframe. </span>
+<span class="sd">        w_train: The duration, given as a number of days, of the segments where the model is trained.</span>
+<span class="sd">        ref_points: A list containing the starting date of each segment where the model is trained.</span>
+<span class="sd">        feats: A list of names of columns of df corresponding to the feature variables.</span>
+<span class="sd">        target: A name of a column of df corresponding to the dependent variable.</span>
+<span class="sd">        random_state: Seed for a random number generator, which is used in randomly selecting the validation </span>
+<span class="sd">        set among the points in a fixed segment.</span>
+<span class="sd">    Returns:</span>
+<span class="sd">        model: The regression model. This is an instance of Pipeline.</span>
+<span class="sd">        training_scores: An array containing scores for the training set. It contains the coefficient </span>
+<span class="sd">        of determination “R squared”, the mean absolute error, the mean error, the mean absolute percentage error.</span>
+<span class="sd">        validation_scores: An array containing scores for the validation set. It contains the coefficient </span>
+<span class="sd">        of determination “R squared”, the mean absolute error, the mean error, the mean absolute percentage error.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">df_train</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">([])</span>
+    <span class="n">df_val</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">([])</span>
+    <span class="k">for</span> <span class="n">idx</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">ref_points</span><span class="o">.</span><span class="n">size</span><span class="p">):</span>
+        <span class="n">d_train_stop</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">to_datetime</span><span class="p">(</span><span class="n">ref_points</span><span class="p">[</span><span class="n">idx</span><span class="p">])</span> <span class="o">+</span> <span class="n">pd</span><span class="o">.</span><span class="n">Timedelta</span><span class="p">(</span><span class="n">days</span><span class="o">=</span><span class="n">w_train</span><span class="p">)</span>
+        <span class="n">df_tmp</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">ref_points</span><span class="p">[</span><span class="n">idx</span><span class="p">]:</span><span class="nb">str</span><span class="p">(</span><span class="n">d_train_stop</span><span class="p">)]</span>
+        <span class="n">df_tmp2</span> <span class="o">=</span> <span class="n">df_tmp</span><span class="o">.</span><span class="n">sample</span><span class="p">(</span><span class="n">frac</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">random_state</span><span class="o">=</span><span class="n">random_state</span><span class="p">)</span> <span class="c1"># added random state for reproducibility during experiments</span>
+        <span class="n">size_train</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">df_tmp2</span><span class="p">)</span> <span class="o">*</span> <span class="mf">0.80</span><span class="p">)</span>
+        <span class="n">df_train</span> <span class="o">=</span> <span class="n">df_train</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">df_tmp2</span><span class="p">[:</span><span class="n">size_train</span><span class="p">])</span>
+        <span class="n">df_val</span> <span class="o">=</span> <span class="n">df_val</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">df_tmp2</span><span class="p">[</span><span class="n">size_train</span><span class="p">:])</span>
+
+    <span class="n">model</span><span class="p">,</span> <span class="n">y_pred_train</span><span class="p">,</span> <span class="n">r_sq_train</span><span class="p">,</span> <span class="n">mae_train</span><span class="p">,</span> <span class="n">me_train</span><span class="p">,</span> <span class="n">mape_train</span> <span class="o">=</span> <span class="n">fit_linear_model</span><span class="p">(</span><span class="n">df_train</span><span class="p">,</span> <span class="n">feats</span><span class="p">,</span> <span class="n">target</span><span class="p">)</span>
+    <span class="n">y_pred_val</span> <span class="o">=</span> <span class="n">predict</span><span class="p">(</span><span class="n">df_val</span><span class="p">,</span> <span class="n">model</span><span class="p">,</span> <span class="n">feats</span><span class="p">,</span> <span class="n">target</span><span class="p">)</span>
+    <span class="n">r_sq_val</span><span class="p">,</span> <span class="n">mae_val</span><span class="p">,</span> <span class="n">me_val</span><span class="p">,</span> <span class="n">mape_val</span><span class="p">,</span> <span class="n">mpe_val</span> <span class="o">=</span> <span class="n">score</span><span class="p">(</span><span class="n">df_val</span><span class="p">[</span><span class="n">target</span><span class="p">]</span><span class="o">.</span><span class="n">values</span><span class="p">,</span> <span class="n">y_pred_val</span><span class="p">)</span>
+    <span class="n">training_scores</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">r_sq_train</span><span class="p">,</span> <span class="n">mae_train</span><span class="p">,</span> <span class="n">me_train</span><span class="p">,</span> <span class="n">mape_train</span><span class="p">])</span>
+    <span class="n">validation_scores</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">r_sq_val</span><span class="p">,</span> <span class="n">mae_val</span><span class="p">,</span> <span class="n">me_val</span><span class="p">,</span> <span class="n">mape_val</span><span class="p">,</span> <span class="n">mpe_val</span><span class="p">])</span>
+
+    <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Training Metrics:&#39;</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;MAE:</span><span class="si">{</span><span class="n">training_scores</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="si">:</span><span class="s1">.3f</span><span class="si">}</span><span class="s1"> </span><span class="se">\n</span><span class="s1">ME(true-pred):</span><span class="si">{</span><span class="n">training_scores</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span><span class="si">:</span><span class="s1">.3f</span><span class="si">}</span><span class="s1"> </span><span class="se">\n</span><span class="s1">MAPE:</span><span class="si">{</span><span class="n">training_scores</span><span class="p">[</span><span class="mi">3</span><span class="p">]</span><span class="si">:</span><span class="s1">.3f</span><span class="si">}</span><span class="s1"> </span><span class="se">\n</span><span class="s1">R2: </span><span class="si">{</span><span class="n">training_scores</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="si">:</span><span class="s1">.3f</span><span class="si">}</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Validation Metrics:&#39;</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;MAE:</span><span class="si">{</span><span class="n">validation_scores</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="si">:</span><span class="s1">.3f</span><span class="si">}</span><span class="s1"> </span><span class="se">\n</span><span class="s1">ME(true-pred):</span><span class="si">{</span><span class="n">validation_scores</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span><span class="si">:</span><span class="s1">.3f</span><span class="si">}</span><span class="s1"> </span><span class="se">\n</span><span class="s1">MAPE:</span><span class="si">{</span><span class="n">validation_scores</span><span class="p">[</span><span class="mi">3</span><span class="p">]</span><span class="si">:</span><span class="s1">.3f</span><span class="si">}</span><span class="s1"> </span><span class="se">\n</span><span class="s1">MPE:</span><span class="si">{</span><span class="n">validation_scores</span><span class="p">[</span><span class="mi">4</span><span class="p">]</span><span class="si">:</span><span class="s1">.3f</span><span class="si">}</span><span class="s1"> </span><span class="se">\n</span><span class="s1">R2: </span><span class="si">{</span><span class="n">validation_scores</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="si">:</span><span class="s1">.3f</span><span class="si">}</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">model</span><span class="p">,</span> <span class="n">training_scores</span><span class="p">,</span> <span class="n">validation_scores</span></div>
+
+<div class="viewcode-block" id="predict_on_sliding_windows"><a class="viewcode-back" href="../learning.html#learning.predict_on_sliding_windows">[docs]</a><span class="k">def</span> <span class="nf">predict_on_sliding_windows</span><span class="p">(</span><span class="n">df</span><span class="p">,</span> <span class="n">win_size</span><span class="p">,</span> <span class="n">step</span><span class="p">,</span> <span class="n">model</span><span class="p">,</span> <span class="n">feats</span><span class="p">,</span> <span class="n">target</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Given a regression model, predicts values on a sliding window in a dataframe </span>
+<span class="sd">    and outputs scores, a list of predictions and a list of windows. </span>
+<span class="sd">    Args: </span>
+<span class="sd">        df: The input dataframe.</span>
+<span class="sd">        win_size: The size of the sliding window, as a number of days.</span>
+<span class="sd">        step: The sliding step.</span>
+<span class="sd">        model: The regression model. </span>
+<span class="sd">        feats: A list of names of columns of df indicating the feature variables.</span>
+<span class="sd">        target: The name of a column of df indicating the dependent variable.</span>
+<span class="sd">    Returns:</span>
+<span class="sd">        scores: An array of arrays of scores: one array for each window containing the coefficient of </span>
+<span class="sd">        determination “R squared”, the mean absolute error, the mean error, the mean absolute percentage error, </span>
+<span class="sd">        the mean percentage error.</span>
+<span class="sd">        preds_test: a list of predictions: one list of predicted values for each window.</span>
+<span class="sd">        windows: A list of starting/ending dates: one for each window.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">windows</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="n">preds_test</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="n">scores_list</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">time</span> <span class="ow">in</span> <span class="n">enumerate2</span><span class="p">(</span><span class="nb">min</span><span class="p">(</span><span class="n">df</span><span class="o">.</span><span class="n">index</span><span class="p">),</span> <span class="nb">max</span><span class="p">(</span><span class="n">df</span><span class="o">.</span><span class="n">index</span><span class="p">),</span> <span class="n">step</span><span class="o">=</span><span class="n">step</span><span class="p">):</span>
+        <span class="n">window</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">to_datetime</span><span class="p">(</span><span class="n">time</span><span class="p">)</span> <span class="o">+</span> <span class="n">pd</span><span class="o">.</span><span class="n">Timedelta</span><span class="p">(</span><span class="n">days</span><span class="o">=</span><span class="n">win_size</span><span class="p">)</span>
+        <span class="n">df_test</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">time</span><span class="p">:</span><span class="n">window</span><span class="p">]</span>
+        <span class="k">if</span> <span class="n">df_test</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">&gt;</span><span class="mi">0</span><span class="p">:</span>
+            <span class="n">y_pred</span> <span class="o">=</span> <span class="n">predict</span><span class="p">(</span><span class="n">df_test</span><span class="p">,</span> <span class="n">model</span><span class="p">,</span> <span class="n">feats</span><span class="p">,</span> <span class="n">target</span><span class="p">)</span>
+            <span class="n">r_sq</span><span class="p">,</span> <span class="n">mae</span><span class="p">,</span> <span class="n">me</span><span class="p">,</span> <span class="n">mape</span><span class="p">,</span> <span class="n">mpe</span> <span class="o">=</span> <span class="n">score</span><span class="p">(</span><span class="n">df_test</span><span class="p">[</span><span class="n">target</span><span class="p">]</span><span class="o">.</span><span class="n">values</span><span class="p">,</span> <span class="n">y_pred</span><span class="p">)</span>
+            <span class="n">scores_list</span><span class="o">.</span><span class="n">append</span><span class="p">([</span><span class="n">r_sq</span><span class="p">,</span> <span class="n">mae</span><span class="p">,</span> <span class="n">me</span><span class="p">,</span> <span class="n">mape</span><span class="p">,</span> <span class="n">mpe</span><span class="p">])</span>
+            <span class="n">preds_test</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">y_pred</span><span class="p">)</span>
+            <span class="n">windows</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="n">time</span><span class="p">,</span> <span class="n">window</span><span class="p">))</span>
+    <span class="n">scores</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">scores_list</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">scores</span><span class="p">,</span> <span class="n">preds_test</span><span class="p">,</span> <span class="n">windows</span></div>
+
+<div class="viewcode-block" id="changepoint_scores"><a class="viewcode-back" href="../learning.html#learning.changepoint_scores">[docs]</a><span class="k">def</span> <span class="nf">changepoint_scores</span><span class="p">(</span><span class="n">df</span><span class="p">,</span> <span class="n">feats</span><span class="p">,</span> <span class="n">target</span><span class="p">,</span> <span class="n">d1</span><span class="p">,</span> <span class="n">d2</span><span class="p">,</span> <span class="n">w_train</span><span class="p">,</span> <span class="n">w_val</span><span class="p">,</span> <span class="n">w_test</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Given as input a dataframe and a reference interval where a changepoint may lie, trains a regression model in</span>
+<span class="sd">    a window before the reference interval, validates the model in a window before the reference interval and tests </span>
+<span class="sd">    the model in a window after the reference interval. </span>
+<span class="sd">    Args:</span>
+<span class="sd">        df: The input dataframe.</span>
+<span class="sd">        feats: A list of names of columns of df indicating the feature variables.</span>
+<span class="sd">        target: The name of a column of df indicating the dependent variable.</span>
+<span class="sd">        d1: The first date in the reference interval.</span>
+<span class="sd">        d2: The last date in the reference interval.</span>
+<span class="sd">        w_train: The number of days defining the training set.</span>
+<span class="sd">        w_val: The number of days defining the validation set.</span>
+<span class="sd">        w_test: The number of days defining the test set.</span>
+<span class="sd">    Returns:</span>
+<span class="sd">        y_pred_train: The array of predicted values in the training set.</span>
+<span class="sd">        score_train: An array containing scores for the training set: </span>
+<span class="sd">        the coefficient of determination “R squared”, the mean absolute error, the mean error, </span>
+<span class="sd">        the mean absolute percentage error, the mean percentage error.</span>
+<span class="sd">        y_pred_val: The array of predicted values in the validation set.</span>
+<span class="sd">        score_val: An array containing scores for the validation set: </span>
+<span class="sd">        the coefficient of determination “R squared”, the mean absolute error, the mean error, </span>
+<span class="sd">        the mean absolute percentage error, the mean percentage error.</span>
+<span class="sd">        y_pred_test: The array of predicted values in the test set.</span>
+<span class="sd">        score_test: An array containing scores for the test set: </span>
+<span class="sd">        the coefficient of determination “R squared”, the mean absolute error, the mean error, </span>
+<span class="sd">        the mean absolute percentage error, the mean percentage error.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">d_train_start</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">to_datetime</span><span class="p">(</span><span class="n">d1</span><span class="p">)</span> <span class="o">-</span> <span class="n">pd</span><span class="o">.</span><span class="n">Timedelta</span><span class="p">(</span><span class="n">days</span><span class="o">=</span><span class="n">w_train</span><span class="p">)</span> <span class="o">-</span> <span class="n">pd</span><span class="o">.</span><span class="n">Timedelta</span><span class="p">(</span><span class="n">days</span><span class="o">=</span><span class="n">w_val</span><span class="p">)</span>
+    <span class="n">d_train_stop</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">to_datetime</span><span class="p">(</span><span class="n">d1</span><span class="p">)</span> <span class="o">-</span> <span class="n">pd</span><span class="o">.</span><span class="n">Timedelta</span><span class="p">(</span><span class="n">days</span><span class="o">=</span><span class="n">w_val</span><span class="p">)</span>
+    <span class="n">d_test_stop</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">to_datetime</span><span class="p">(</span><span class="n">d2</span><span class="p">)</span> <span class="o">+</span> <span class="n">pd</span><span class="o">.</span><span class="n">Timedelta</span><span class="p">(</span><span class="n">days</span><span class="o">=</span><span class="n">w_test</span><span class="p">)</span>
+    <span class="n">df_train</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="nb">str</span><span class="p">(</span><span class="n">d_train_start</span><span class="p">):</span><span class="nb">str</span><span class="p">(</span><span class="n">d_train_stop</span><span class="p">)]</span>
+    <span class="n">df_val</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="nb">str</span><span class="p">(</span><span class="n">d_train_stop</span><span class="p">):</span><span class="nb">str</span><span class="p">(</span><span class="n">d1</span><span class="p">)]</span>
+    <span class="n">df_test</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="nb">str</span><span class="p">(</span><span class="n">d2</span><span class="p">):</span><span class="nb">str</span><span class="p">(</span><span class="n">d_test_stop</span><span class="p">)]</span>
+    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">df_train</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span> <span class="ow">and</span> <span class="nb">len</span><span class="p">(</span><span class="n">df_test</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="n">model</span><span class="p">,</span> <span class="n">y_pred_train</span><span class="p">,</span> <span class="n">r_sq_train</span><span class="p">,</span> <span class="n">mae_train</span><span class="p">,</span> <span class="n">me_train</span><span class="p">,</span> <span class="n">mape_train</span><span class="p">,</span> <span class="n">mpe_train</span> <span class="o">=</span> <span class="n">fit_linear_model</span><span class="p">(</span><span class="n">df_train</span><span class="p">,</span> <span class="p">[</span><span class="s1">&#39;irradiance&#39;</span><span class="p">,</span> <span class="s1">&#39;mod_temp&#39;</span><span class="p">],</span> <span class="s1">&#39;power&#39;</span><span class="p">)</span>
+        <span class="n">y_pred_val</span> <span class="o">=</span> <span class="n">predict</span><span class="p">(</span><span class="n">df_val</span><span class="p">,</span> <span class="n">model</span><span class="p">,</span> <span class="n">feats</span><span class="p">,</span> <span class="n">target</span><span class="p">)</span>
+        <span class="n">y_pred_test</span> <span class="o">=</span> <span class="n">predict</span><span class="p">(</span><span class="n">df_test</span><span class="p">,</span> <span class="n">model</span><span class="p">,</span> <span class="n">feats</span><span class="p">,</span> <span class="n">target</span><span class="p">)</span>
+        
+        <span class="n">r_sq_val</span><span class="p">,</span> <span class="n">mae_val</span><span class="p">,</span> <span class="n">me_val</span><span class="p">,</span> <span class="n">mape_val</span><span class="p">,</span> <span class="n">mpe_val</span> <span class="o">=</span> <span class="n">score</span><span class="p">(</span><span class="n">df_val</span><span class="p">[</span><span class="n">target</span><span class="p">]</span><span class="o">.</span><span class="n">values</span><span class="p">,</span> <span class="n">y_pred_val</span><span class="p">)</span>
+        <span class="n">r_sq_test</span><span class="p">,</span> <span class="n">mae_test</span><span class="p">,</span> <span class="n">me_test</span><span class="p">,</span> <span class="n">mape_test</span><span class="p">,</span> <span class="n">mpe_test</span> <span class="o">=</span> <span class="n">score</span><span class="p">(</span><span class="n">df_test</span><span class="p">[</span><span class="n">target</span><span class="p">]</span><span class="o">.</span><span class="n">values</span><span class="p">,</span> <span class="n">y_pred_test</span><span class="p">)</span>
+        <span class="n">score_train</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="o">-</span><span class="n">r_sq_train</span><span class="p">,</span> <span class="n">mae_train</span><span class="p">,</span> <span class="n">me_train</span><span class="p">,</span> <span class="n">mape_train</span><span class="p">,</span> <span class="n">mpe_train</span><span class="p">])</span>
+        <span class="n">score_val</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="o">-</span><span class="n">r_sq_val</span><span class="p">,</span> <span class="n">mae_val</span><span class="p">,</span> <span class="n">me_val</span><span class="p">,</span> <span class="n">mape_val</span><span class="p">,</span> <span class="n">mpe_val</span><span class="p">])</span>
+        <span class="n">score_test</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="o">-</span><span class="n">r_sq_test</span><span class="p">,</span> <span class="n">mae_test</span><span class="p">,</span> <span class="n">me_test</span><span class="p">,</span> <span class="n">mape_test</span><span class="p">,</span> <span class="n">mpe_test</span><span class="p">])</span>
+        <span class="k">return</span> <span class="n">y_pred_train</span><span class="p">,</span> <span class="n">score_train</span><span class="p">,</span> <span class="n">y_pred_val</span><span class="p">,</span> <span class="n">score_val</span><span class="p">,</span> <span class="n">y_pred_test</span><span class="p">,</span> <span class="n">score_test</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="s2">&quot;Either the training set is empty or the test set is empty&quot;</span><span class="p">)</span></div>
+</pre></div>
+
+      </div>
+      <div class="bottomnav" role="navigation" aria-label="bottom navigation">
+      
+        <p>
+        <a class="uplink" href="../index.html">Contents</a>
+        </p>
+
+      </div>
+
+    <div class="footer" role="contentinfo">
+        &#169; Copyright 2021, Ioannis.
+      Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 4.2.0.
+    </div>
+  </body>
+</html>

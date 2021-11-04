@@ -1,0 +1,211 @@
+
+<!DOCTYPE html>
+
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
+    <title>This is the module for Patterns &#8212; Moret  documentation</title>
+    <link rel="stylesheet" type="text/css" href="_static/pygments.css" />
+    <link rel="stylesheet" type="text/css" href="_static/nature.css" />
+    <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
+    <script src="_static/jquery.js"></script>
+    <script src="_static/underscore.js"></script>
+    <script src="_static/doctools.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="This is the module for Learning" href="learning.html" />
+    <link rel="prev" title="This is the module for Preprocessing" href="preprocessing.html" /> 
+  </head><body>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="learning.html" title="This is the module for Learning"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="preprocessing.html" title="This is the module for Preprocessing"
+             accesskey="P">previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="index.html">Moret  documentation</a> &#187;</li>
+        <li class="nav-item nav-item-this"><a href="">This is the module for Patterns</a></li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <section id="module-patterns">
+<span id="this-is-the-module-for-patterns"></span><h1>This is the module for Patterns<a class="headerlink" href="#module-patterns" title="Permalink to this headline">¶</a></h1>
+<dl class="py function">
+<dt class="sig sig-object py" id="patterns.calc_cost">
+<span class="sig-prename descclassname"><span class="pre">patterns.</span></span><span class="sig-name descname"><span class="pre">calc_cost</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">cl1_len</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cl2_len</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">num_cl1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">num_cl2</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/patterns.html#calc_cost"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#patterns.calc_cost" title="Permalink to this definition">¶</a></dt>
+<dd><p>Assign a cost to a pattern based on if the majority of its occurances are observed
+in regions of a time series that are annotated with the same binary label.
+The cost calculation takes into account a possible difference in the total lengths of the segments.</p>
+<dl class="simple">
+<dt>Args:</dt><dd><p>cl1_len: Total length of the time series that belong to the class 1.
+cl2_len: Total length of the time series that belong to the class 2.
+num_cl1: Number of occurances of the pattern in regions that belong to cl1.
+num_cl2: Number of occurances of the pattern in regions that belong to cl2.</p>
+</dd>
+</dl>
+<p>Return: The label name of the region that the pattern is contained in, as well as the normalized number of occurences.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="patterns.calculate_motif_stats">
+<span class="sig-prename descclassname"><span class="pre">patterns.</span></span><span class="sig-name descname"><span class="pre">calculate_motif_stats</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">p</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mask</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">k</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">m</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ez</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">radius</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">segment_labels</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/patterns.html#calculate_motif_stats"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#patterns.calculate_motif_stats" title="Permalink to this definition">¶</a></dt>
+<dd><p>Calculate some useful statistics for the motifs found.</p>
+<dl class="simple">
+<dt>Args:</dt><dd><p>p: A profile object as it is defined in the matrixprofile foundation python library.
+mask: Binary mask used to annotate the time series.
+m: The window size (length of the motif).
+ez: The exclusion zone used.
+radius: The radius that has been used in the experiment.
+segment_labels: List of the two labels that characterize the time series.</p>
+</dd>
+</dl>
+<p>Return: List of the statistics</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="patterns.compute_mp_av">
+<span class="sig-prename descclassname"><span class="pre">patterns.</span></span><span class="sig-name descname"><span class="pre">compute_mp_av</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">mp</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">index</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">m</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">df</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">k</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/patterns.html#compute_mp_av"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#patterns.compute_mp_av" title="Permalink to this definition">¶</a></dt>
+<dd><p>Given a matrix profile, a matrix profile index, the window size and the DataFrame that contains the timeseries.
+Create a matrix profile object and add the corrected matrix profile after applying the complexity av.
+Uses an extended version of the apply_av function from matrixprofile foundation that is compatible with multi-dimensional timeseries.
+The implementation can be found here (<a class="reference external" href="https://github.com/MORE-EU/matrixprofile/blob/master/matrixprofile/transform.py">https://github.com/MORE-EU/matrixprofile/blob/master/matrixprofile/transform.py</a>)</p>
+<dl class="simple">
+<dt>Args:</dt><dd><p>mp: A matrix profile.
+index: The matrix profile index that accompanies the matrix profile.
+window: The subsequence window size.
+ts: The timeseries that was used to calculate the matrix profile.</p>
+</dd>
+<dt>Return:</dt><dd><p>Updated profile with an annotation vector</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="patterns.pattern_loc">
+<span class="sig-prename descclassname"><span class="pre">patterns.</span></span><span class="sig-name descname"><span class="pre">pattern_loc</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">start</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">end</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mask</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">segment_labels</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/patterns.html#pattern_loc"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#patterns.pattern_loc" title="Permalink to this definition">¶</a></dt>
+<dd><p>Considering that a time series is characterized by regions belonging to two different labels.</p>
+<dl class="simple">
+<dt>Args:</dt><dd><p>start: The starting index of the pattern.
+end: The ending index of the pattern. 
+mask: Binary mask used to annotate the time series.
+segment_labels: List of the two labels that characterize the time series.</p>
+</dd>
+</dl>
+<p>Return: The label name of the region that the pattern is contained in.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="patterns.pick_subspace_columns">
+<span class="sig-prename descclassname"><span class="pre">patterns.</span></span><span class="sig-name descname"><span class="pre">pick_subspace_columns</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">df</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mps</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">idx</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">k</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">m</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">include</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/patterns.html#pick_subspace_columns"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#patterns.pick_subspace_columns" title="Permalink to this definition">¶</a></dt>
+<dd><p>Given a multi-dimensional time series as a pandas Dataframe, keep only the columns that have been used for the creation of the k-dimensional matrix profile.</p>
+<dl>
+<dt>Args:</dt><dd><p>df: The DataFrame that contains the multidimensional time series.
+mps: The multi-dimensional matrix profile. Each row of the array corresponds to each matrix profile for a given dimension</p>
+<blockquote>
+<div><p>(i.e., the first row is the 1-D matrix profile and the second row is the 2-D matrix profile).</p>
+</div></blockquote>
+<p>idx: The multi-dimensional matrix profile index where each row of the array corresponds to each matrix profile index for a given dimension.
+k: If mps and idx are one-dimensional k can be used to specify the given dimension of the matrix profile. The default value specifies the 1-D matrix profile.</p>
+<blockquote>
+<div><p>If mps and idx are multi-dimensional, k is ignored.</p>
+</div></blockquote>
+<p>m: The subsequence window size. Should be the same as the one used to create the multidimensional matrix profile that is the input.
+include: A list of the column names that must be included in the constrained multidimensional motif search.</p>
+</dd>
+<dt>Return:</dt><dd><p>The list of subspace columns</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="patterns.to_mpf">
+<span class="sig-prename descclassname"><span class="pre">patterns.</span></span><span class="sig-name descname"><span class="pre">to_mpf</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">mp</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">index</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">window</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ts</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/patterns.html#to_mpf"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#patterns.to_mpf" title="Permalink to this definition">¶</a></dt>
+<dd><p>Using a matrix profile, a matrix profile index, the window size and the timeseries used to calculate the previous, create a matrix profile object that
+is compatible with the matrix profile foundation library (<a class="reference external" href="https://github.com/matrix-profile-foundation/matrixprofile">https://github.com/matrix-profile-foundation/matrixprofile</a>). This is useful for cases where another               library was used to generate the matrix profile.</p>
+<dl class="simple">
+<dt>Args:</dt><dd><p>mp: A matrix profile.
+index: The matrix profile index that accompanies the matrix profile.
+window: The subsequence window size.
+ts: The timeseries that was used to calculate the matrix profile.</p>
+</dd>
+<dt>Return: </dt><dd><p>The Matrixprofile structure</p>
+</dd>
+</dl>
+</dd></dl>
+
+</section>
+
+
+            <div class="clearer"></div>
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="preprocessing.html"
+                        title="previous chapter">This is the module for Preprocessing</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="learning.html"
+                        title="next chapter">This is the module for Learning</a></p>
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="_sources/patterns.rst.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"/>
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script>$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="learning.html" title="This is the module for Learning"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="preprocessing.html" title="This is the module for Preprocessing"
+             >previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="index.html">Moret  documentation</a> &#187;</li>
+        <li class="nav-item nav-item-this"><a href="">This is the module for Patterns</a></li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+        &#169; Copyright 2021, Ioannis.
+      Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 4.2.0.
+    </div>
+  </body>
+</html>

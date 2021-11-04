@@ -1,0 +1,300 @@
+
+<!DOCTYPE html>
+
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>preprocessing &#8212; Moret  documentation</title>
+    <link rel="stylesheet" type="text/css" href="../_static/pygments.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/haiku.css" />
+    <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
+    <script src="../_static/jquery.js"></script>
+    <script src="../_static/underscore.js"></script>
+    <script src="../_static/doctools.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" /> 
+  </head><body>
+      <div class="header" role="banner"><h1 class="heading"><a href="../index.html">
+          <span>Moret  documentation</span></a></h1>
+        <h2 class="heading"><span>preprocessing</span></h2>
+      </div>
+      <div class="topnav" role="navigation" aria-label="top navigation">
+      
+        <p>
+        <a class="uplink" href="../index.html">Contents</a>
+        </p>
+
+      </div>
+      <div class="content" role="main">
+        
+        
+  <h1>Source code for preprocessing</h1><div class="highlight"><pre>
+<span></span><span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">from</span> <span class="nn">sklearn.preprocessing</span> <span class="kn">import</span> <span class="n">MinMaxScaler</span>
+
+<div class="viewcode-block" id="enumerate2"><a class="viewcode-back" href="../preprocessing.html#preprocessing.enumerate2">[docs]</a><span class="k">def</span> <span class="nf">enumerate2</span><span class="p">(</span><span class="n">start</span><span class="p">,</span> <span class="n">end</span><span class="p">,</span> <span class="n">step</span><span class="o">=</span><span class="mi">1</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot; </span>
+<span class="sd">    </span>
+<span class="sd">        </span>
+<span class="sd">    Args:</span>
+<span class="sd">        start: starting point</span>
+<span class="sd">        end: ending point    .</span>
+<span class="sd">        step: step of the process                   </span>
+<span class="sd">        </span>
+<span class="sd">        </span>
+<span class="sd">    Return: </span>
+<span class="sd">        The interpolated DataFrame/TimeSeries</span>
+<span class="sd">     &quot;&quot;&quot;</span>
+    <span class="n">i</span><span class="o">=</span><span class="mi">0</span>
+    <span class="k">while</span> <span class="n">start</span> <span class="o">&lt;</span> <span class="n">pd</span><span class="o">.</span><span class="n">to_datetime</span><span class="p">(</span><span class="n">end</span><span class="p">):</span>
+        <span class="k">yield</span> <span class="p">(</span><span class="n">i</span><span class="p">,</span> <span class="n">start</span><span class="p">)</span>
+        <span class="n">start</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">to_datetime</span><span class="p">(</span><span class="n">start</span><span class="p">)</span> <span class="o">+</span> <span class="n">pd</span><span class="o">.</span><span class="n">Timedelta</span><span class="p">(</span><span class="n">days</span><span class="o">=</span><span class="n">step</span><span class="p">)</span>
+        <span class="n">i</span> <span class="o">+=</span> <span class="mi">1</span></div>
+
+<div class="viewcode-block" id="change_granularity"><a class="viewcode-back" href="../preprocessing.html#preprocessing.change_granularity">[docs]</a><span class="k">def</span> <span class="nf">change_granularity</span><span class="p">(</span><span class="n">df</span><span class="p">,</span><span class="n">granularity</span><span class="o">=</span><span class="s1">&#39;30s&#39;</span><span class="p">,</span><span class="n">size</span><span class="o">=</span><span class="mi">10</span><span class="o">**</span><span class="mi">7</span><span class="p">,</span><span class="n">chunk</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span> 
+    <span class="sd">&quot;&quot;&quot; </span>
+<span class="sd">    Changing the offset of a TimeSeries. </span>
+<span class="sd">    We do this procedure by using chunk_interpolate. </span>
+<span class="sd">    We divide our TimeSeries into pieces in order to interpolate them.</span>
+<span class="sd">        </span>
+<span class="sd">    Args:</span>
+<span class="sd">        df: Date/Time DataFrame. </span>
+<span class="sd">        size: The size/chunks we want to divide our /DataFrame according to the global index of the set. The Default price is 10 million.       .</span>
+<span class="sd">        granularity: The offset user wants to resample the Time Series                  </span>
+<span class="sd">        chunk: If set True, It applies the chunk_interpolation</span>
+<span class="sd">    </span>
+<span class="sd">    Return: </span>
+<span class="sd">        The interpolated DataFrame/TimeSeries</span>
+<span class="sd">     &quot;&quot;&quot;</span>
+
+    <span class="n">df</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">resample</span><span class="p">(</span><span class="n">granularity</span><span class="p">)</span><span class="o">.</span><span class="n">mean</span><span class="p">()</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Resample Complete&#39;</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">chunk</span><span class="o">==</span><span class="kc">True</span><span class="p">:</span> <span class="c1">#Getting rid of NaN occurances.</span>
+        <span class="n">df</span><span class="o">=</span><span class="n">chunk_interpolate</span><span class="p">(</span><span class="n">df</span><span class="p">,</span><span class="n">size</span><span class="o">=</span><span class="n">size</span><span class="p">,</span><span class="n">interpolate</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">method</span><span class="o">=</span><span class="s2">&quot;linear&quot;</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span><span class="n">limit_direction</span><span class="o">=</span><span class="s2">&quot;both&quot;</span><span class="p">,</span> <span class="n">limit</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Interpolate Complete&#39;</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">df</span></div>
+  
+  
+<div class="viewcode-block" id="filter_col"><a class="viewcode-back" href="../preprocessing.html#preprocessing.filter_col">[docs]</a><span class="k">def</span> <span class="nf">filter_col</span><span class="p">(</span><span class="n">df</span><span class="p">,</span> <span class="n">col</span><span class="p">,</span> <span class="n">less_than</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">bigger_than</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span> 
+    <span class="sd">&quot;&quot;&quot; </span>
+<span class="sd">    Remove rows of the dataframe that they are under, over/both from a specific/two different input price/prices.</span>
+<span class="sd">        </span>
+<span class="sd">    Args:</span>
+<span class="sd">        df: Date/Time DataFrame. </span>
+<span class="sd">        col: The desired column to work on our DataFrame. </span>
+<span class="sd">        less_than: Filtering the column dropping values below that price.</span>
+<span class="sd">        bigger_than: Filtering the column dropping values above that price.</span>
+<span class="sd">    </span>
+<span class="sd">    Return: </span>
+<span class="sd">        The Filtrated TimeSeries/DataFrame</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span><span class="p">(</span><span class="n">less_than</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">):</span>
+        <span class="n">df</span><span class="o">=</span><span class="n">df</span><span class="o">.</span><span class="n">drop</span><span class="p">(</span><span class="n">df</span><span class="p">[</span><span class="n">df</span><span class="o">.</span><span class="n">iloc</span><span class="p">[:,</span><span class="n">col</span><span class="p">]</span> <span class="o">&lt;</span> <span class="n">less_than</span><span class="p">]</span><span class="o">.</span><span class="n">index</span><span class="p">)</span>
+    <span class="k">if</span><span class="p">(</span><span class="n">bigger_than</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">):</span>
+        <span class="n">df</span><span class="o">=</span><span class="n">df</span><span class="o">.</span><span class="n">drop</span><span class="p">(</span><span class="n">df</span><span class="p">[</span><span class="n">df</span><span class="o">.</span><span class="n">iloc</span><span class="p">[:,</span><span class="n">col</span><span class="p">]</span> <span class="o">&gt;</span> <span class="n">bigger_than</span><span class="p">]</span><span class="o">.</span><span class="n">index</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Filter Complete&#39;</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">df</span></div>
+
+
+<div class="viewcode-block" id="filter_dates"><a class="viewcode-back" href="../preprocessing.html#preprocessing.filter_dates">[docs]</a><span class="k">def</span> <span class="nf">filter_dates</span><span class="p">(</span><span class="n">df</span><span class="p">,</span> <span class="n">start</span><span class="p">,</span> <span class="n">end</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot; </span>
+<span class="sd">    Remove rows of the dataframe that are not in the [start, end] interval.</span>
+<span class="sd">    </span>
+<span class="sd">    Args:</span>
+<span class="sd">        df:DataFrame that has a datetime index.</span>
+<span class="sd">        start: Date that signifies the start of the interval.</span>
+<span class="sd">        end: Date that signifies the end of the interval.</span>
+<span class="sd">   </span>
+<span class="sd">   Returns:</span>
+<span class="sd">        The Filtrared TimeSeries/DataFrame</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">date_range</span> <span class="o">=</span> <span class="p">(</span><span class="n">df</span><span class="o">.</span><span class="n">index</span> <span class="o">&gt;=</span> <span class="n">start</span><span class="p">)</span> <span class="o">&amp;</span> <span class="p">(</span><span class="n">df</span><span class="o">.</span><span class="n">index</span> <span class="o">&lt;=</span> <span class="n">end</span><span class="p">)</span>
+    <span class="n">df</span> <span class="o">=</span> <span class="n">df</span><span class="p">[</span><span class="n">date_range</span><span class="p">]</span>
+    <span class="k">return</span> <span class="n">df</span></div>
+
+<div class="viewcode-block" id="normalize"><a class="viewcode-back" href="../preprocessing.html#preprocessing.normalize">[docs]</a><span class="k">def</span> <span class="nf">normalize</span><span class="p">(</span><span class="n">df</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot; </span>
+<span class="sd">    Args:</span>
+<span class="sd">        df: Date/Time DataFrame or any DataFrame given with a specific column to Normalize. </span>
+<span class="sd">   </span>
+<span class="sd">    Return:</span>
+<span class="sd">        Normalized Array</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">values</span><span class="o">=</span><span class="p">[]</span>
+        <span class="c1"># prepare data for normalization</span>
+    <span class="n">values</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">values</span>
+    <span class="n">values</span> <span class="o">=</span> <span class="n">values</span><span class="o">.</span><span class="n">reshape</span><span class="p">((</span><span class="nb">len</span><span class="p">(</span><span class="n">values</span><span class="p">),</span> <span class="mi">1</span><span class="p">))</span>
+        <span class="c1"># train the normalization</span>
+    <span class="n">scaler</span> <span class="o">=</span> <span class="n">MinMaxScaler</span><span class="p">(</span><span class="n">feature_range</span><span class="o">=</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">))</span>
+    <span class="n">scaler</span> <span class="o">=</span> <span class="n">scaler</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">values</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Min: </span><span class="si">%f</span><span class="s1">, Max: </span><span class="si">%f</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="n">scaler</span><span class="o">.</span><span class="n">data_min_</span><span class="p">,</span> <span class="n">scaler</span><span class="o">.</span><span class="n">data_max_</span><span class="p">))</span>
+        <span class="c1"># normalize the dataset and print the first 5 rows</span>
+    <span class="n">normalized</span> <span class="o">=</span> <span class="n">scaler</span><span class="o">.</span><span class="n">transform</span><span class="p">(</span><span class="n">values</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">normalized</span></div>
+
+
+<div class="viewcode-block" id="add_noise_to_series"><a class="viewcode-back" href="../preprocessing.html#preprocessing.add_noise_to_series">[docs]</a><span class="k">def</span> <span class="nf">add_noise_to_series</span><span class="p">(</span><span class="n">series</span><span class="p">,</span> <span class="n">noise_max</span><span class="o">=</span><span class="mf">0.00009</span><span class="p">):</span>
+    
+    <span class="sd">&quot;&quot;&quot; </span>
+<span class="sd">    Add uniform noise to series.</span>
+<span class="sd">    </span>
+<span class="sd">    Args:</span>
+<span class="sd">        series: The time series to be added noise.</span>
+<span class="sd">        noise_max: The upper limit of the amount of noise that can be added to a time series point</span>
+<span class="sd">    </span>
+<span class="sd">    Return: </span>
+<span class="sd">        DataFrame with noise</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">core</span><span class="o">.</span><span class="n">is_array_like</span><span class="p">(</span><span class="n">series</span><span class="p">):</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s1">&#39;series is not array like!&#39;</span><span class="p">)</span>
+
+    <span class="n">temp</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">copy</span><span class="p">(</span><span class="n">core</span><span class="o">.</span><span class="n">to_np_array</span><span class="p">(</span><span class="n">series</span><span class="p">))</span>
+    <span class="n">noise</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">uniform</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">noise_max</span><span class="p">,</span> <span class="n">size</span><span class="o">=</span><span class="nb">len</span><span class="p">(</span><span class="n">temp</span><span class="p">))</span>
+    <span class="n">temp</span> <span class="o">=</span> <span class="n">temp</span> <span class="o">+</span> <span class="n">noise</span>
+
+    <span class="k">return</span> <span class="n">temp</span></div>
+
+
+<div class="viewcode-block" id="add_noise_to_series_md"><a class="viewcode-back" href="../preprocessing.html#preprocessing.add_noise_to_series_md">[docs]</a><span class="k">def</span> <span class="nf">add_noise_to_series_md</span><span class="p">(</span><span class="n">df</span><span class="p">,</span> <span class="n">noise_max</span><span class="o">=</span><span class="mf">0.00009</span><span class="p">):</span>
+    
+    <span class="sd">&quot;&quot;&quot; </span>
+<span class="sd">    Add uniform noise to a multidimensional time series that is given as a pandas DataFrame.</span>
+<span class="sd">    </span>
+<span class="sd">    Args:</span>
+<span class="sd">        df: The DataFrame that contains the multidimensional time series.</span>
+<span class="sd">        noise_max: The upper limit of the amount of noise that can be added to a time series point.</span>
+<span class="sd">   </span>
+<span class="sd">    Return:</span>
+<span class="sd">        The DataFrame with noise to all the columns</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    
+    <span class="k">for</span> <span class="n">col</span> <span class="ow">in</span> <span class="n">df</span><span class="o">.</span><span class="n">columns</span><span class="p">:</span>
+        <span class="n">df</span><span class="p">[</span><span class="n">col</span><span class="p">]</span> <span class="o">=</span> <span class="n">add_noise_to_series</span><span class="p">(</span><span class="n">df</span><span class="p">[</span><span class="n">col</span><span class="p">]</span><span class="o">.</span><span class="n">values</span><span class="p">,</span> <span class="n">noise_max</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">df</span></div>
+
+
+<div class="viewcode-block" id="filter_df"><a class="viewcode-back" href="../preprocessing.html#preprocessing.filter_df">[docs]</a><span class="k">def</span> <span class="nf">filter_df</span><span class="p">(</span><span class="n">df</span><span class="p">,</span> <span class="n">filter_dict</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot; </span>
+<span class="sd">    Creates a filtered DataFrame with multiple columns.</span>
+<span class="sd">        </span>
+<span class="sd">    Args:</span>
+<span class="sd">        df: Date/Time DataFrame or any Given DataFrame.</span>
+<span class="sd">        filter_dict: A dictionary of columns user wants to filter</span>
+<span class="sd">    </span>
+<span class="sd">    Return: </span>
+<span class="sd">        Filtered DataFrame</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">mask</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">(</span><span class="n">df</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">bool</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">name</span><span class="p">,</span> <span class="n">item</span> <span class="ow">in</span> <span class="n">filter_dict</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+        <span class="n">val</span><span class="p">,</span> <span class="n">perc</span> <span class="o">=</span> <span class="n">item</span>
+        <span class="k">if</span> <span class="n">val</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">mask</span> <span class="o">=</span> <span class="n">mask</span> <span class="o">&amp;</span> <span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">df</span><span class="p">[</span><span class="n">name</span><span class="p">]</span><span class="o">.</span><span class="n">values</span> <span class="o">-</span> <span class="n">val</span><span class="p">)</span> <span class="o">&lt;</span> <span class="n">val</span> <span class="o">*</span> <span class="n">perc</span><span class="p">)</span>
+            
+    <span class="n">df</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="o">~</span><span class="n">mask</span><span class="p">,</span> <span class="n">df</span><span class="o">.</span><span class="n">columns</span> <span class="o">!=</span> <span class="n">df</span><span class="o">.</span><span class="n">index</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">NaN</span>
+    <span class="n">f_df</span> <span class="o">=</span> <span class="n">df</span>
+    <span class="nb">print</span><span class="p">(</span><span class="n">f_df</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">f_df</span></div>
+
+<div class="viewcode-block" id="chunker"><a class="viewcode-back" href="../preprocessing.html#preprocessing.chunker">[docs]</a><span class="k">def</span> <span class="nf">chunker</span><span class="p">(</span><span class="n">seq</span><span class="p">,</span> <span class="n">size</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Dividing a file/DataFrame etc into pieces for better hadling of RAM. </span>
+<span class="sd">    </span>
+<span class="sd">    Args:</span>
+<span class="sd">        seq: Sequence, Folder, Date/Time DataFrame or any Given DataFrame.</span>
+<span class="sd">        size: The size/chunks we want to divide our Seq/Folder/DataFrame.</span>
+<span class="sd">    </span>
+<span class="sd">    Return:</span>
+<span class="sd">        The divided groups</span>
+<span class="sd">        </span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="p">(</span><span class="n">seq</span><span class="p">[</span><span class="n">pos</span><span class="p">:</span><span class="n">pos</span> <span class="o">+</span> <span class="n">size</span><span class="p">]</span> <span class="k">for</span> <span class="n">pos</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">seq</span><span class="p">),</span> <span class="n">size</span><span class="p">))</span></div>
+
+
+<div class="viewcode-block" id="chunk_interpolate"><a class="viewcode-back" href="../preprocessing.html#preprocessing.chunk_interpolate">[docs]</a><span class="k">def</span> <span class="nf">chunk_interpolate</span><span class="p">(</span><span class="n">df</span><span class="p">,</span><span class="n">size</span><span class="o">=</span><span class="mi">10</span><span class="o">**</span><span class="mi">6</span><span class="p">,</span><span class="n">interpolate</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">method</span><span class="o">=</span><span class="s2">&quot;linear&quot;</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span><span class="n">limit_direction</span><span class="o">=</span><span class="s2">&quot;both&quot;</span><span class="p">,</span> <span class="n">limit</span><span class="o">=</span><span class="mi">1</span><span class="p">):</span>
+
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    After Chunker makes the pieces according to index, we Interpolate them with *args* of pandas.interpolate() and then we Merge them back together.</span>
+<span class="sd">    This step is crucial for the complete data interpolation without RAM problems especially in large DataSets.</span>
+<span class="sd">    </span>
+<span class="sd">    Args:</span>
+<span class="sd">        df: Date/Time DataFrame or any Given DataFrame.</span>
+<span class="sd">        size: The size/chunks we want to divide our /DataFrame according to the global index of the set. The Default price is 10 million.</span>
+<span class="sd">    </span>
+<span class="sd">    Return:</span>
+<span class="sd">        The Interpolated DataFrame</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    
+    <span class="n">group</span><span class="o">=</span><span class="p">[]</span>
+    <span class="k">for</span> <span class="n">g</span> <span class="ow">in</span> <span class="n">chunker</span><span class="p">(</span><span class="n">df</span><span class="p">,</span><span class="n">size</span><span class="p">):</span>
+        <span class="n">group</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">g</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Groupping Complete&#39;</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">group</span><span class="p">)):</span>
+            <span class="n">group</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">.</span><span class="n">interpolate</span><span class="p">(</span><span class="n">method</span><span class="o">=</span><span class="n">method</span><span class="p">,</span><span class="n">axis</span><span class="o">=</span><span class="n">axis</span><span class="p">,</span><span class="n">limit_direction</span> <span class="o">=</span> <span class="n">limit_direction</span><span class="p">,</span> <span class="n">limit</span> <span class="o">=</span> <span class="n">limit</span><span class="p">,</span> <span class="n">inplace</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+            <span class="n">df_int</span><span class="o">=</span><span class="n">pd</span><span class="o">.</span><span class="n">concat</span><span class="p">(</span><span class="n">group</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">group</span><span class="p">)))</span>
+            <span class="n">df_int</span><span class="o">=</span><span class="n">pd</span><span class="o">.</span><span class="n">concat</span><span class="p">(</span><span class="n">group</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">group</span><span class="p">)))</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Chunk Interpolate Done&#39;</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">df_int</span></div>
+
+
+<div class="viewcode-block" id="is_stable"><a class="viewcode-back" href="../preprocessing.html#preprocessing.is_stable">[docs]</a><span class="k">def</span> <span class="nf">is_stable</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="n">epsilon</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Args:</span>
+<span class="sd">        epsilon: A small value in order to avoid dividing with Zero.</span>
+<span class="sd">    </span>
+<span class="sd">    Return: </span>
+<span class="sd">        A boolean vector from the division of variance with mean of a column.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c1">#implemented using the index of dispersion (or Fano factor)</span>
+    <span class="n">dis</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">var</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">args</span><span class="p">),</span><span class="n">axis</span> <span class="o">=</span> <span class="mi">1</span><span class="p">)</span><span class="o">/</span><span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">args</span><span class="p">),</span><span class="n">axis</span> <span class="o">=</span> <span class="mi">1</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">all</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">logical_or</span><span class="p">((</span><span class="n">dis</span> <span class="o">&lt;</span> <span class="n">epsilon</span><span class="p">),</span><span class="n">np</span><span class="o">.</span><span class="n">isnan</span><span class="p">(</span><span class="n">dis</span><span class="p">)))</span></div>
+
+
+<div class="viewcode-block" id="filter_dispersed"><a class="viewcode-back" href="../preprocessing.html#preprocessing.filter_dispersed">[docs]</a><span class="k">def</span> <span class="nf">filter_dispersed</span><span class="p">(</span><span class="n">df</span><span class="p">,</span> <span class="n">window</span><span class="p">,</span> <span class="n">eps</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    We are looking at windows of consecutive row and calculate the mean and variance. For each window if the index of disperse or given column is in the given threshhold</span>
+<span class="sd">    then the last row will remain in the data frame.</span>
+<span class="sd">    </span>
+<span class="sd">    Args:</span>
+<span class="sd">        df: Date/Time DataFrame or any Given DataFrame.</span>
+<span class="sd">        window: A small value in order to avoid dividing with Zero.</span>
+<span class="sd">        eps: A small value in order to avoid dividing with Zero (See is_stable)</span>
+<span class="sd">    </span>
+<span class="sd">    Return: The Filtered DataFrame</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">df_tmp</span> <span class="o">=</span> <span class="n">df</span><span class="p">[</span><span class="n">rolling_apply</span><span class="p">(</span><span class="n">is_stable</span><span class="p">,</span> <span class="n">window</span><span class="p">,</span> <span class="o">*</span><span class="n">df</span><span class="o">.</span><span class="n">transpose</span><span class="p">()</span><span class="o">.</span><span class="n">values</span><span class="p">,</span> <span class="n">epsilon</span><span class="o">=</span> <span class="n">eps</span><span class="p">)]</span>
+    <span class="k">return</span> <span class="n">df_tmp</span><span class="p">[</span><span class="n">window</span><span class="p">:]</span></div>
+  
+  
+<div class="viewcode-block" id="scale_df"><a class="viewcode-back" href="../preprocessing.html#preprocessing.scale_df">[docs]</a><span class="k">def</span> <span class="nf">scale_df</span><span class="p">(</span><span class="n">df</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot; </span>
+<span class="sd">    Scale each column of a dataframe to the [0, 1] range performing the min max scaling</span>
+<span class="sd">    </span>
+<span class="sd">    Args:</span>
+<span class="sd">        df: The DataFrame to be scaled.</span>
+<span class="sd">    </span>
+<span class="sd">    Return: Scaled DataFrame</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">min_max_scaler</span> <span class="o">=</span> <span class="n">MinMaxScaler</span><span class="p">()</span>
+    <span class="n">df</span><span class="p">[</span><span class="n">df</span><span class="o">.</span><span class="n">columns</span><span class="p">]</span> <span class="o">=</span> <span class="n">min_max_scaler</span><span class="o">.</span><span class="n">fit_transform</span><span class="p">(</span><span class="n">df</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">df</span></div>
+</pre></div>
+
+      </div>
+      <div class="bottomnav" role="navigation" aria-label="bottom navigation">
+      
+        <p>
+        <a class="uplink" href="../index.html">Contents</a>
+        </p>
+
+      </div>
+
+    <div class="footer" role="contentinfo">
+        &#169; Copyright 2021, Ioannis.
+      Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 4.2.0.
+    </div>
+  </body>
+</html>

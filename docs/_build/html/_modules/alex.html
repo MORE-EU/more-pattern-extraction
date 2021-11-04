@@ -1,0 +1,523 @@
+
+<!DOCTYPE html>
+
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>alex &#8212; Moret  documentation</title>
+    <link rel="stylesheet" type="text/css" href="../_static/pygments.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/haiku.css" />
+    <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
+    <script src="../_static/jquery.js"></script>
+    <script src="../_static/underscore.js"></script>
+    <script src="../_static/doctools.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" /> 
+  </head><body>
+      <div class="header" role="banner"><h1 class="heading"><a href="../index.html">
+          <span>Moret  documentation</span></a></h1>
+        <h2 class="heading"><span>alex</span></h2>
+      </div>
+      <div class="topnav" role="navigation" aria-label="top navigation">
+      
+        <p>
+        <a class="uplink" href="../index.html">Contents</a>
+        </p>
+
+      </div>
+      <div class="content" role="main">
+        
+        
+  <h1>Source code for alex</h1><div class="highlight"><pre>
+<span></span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">Patterns Tools</span>
+<span class="sd">&quot;&quot;&quot;</span>
+<div class="viewcode-block" id="Patterns"><a class="viewcode-back" href="../patterns.html#alex.Patterns">[docs]</a><span class="k">class</span> <span class="nc">Patterns</span><span class="p">:</span>
+    
+    <span class="sd">&quot;&quot;&quot; a class for pattern detection tools</span>
+<span class="sd">    &quot;&quot;&quot;</span></div>
+
+
+<div class="viewcode-block" id="create_mp"><a class="viewcode-back" href="../patterns.html#alex.create_mp">[docs]</a><span class="k">def</span> <span class="nf">create_mp</span><span class="p">(</span><span class="n">df</span><span class="p">,</span> <span class="n">motif_len</span><span class="p">,</span> <span class="n">column</span><span class="p">,</span><span class="n">path</span><span class="p">,</span><span class="n">dask</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot; </span>
+<span class="sd">   Create and Save a univariate/multidimensional matrix profile as a pair of npz files. Input is based on the output of (https://stumpy.readthedocs.io/en/latest/api.html#mstump)</span>
+<span class="sd">    </span>
+<span class="sd">   Args:</span>
+<span class="sd">      df: The DataFrame that contains the multidimensional time series. </span>
+<span class="sd">      motif_len: The subsequence window size. </span>
+<span class="sd">      columns: A list of the column indexes that are included in the comptutation univariate/multidimensional profile.</span>
+<span class="sd">      path: Path of the directory where the file will be saved.</span>
+<span class="sd">      dask: A Dask Distributed client that is connected to a Dask scheduler and Dask workers</span>
+<span class="sd">    </span>
+<span class="sd">   Return: </span>
+<span class="sd">       Matrix profile distances, matrix profile indexes</span>
+<span class="sd">   &quot;&quot;&quot;</span>
+   
+    <span class="n">column1</span><span class="o">=</span><span class="nb">str</span><span class="p">(</span><span class="n">column</span><span class="p">)</span>
+    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">column1</span><span class="p">)</span><span class="o">&lt;</span><span class="mi">2</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">dask</span><span class="o">==</span><span class="kc">True</span><span class="p">:</span>
+            <span class="kn">from</span> <span class="nn">dask.distributed</span> <span class="kn">import</span> <span class="n">Client</span><span class="p">,</span> <span class="n">LocalCluster</span>
+            <span class="k">with</span> <span class="n">Client</span><span class="p">(</span><span class="n">scheduler_port</span><span class="o">=</span><span class="mi">8782</span><span class="p">,</span> <span class="n">dashboard_address</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">processes</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">n_workers</span><span class="o">=</span><span class="mi">4</span><span class="p">,</span> <span class="n">threads_per_worker</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">memory_limit</span><span class="o">=</span><span class="s1">&#39;50GB&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">dask_client</span><span class="p">:</span>
+                <span class="n">mps</span><span class="o">=</span><span class="n">stumped</span><span class="p">(</span><span class="n">dask_client</span><span class="p">,</span> <span class="n">df</span><span class="o">.</span><span class="n">iloc</span><span class="p">[:,</span><span class="n">column</span><span class="p">],</span> <span class="n">motif_len</span><span class="p">)</span><span class="c1"># Note that a dask client is needed</span>
+                <span class="k">if</span><span class="p">(</span><span class="n">path</span><span class="p">):</span>
+                    <span class="n">np</span><span class="o">.</span><span class="n">savez_compressed</span><span class="p">(</span><span class="n">path</span><span class="p">,</span><span class="n">mp</span><span class="o">=</span><span class="n">mps</span><span class="p">[:,</span><span class="mi">0</span><span class="p">],</span><span class="n">mpi</span><span class="o">=</span><span class="n">mps</span><span class="p">[:,</span><span class="mi">1</span><span class="p">]</span> <span class="p">)</span>
+                <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Univariate with Dask&#39;</span><span class="p">)</span>
+                <span class="k">return</span> <span class="n">mps</span><span class="p">[:,</span><span class="mi">0</span><span class="p">],</span><span class="n">mps</span><span class="p">[:,</span><span class="mi">1</span><span class="p">]</span>
+        
+        <span class="n">mps</span> <span class="o">=</span> <span class="n">stump</span><span class="p">(</span><span class="n">df</span><span class="o">.</span><span class="n">iloc</span><span class="p">[:,</span><span class="n">column</span><span class="p">],</span> <span class="n">motif_len</span><span class="p">)</span>
+        <span class="k">if</span><span class="p">(</span><span class="n">path</span><span class="p">):</span>
+            <span class="n">np</span><span class="o">.</span><span class="n">savez_compressed</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="n">mp</span><span class="o">=</span><span class="n">mps</span><span class="p">[:,</span><span class="mi">0</span><span class="p">],</span><span class="n">mpi</span><span class="o">=</span><span class="n">mps</span><span class="p">[:,</span><span class="mi">1</span><span class="p">])</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Uvivariate without Dask&#39;</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">mps</span><span class="p">[:,</span><span class="mi">0</span><span class="p">],</span><span class="n">mps</span><span class="p">[:,</span><span class="mi">1</span><span class="p">]</span>
+
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">dask</span><span class="o">==</span><span class="kc">True</span><span class="p">:</span>
+            <span class="kn">from</span> <span class="nn">dask.distributed</span> <span class="kn">import</span> <span class="n">Client</span><span class="p">,</span> <span class="n">LocalCluster</span>
+            <span class="k">with</span> <span class="n">Client</span><span class="p">(</span><span class="n">scheduler_port</span><span class="o">=</span><span class="mi">8782</span><span class="p">,</span> <span class="n">dashboard_address</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">processes</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">n_workers</span><span class="o">=</span><span class="mi">4</span><span class="p">,</span> <span class="n">threads_per_worker</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">memory_limit</span><span class="o">=</span><span class="s1">&#39;50GB&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">dask_client</span><span class="p">:</span>
+                <span class="n">mps</span><span class="p">,</span><span class="n">indices</span> <span class="o">=</span> <span class="n">mstumped</span><span class="p">(</span><span class="n">dask_client</span><span class="p">,</span> <span class="n">df</span><span class="o">.</span><span class="n">iloc</span><span class="p">[:,</span><span class="n">column</span><span class="p">],</span> <span class="n">motif_len</span><span class="p">)</span>  <span class="c1"># Note that a dask client is needed</span>
+                <span class="k">if</span><span class="p">(</span><span class="n">path</span><span class="p">):</span>
+                    <span class="n">np</span><span class="o">.</span><span class="n">savez_compressed</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="n">mp</span><span class="o">=</span><span class="n">mps</span><span class="p">,</span> <span class="n">mpi</span><span class="o">=</span><span class="n">indices</span><span class="p">)</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Multivariate with Dask&#39;</span><span class="p">)</span>
+            <span class="k">return</span> <span class="n">mps</span><span class="p">,</span> <span class="n">indices</span>
+        
+        <span class="n">mps</span><span class="p">,</span><span class="n">indices</span> <span class="o">=</span> <span class="n">mstump</span><span class="p">(</span><span class="n">df</span><span class="o">.</span><span class="n">iloc</span><span class="p">[:,</span><span class="n">column</span><span class="p">],</span> <span class="n">motif_len</span><span class="p">)</span> 
+        <span class="k">if</span><span class="p">(</span><span class="n">path</span><span class="p">):</span>
+            <span class="n">np</span><span class="o">.</span><span class="n">savez_compressed</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="n">mp</span><span class="o">=</span><span class="n">mps</span><span class="p">,</span> <span class="n">mpi</span><span class="o">=</span><span class="n">indices</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Multivariate without Dask&#39;</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">mps</span><span class="p">,</span> <span class="n">indices</span></div>
+
+      
+<div class="viewcode-block" id="load_mp"><a class="viewcode-back" href="../patterns.html#alex.load_mp">[docs]</a><span class="k">def</span> <span class="nf">load_mp</span><span class="p">(</span><span class="n">path</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Load the Univariate/Multivariate Matrix profile which was saved from Create_mp in a .npz file.</span>
+<span class="sd">     </span>
+<span class="sd">    Args:</span>
+<span class="sd">       path: Path of the directory where the file is saved.</span>
+<span class="sd">           </span>
+<span class="sd">    Return:</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">mp</span> <span class="o">=</span> <span class="p">{}</span>
+    <span class="n">mpi</span> <span class="o">=</span> <span class="p">{}</span>
+    <span class="n">loaded</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">path</span> <span class="o">+</span> <span class="s2">&quot;.npz&quot;</span><span class="p">,</span> <span class="n">allow_pickle</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+    <span class="n">mp</span> <span class="o">=</span> <span class="n">loaded</span><span class="p">[</span><span class="s1">&#39;mp&#39;</span><span class="p">]</span>
+    <span class="n">mpi</span> <span class="o">=</span> <span class="n">loaded</span><span class="p">[</span><span class="s1">&#39;mpi&#39;</span><span class="p">]</span>
+    <span class="k">return</span> <span class="n">mp</span><span class="p">,</span> <span class="n">mpi</span></div>
+
+<div class="viewcode-block" id="save_mdmp_as_h5"><a class="viewcode-back" href="../patterns.html#alex.save_mdmp_as_h5">[docs]</a><span class="k">def</span> <span class="nf">save_mdmp_as_h5</span><span class="p">(</span><span class="n">dir_path</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">mps</span><span class="p">,</span> <span class="n">idx</span><span class="p">,</span> <span class="n">k</span><span class="o">=</span><span class="mi">0</span><span class="p">):</span>
+   
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Save a multidimensional matrix profile as a pair of hdf5 files. Input is based on the output of (https://stumpy.readthedocs.io/en/latest/api.html#mstump).</span>
+<span class="sd">    </span>
+<span class="sd">    Args:</span>
+<span class="sd">       dir_path: Path of the directory where the file will be saved.</span>
+<span class="sd">       name: Name that will be appended to the file after a default prefix. (i.e. mp_multivariate_&lt;name&gt;.h5)</span>
+<span class="sd">       mps: The multi-dimensional matrix profile. Each row of the array corresponds to each matrix profile for a given dimension </span>
+<span class="sd">                   (i.e., the first row is the 1-D matrix profile and the second row is the 2-D matrix profile).</span>
+<span class="sd">       idx: The multi-dimensional matrix profile index where each row of the array corresponds to each matrix profile index for a given dimension.</span>
+<span class="sd">       k: If mps and idx are one-dimensional k can be used to specify the given dimension of the matrix profile. The default value specifies the 1-D matrix profile.</span>
+<span class="sd">                 If mps and idx are multi-dimensional, k is ignored.</span>
+<span class="sd">    </span>
+<span class="sd">    Return:        </span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">mps</span><span class="o">.</span><span class="n">ndim</span> <span class="o">!=</span> <span class="n">idx</span><span class="o">.</span><span class="n">ndim</span><span class="p">:</span>
+        <span class="n">err</span> <span class="o">=</span> <span class="s1">&#39;Dimensions of mps and idx should match&#39;</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">err</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">mps</span><span class="o">.</span><span class="n">ndim</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+        <span class="n">mps</span> <span class="o">=</span> <span class="n">mps</span><span class="p">[</span><span class="kc">None</span><span class="p">,</span> <span class="p">:]</span>
+        <span class="n">idx</span> <span class="o">=</span> <span class="n">idx</span><span class="p">[</span><span class="kc">None</span><span class="p">,</span> <span class="p">:]</span>
+        <span class="n">h5f</span> <span class="o">=</span> <span class="n">h5py</span><span class="o">.</span><span class="n">File</span><span class="p">(</span><span class="n">dir_path</span> <span class="o">+</span> <span class="s1">&#39;mp_multivariate_&#39;</span> <span class="o">+</span> <span class="n">name</span> <span class="o">+</span> <span class="s1">&#39;.h5&#39;</span><span class="p">,</span><span class="s1">&#39;w&#39;</span><span class="p">)</span>
+        <span class="n">h5f</span><span class="o">.</span><span class="n">create_dataset</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;mp</span><span class="si">{</span><span class="n">k</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">,</span> <span class="n">data</span><span class="o">=</span><span class="n">mps</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+        <span class="n">h5f</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+
+        <span class="n">h5f</span> <span class="o">=</span> <span class="n">h5py</span><span class="o">.</span><span class="n">File</span><span class="p">(</span><span class="n">dir_path</span> <span class="o">+</span> <span class="s1">&#39;index_multivariate_&#39;</span> <span class="o">+</span> <span class="n">name</span> <span class="o">+</span> <span class="s1">&#39;.h5&#39;</span><span class="p">,</span><span class="s1">&#39;w&#39;</span><span class="p">)</span>
+        <span class="n">h5f</span><span class="o">.</span><span class="n">create_dataset</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;idx</span><span class="si">{</span><span class="n">k</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">,</span> <span class="n">data</span><span class="o">=</span><span class="n">idx</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+        <span class="n">h5f</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+        <span class="k">return</span>
+    
+    <span class="n">h5f</span> <span class="o">=</span> <span class="n">h5py</span><span class="o">.</span><span class="n">File</span><span class="p">(</span><span class="n">dir_path</span> <span class="o">+</span> <span class="s1">&#39;mp_multivariate_&#39;</span> <span class="o">+</span> <span class="n">name</span> <span class="o">+</span> <span class="s1">&#39;.h5&#39;</span><span class="p">,</span><span class="s1">&#39;w&#39;</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">mps</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]):</span>
+        <span class="n">h5f</span><span class="o">.</span><span class="n">create_dataset</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;mp</span><span class="si">{</span><span class="n">i</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">,</span> <span class="n">data</span><span class="o">=</span><span class="n">mps</span><span class="p">[</span><span class="n">i</span><span class="p">])</span>
+    <span class="n">h5f</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+
+    <span class="n">h5f</span> <span class="o">=</span> <span class="n">h5py</span><span class="o">.</span><span class="n">File</span><span class="p">(</span><span class="n">dir_path</span> <span class="o">+</span> <span class="s1">&#39;index_multivariate_&#39;</span> <span class="o">+</span> <span class="n">name</span> <span class="o">+</span> <span class="s1">&#39;.h5&#39;</span><span class="p">,</span><span class="s1">&#39;w&#39;</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">mps</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]):</span>
+        <span class="n">h5f</span><span class="o">.</span><span class="n">create_dataset</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;idx</span><span class="si">{</span><span class="n">i</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">,</span> <span class="n">data</span><span class="o">=</span><span class="n">idx</span><span class="p">[</span><span class="n">i</span><span class="p">])</span>
+    <span class="n">h5f</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+    <span class="k">return</span></div>
+
+  
+<div class="viewcode-block" id="load_mdmp_from_h5"><a class="viewcode-back" href="../patterns.html#alex.load_mdmp_from_h5">[docs]</a><span class="k">def</span> <span class="nf">load_mdmp_from_h5</span><span class="p">(</span><span class="n">dir_path</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">k</span><span class="p">):</span>
+   
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Load a multidimensional matrix profile that has been saved as a pair of hdf5 files.</span>
+<span class="sd">    </span>
+<span class="sd">    Args:</span>
+<span class="sd">      dir_path: Path of the directory where the file is located.</span>
+<span class="sd">     name: Name that follows the default prefix. (i.e. mp_multivariate_&lt;name&gt;.h5)</span>
+<span class="sd">      k: Specifies which K-dimensional matrix profile to load. </span>
+<span class="sd">                 (i.e. k=2 loads the 2-D matrix profile</span>
+<span class="sd">    </span>
+<span class="sd">    Return:</span>
+<span class="sd">        </span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c1"># Load MP from disk</span>
+    
+    <span class="n">h5f</span> <span class="o">=</span> <span class="n">h5py</span><span class="o">.</span><span class="n">File</span><span class="p">(</span><span class="n">dir_path</span> <span class="o">+</span> <span class="s1">&#39;mp_multivariate_&#39;</span> <span class="o">+</span> <span class="n">name</span> <span class="o">+</span> <span class="s1">&#39;.h5&#39;</span><span class="p">,</span><span class="s1">&#39;r&#39;</span><span class="p">)</span>
+    <span class="n">mp</span><span class="o">=</span> <span class="n">h5f</span><span class="p">[</span><span class="sa">f</span><span class="s1">&#39;mp</span><span class="si">{</span><span class="n">k</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">][:]</span>
+    <span class="n">h5f</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+
+    <span class="n">h5f</span> <span class="o">=</span> <span class="n">h5py</span><span class="o">.</span><span class="n">File</span><span class="p">(</span><span class="n">dir_path</span> <span class="o">+</span> <span class="s1">&#39;index_multivariate_&#39;</span> <span class="o">+</span> <span class="n">name</span> <span class="o">+</span> <span class="s1">&#39;.h5&#39;</span><span class="p">,</span><span class="s1">&#39;r&#39;</span><span class="p">)</span>
+    <span class="n">index</span> <span class="o">=</span> <span class="n">h5f</span><span class="p">[</span><span class="sa">f</span><span class="s1">&#39;idx</span><span class="si">{</span><span class="n">k</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">][:]</span>
+    <span class="n">h5f</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+    <span class="k">return</span> <span class="n">mp</span><span class="p">,</span> <span class="n">index</span></div>
+
+  
+<div class="viewcode-block" id="pick_subspace_columns"><a class="viewcode-back" href="../patterns.html#alex.pick_subspace_columns">[docs]</a><span class="k">def</span> <span class="nf">pick_subspace_columns</span><span class="p">(</span><span class="n">df</span><span class="p">,</span> <span class="n">mps</span><span class="p">,</span> <span class="n">idx</span><span class="p">,</span> <span class="n">k</span><span class="p">,</span> <span class="n">m</span><span class="p">,</span> <span class="n">include</span><span class="p">):</span>
+    
+    <span class="sd">&quot;&quot;&quot; </span>
+<span class="sd">    Given a multi-dimensional time series as a pandas Dataframe, keep only the columns that have been used for the creation of the k-dimensional matrix profile.</span>
+<span class="sd">    </span>
+<span class="sd">    Args:</span>
+<span class="sd">       df: The DataFrame that contains the multidimensional time series.</span>
+<span class="sd">       mps: The multi-dimensional matrix profile. Each row of the array corresponds to each matrix profile for a given dimension </span>
+<span class="sd">                   (i.e., the first row is the 1-D matrix profile and the second row is the 2-D matrix profile).</span>
+<span class="sd">       idx: The multi-dimensional matrix profile index where each row of the array corresponds to each matrix profile index for a given dimension.</span>
+<span class="sd">       k: If mps and idx are one-dimensional k can be used to specify the given dimension of the matrix profile. The default value specifies the 1-D matrix profile.</span>
+<span class="sd">                 If mps and idx are multi-dimensional, k is ignored.</span>
+<span class="sd">       m: The subsequence window size. Should be the same as the one used to create the multidimensional matrix profile that is the input.</span>
+<span class="sd">       include: A list of the column names that must be included in the constrained multidimensional motif search.</span>
+<span class="sd">    </span>
+<span class="sd">    Return:</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    
+      
+    
+    <span class="n">motifs_idx</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">argsort</span><span class="p">(</span><span class="n">mps</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)[:,</span> <span class="p">:</span><span class="mi">2</span><span class="p">]</span>
+    <span class="n">col_indexes</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">for</span> <span class="n">n</span> <span class="ow">in</span> <span class="n">include</span><span class="p">:</span>
+        <span class="n">col_indexes</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">df</span><span class="o">.</span><span class="n">columns</span><span class="o">.</span><span class="n">get_loc</span><span class="p">(</span><span class="n">n</span><span class="p">))</span>
+    
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;Include dimensions: </span><span class="si">{</span><span class="n">include</span><span class="si">}</span><span class="s1">, indexes in df = </span><span class="si">{</span><span class="n">col_indexes</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>
+    <span class="n">S</span> <span class="o">=</span> <span class="n">subspace</span><span class="p">(</span><span class="n">df</span><span class="p">,</span> <span class="n">m</span><span class="p">,</span> <span class="n">motifs_idx</span><span class="p">[</span><span class="n">k</span><span class="p">][</span><span class="mi">0</span><span class="p">],</span> <span class="n">idx</span><span class="p">[</span><span class="n">k</span><span class="p">][</span><span class="n">motifs_idx</span><span class="p">[</span><span class="n">k</span><span class="p">][</span><span class="mi">0</span><span class="p">]],</span> <span class="n">k</span><span class="p">,</span> <span class="n">include</span><span class="o">=</span><span class="n">col_indexes</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;For k = </span><span class="si">{</span><span class="n">k</span><span class="si">}</span><span class="s2">, the </span><span class="si">{</span><span class="n">k</span> <span class="o">+</span> <span class="mi">1</span><span class="si">}</span><span class="s2">-dimensional subspace includes subsequences from </span><span class="si">{</span><span class="n">df</span><span class="o">.</span><span class="n">columns</span><span class="p">[</span><span class="n">S</span><span class="p">]</span><span class="o">.</span><span class="n">values</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+    <span class="n">subspace_cols</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">df</span><span class="o">.</span><span class="n">columns</span><span class="p">[</span><span class="n">S</span><span class="p">]</span><span class="o">.</span><span class="n">values</span><span class="p">)</span>
+    <span class="n">df</span> <span class="o">=</span> <span class="n">df</span><span class="p">[</span><span class="n">subspace_cols</span><span class="p">]</span>
+    <span class="k">return</span> <span class="n">df</span></div>
+
+
+<div class="viewcode-block" id="to_mpf"><a class="viewcode-back" href="../patterns.html#alex.to_mpf">[docs]</a><span class="k">def</span> <span class="nf">to_mpf</span><span class="p">(</span><span class="n">mp</span><span class="p">,</span> <span class="n">index</span><span class="p">,</span> <span class="n">window</span><span class="p">,</span> <span class="n">ts</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot; </span>
+<span class="sd">    Using a matrix profile, a matrix profile index, the window size and the timeseries used to calculate the previous, create a matrix profile object that</span>
+<span class="sd">    is compatible with the matrix profile foundation library (https://github.com/matrix-profile-foundation/matrixprofile). This is useful for cases where another</span>
+<span class="sd">    library was used to generate the matrix profile.</span>
+<span class="sd">    </span>
+<span class="sd">    Args:</span>
+<span class="sd">       mp: A matrix profile.</span>
+<span class="sd">       index: The matrix profile index that accompanies the matrix profile.</span>
+<span class="sd">       window: The subsequence window size.</span>
+<span class="sd">       ts: The timeseries that was used to calculate the matrix profile.</span>
+<span class="sd">    </span>
+<span class="sd">    Return:</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    
+    
+    <span class="n">mp_mpf</span> <span class="o">=</span> <span class="n">mpf</span><span class="o">.</span><span class="n">utils</span><span class="o">.</span><span class="n">empty_mp</span><span class="p">()</span>
+    <span class="n">mp_mpf</span><span class="p">[</span><span class="s1">&#39;mp&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">mp</span><span class="p">)</span>
+    <span class="n">mp_mpf</span><span class="p">[</span><span class="s1">&#39;pi&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">index</span><span class="p">)</span>
+    <span class="n">mp_mpf</span><span class="p">[</span><span class="s1">&#39;metric&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;euclidean&#39;</span>
+    <span class="n">mp_mpf</span><span class="p">[</span><span class="s1">&#39;w&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">window</span>
+    <span class="n">mp_mpf</span><span class="p">[</span><span class="s1">&#39;ez&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="n">mp_mpf</span><span class="p">[</span><span class="s1">&#39;join&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="kc">False</span>
+    <span class="n">mp_mpf</span><span class="p">[</span><span class="s1">&#39;sample_pct&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="mi">1</span>
+    <span class="n">mp_mpf</span><span class="p">[</span><span class="s1">&#39;data&#39;</span><span class="p">][</span><span class="s1">&#39;ts&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">ts</span><span class="p">)</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="s1">&#39;d&#39;</span><span class="p">)</span>
+    <span class="n">mp_mpf</span><span class="p">[</span><span class="s1">&#39;algorithm&#39;</span><span class="p">]</span><span class="o">=</span><span class="s1">&#39;mpx&#39;</span>
+    
+    <span class="k">return</span> <span class="n">mp_mpf</span></div>
+
+
+<div class="viewcode-block" id="compute_mp_av"><a class="viewcode-back" href="../patterns.html#alex.compute_mp_av">[docs]</a><span class="k">def</span> <span class="nf">compute_mp_av</span><span class="p">(</span><span class="n">mp</span><span class="p">,</span> <span class="n">index</span><span class="p">,</span> <span class="n">m</span><span class="p">,</span> <span class="n">df</span><span class="p">,</span> <span class="n">k</span><span class="p">):</span>
+    
+    <span class="sd">&quot;&quot;&quot; </span>
+<span class="sd">    Given a matrix profile, a matrix profile index, the window size and the DataFrame that contains the timeseries.</span>
+<span class="sd">    Create a matrix profile object and add the corrected matrix profile after applying the complexity av.</span>
+<span class="sd">    Uses an extended version of the apply_av function from matrixprofile foundation that is compatible with multi-dimensional timeseries.</span>
+<span class="sd">    The implementation can be found here (https://github.com/MORE-EU/matrixprofile/blob/master/matrixprofile/transform.py)</span>
+<span class="sd">    </span>
+<span class="sd">    Args:</span>
+<span class="sd">      mp: A matrix profile.</span>
+<span class="sd">      index: The matrix profile index that accompanies the matrix profile.</span>
+<span class="sd">      window: The subsequence window size.</span>
+<span class="sd">      ts: The timeseries that was used to calculate the matrix profile.</span>
+<span class="sd">    </span>
+<span class="sd">    Return:</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    
+    <span class="c1"># Apply the annotation vector</span>
+    <span class="n">m</span>  <span class="o">=</span> <span class="n">m</span> <span class="c1"># window size</span>
+    <span class="n">mp</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">nan_to_num</span><span class="p">(</span><span class="n">mp</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">nanmax</span><span class="p">(</span><span class="n">mp</span><span class="p">))</span> <span class="c1"># remove nan values</span>
+    <span class="n">profile</span> <span class="o">=</span> <span class="n">to_mpf</span><span class="p">(</span><span class="n">mp</span><span class="p">,</span> <span class="n">index</span><span class="p">,</span> <span class="n">m</span><span class="p">,</span> <span class="n">df</span><span class="p">)</span>
+    <span class="n">av_type</span> <span class="o">=</span> <span class="s1">&#39;complexity&#39;</span>
+    <span class="n">profile</span> <span class="o">=</span> <span class="n">mpf</span><span class="o">.</span><span class="n">transform</span><span class="o">.</span><span class="n">apply_av</span><span class="p">(</span><span class="n">profile</span><span class="p">,</span> <span class="n">av_type</span><span class="p">)</span>
+    
+    <span class="k">return</span> <span class="n">profile</span></div>
+
+  
+<div class="viewcode-block" id="pattern_loc"><a class="viewcode-back" href="../patterns.html#alex.pattern_loc">[docs]</a><span class="k">def</span> <span class="nf">pattern_loc</span><span class="p">(</span><span class="n">start</span><span class="p">,</span> <span class="n">end</span><span class="p">,</span> <span class="n">mask</span><span class="p">,</span> <span class="n">segment_labels</span><span class="p">):</span>
+    
+    <span class="sd">&quot;&quot;&quot; </span>
+<span class="sd">    Considering that a time series is characterized by regions belonging to two different labels.</span>
+<span class="sd">    </span>
+<span class="sd">    Args:</span>
+<span class="sd">       start: The starting index of the pattern.</span>
+<span class="sd">       end: The ending index of the pattern. </span>
+<span class="sd">       mask: Binary mask used to annotate the time series.</span>
+<span class="sd">       segment_labels: List of the two labels that characterize the time series.</span>
+<span class="sd">    </span>
+<span class="sd">    Return: The label name of the region that the pattern is contained in.</span>
+<span class="sd">    </span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    
+    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">segment_labels</span><span class="p">)</span> <span class="o">!=</span> <span class="mi">2</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s1">&#39;segment_labels must contain exactly 2 labels&#39;</span><span class="p">)</span>
+    
+    <span class="n">start</span> <span class="o">=</span> <span class="n">start</span>
+    <span class="n">end</span> <span class="o">=</span> <span class="n">end</span>
+    
+    <span class="c1"># the first label in the list will be assigned to for the True regions in the mask</span>
+    <span class="n">true_label</span> <span class="o">=</span> <span class="n">segment_labels</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+    
+    <span class="c1"># the second label in the list will be assigned to for the False regions in the mask</span>
+    <span class="n">false_label</span> <span class="o">=</span> <span class="n">segment_labels</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+    
+    <span class="k">if</span> <span class="n">mask</span><span class="p">[</span><span class="n">start</span><span class="p">]</span> <span class="o">==</span> <span class="n">mask</span><span class="p">[</span><span class="n">end</span><span class="p">]:</span>
+        <span class="k">if</span> <span class="n">mask</span><span class="p">[</span><span class="n">start</span><span class="p">]</span> <span class="o">==</span> <span class="kc">True</span><span class="p">:</span>
+            <span class="n">loc</span> <span class="o">=</span> <span class="n">true_label</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">loc</span> <span class="o">=</span> <span class="n">false_label</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="c1"># if a pattern spans both regions return the label &#39;both&#39;</span>
+        <span class="n">loc</span> <span class="o">=</span> <span class="s1">&#39;both&#39;</span>
+        
+    <span class="k">return</span> <span class="n">loc</span></div>
+
+  
+<div class="viewcode-block" id="calc_cost"><a class="viewcode-back" href="../patterns.html#alex.calc_cost">[docs]</a><span class="k">def</span> <span class="nf">calc_cost</span><span class="p">(</span><span class="n">cl1_len</span><span class="p">,</span> <span class="n">cl2_len</span><span class="p">,</span> <span class="n">num_cl1</span><span class="p">,</span> <span class="n">num_cl2</span><span class="p">):</span>
+    
+    <span class="sd">&quot;&quot;&quot; </span>
+<span class="sd">    Assign a cost to a pattern based on if the majority of its occurances are observed</span>
+<span class="sd">    in regions of a time series that are annotated with the same binary label.</span>
+<span class="sd">    The cost calculation takes into account a possible difference in the total lengths of the segments.</span>
+<span class="sd">    </span>
+<span class="sd">    Args:</span>
+<span class="sd">       cl1_len: Total length of the time series that belong to the class 1.</span>
+<span class="sd">       cl2_len: Total length of the time series that belong to the class 2.</span>
+<span class="sd">       num_cl1: Number of occurances of the pattern in regions that belong to cl1.</span>
+<span class="sd">       num_cl2: Number of occurances of the pattern in regions that belong to cl2.</span>
+<span class="sd">       </span>
+<span class="sd">       </span>
+<span class="sd">    Return: The label name of the region that the pattern is contained in, as well as the normalized number of occurences.   </span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    
+    <span class="k">if</span> <span class="p">(</span><span class="n">num_cl1</span> <span class="o">+</span> <span class="n">num_cl2</span> <span class="o">&lt;=</span> <span class="mi">2</span><span class="p">):</span>
+        <span class="k">return</span> <span class="mf">1.0</span><span class="p">,</span> <span class="kc">None</span><span class="p">,</span> <span class="kc">None</span>
+    <span class="k">if</span> <span class="p">(</span><span class="n">cl1_len</span> <span class="o">==</span> <span class="mi">0</span> <span class="ow">or</span> <span class="n">cl2_len</span> <span class="o">==</span> <span class="mi">0</span><span class="p">):</span>
+        <span class="k">return</span> <span class="mf">1.0</span><span class="p">,</span> <span class="kc">None</span><span class="p">,</span> <span class="kc">None</span>
+    <span class="n">f</span> <span class="o">=</span> <span class="n">cl1_len</span> <span class="o">/</span> <span class="n">cl2_len</span>
+    <span class="n">norm_cl1</span> <span class="o">=</span> <span class="n">num_cl1</span> <span class="o">/</span> <span class="n">f</span>
+    <span class="n">norm_cl2</span> <span class="o">=</span> <span class="n">num_cl2</span>
+    <span class="n">cost</span> <span class="o">=</span> <span class="mi">1</span> <span class="o">-</span> <span class="p">(</span><span class="nb">abs</span><span class="p">(</span><span class="n">norm_cl1</span> <span class="o">-</span> <span class="n">norm_cl2</span> <span class="p">)</span> <span class="o">/</span> <span class="p">(</span><span class="n">norm_cl1</span> <span class="o">+</span> <span class="n">norm_cl2</span><span class="p">))</span>
+    <span class="k">return</span> <span class="n">cost</span><span class="p">,</span> <span class="n">norm_cl1</span><span class="p">,</span> <span class="n">norm_cl2</span></div>
+
+
+<div class="viewcode-block" id="get_top_k_motifs"><a class="viewcode-back" href="../patterns.html#alex.get_top_k_motifs">[docs]</a><span class="k">def</span> <span class="nf">get_top_k_motifs</span><span class="p">(</span><span class="n">df</span><span class="p">,</span> <span class="n">mp</span><span class="p">,</span> <span class="n">index</span><span class="p">,</span> <span class="n">m</span><span class="p">,</span> <span class="n">ez</span><span class="p">,</span> <span class="n">radius</span><span class="p">,</span> <span class="n">k</span><span class="p">,</span> <span class="n">max_neighbors</span><span class="o">=</span><span class="mi">50</span><span class="p">):</span>
+    
+    <span class="sd">&quot;&quot;&quot; </span>
+<span class="sd">    Given a matrix profile, a matrix profile index, the window size and the DataFrame that contains a multi-dimensional timeseries,</span>
+<span class="sd">    Find the top k motifs in the timeseries, as well as neighbors that are within the range &lt;radius * min_mp_value&gt; of each of the top k motifs.</span>
+<span class="sd">    Uses an extended version of the top_k_motifs function from matrixprofile foundation library that is compatible with multi-dimensional                 timeseries.</span>
+<span class="sd">    The implementation can be found here (https://github.com/MORE-EU/matrixprofile/blob/master/matrixprofile/algorithms/top_k_motifs.py)</span>
+<span class="sd">    </span>
+<span class="sd">    Args:</span>
+<span class="sd">       df: DataFrame that contains the multi-dimensional timeseries that was used to calculate the matrix profile.</span>
+<span class="sd">       mp: A multi-dimensional matrix profile.</span>
+<span class="sd">       index: The matrix profile index that accompanies the matrix profile.</span>
+<span class="sd">       m: The subsequence window size.</span>
+<span class="sd">       ez: The exclusion zone to use.</span>
+<span class="sd">       radius: The radius to use.</span>
+<span class="sd">       k: The number of the top motifs that were found.</span>
+<span class="sd">       max_neighbors: The maximum amount of neighbors to find for each of the top k motifs.</span>
+<span class="sd">    </span>
+<span class="sd">    Return:</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    
+    <span class="n">np_df</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">to_numpy</span><span class="p">()</span>
+
+    <span class="n">mp</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">nan_to_num</span><span class="p">(</span><span class="n">mp</span><span class="p">,</span> <span class="n">nan</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">nanmax</span><span class="p">(</span><span class="n">mp</span><span class="p">))</span> <span class="c1"># remove nan values</span>
+
+    <span class="n">profile</span> <span class="o">=</span> <span class="n">to_mpf</span><span class="p">(</span><span class="n">mp</span><span class="p">,</span> <span class="n">index</span><span class="p">,</span> <span class="n">m</span><span class="p">,</span> <span class="n">np_df</span><span class="p">)</span>
+    
+    <span class="n">exclusion_zone</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">floor</span><span class="p">(</span><span class="n">m</span> <span class="o">*</span> <span class="n">ez</span><span class="p">))</span>
+    <span class="n">p</span> <span class="o">=</span> <span class="n">top_k_motifs</span><span class="o">.</span><span class="n">top_k_motifs</span><span class="p">(</span><span class="n">profile</span><span class="p">,</span> <span class="n">k</span><span class="o">=</span><span class="n">k</span><span class="p">,</span> <span class="n">radius</span><span class="o">=</span><span class="n">radius</span><span class="p">,</span> <span class="n">exclusion_zone</span><span class="o">=</span><span class="n">exclusion_zone</span><span class="p">,</span>  <span class="n">max_neighbors</span><span class="o">=</span><span class="n">max_neighbors</span><span class="p">)</span>
+    
+    <span class="k">return</span> <span class="n">p</span></div>
+
+
+<div class="viewcode-block" id="save_results"><a class="viewcode-back" href="../patterns.html#alex.save_results">[docs]</a><span class="k">def</span> <span class="nf">save_results</span><span class="p">(</span><span class="n">results_dir</span><span class="p">,</span> <span class="n">sub_dir_name</span><span class="p">,</span> <span class="n">p</span><span class="p">,</span> <span class="n">df_stats</span><span class="p">,</span> <span class="n">m</span><span class="p">,</span> <span class="n">radius</span><span class="p">,</span> <span class="n">ez</span><span class="p">,</span> <span class="n">k</span><span class="p">,</span> <span class="n">max_neighbors</span><span class="p">):</span>
+   
+    <span class="sd">&quot;&quot;&quot; </span>
+<span class="sd">    Save the results of a specific run in the directory specified by the results_dir and sub_dir_name.</span>
+<span class="sd">    The results contain some figures that are created with an adaptation of the matrix profile foundation visualize() function.</span>
+<span class="sd">    The adaptation works for multi dimensional timeseries and can be found at </span>
+<span class="sd">    (https://github.com/MORE-EU/matrixprofile/blob/master/matrixprofile/visualize.py) as visualize_md().</span>
+<span class="sd">    </span>
+<span class="sd">    Args:</span>
+<span class="sd">       results: Path of the directory where the results will be saved.</span>
+<span class="sd">       sub_directory: Path of the sub directory where the results will be saved.</span>
+<span class="sd">       p: A profile object as it is defined in the matrixprofile foundation python library.</span>
+<span class="sd">       df_stats: DataFrame with the desired statistics that need to be saved.</span>
+<span class="sd">       m: The subsequence window size.</span>
+<span class="sd">       ez: The exclusion zone to use.</span>
+<span class="sd">       radius: The radius to use.</span>
+<span class="sd">       k: The number of the top motifs that were calculated.</span>
+<span class="sd">       max_neighbors: The maximum amount of neighbors to find for each of the top k motifs.</span>
+<span class="sd">    </span>
+<span class="sd">    Return:</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">results_dir</span><span class="p">,</span> <span class="n">sub_dir_name</span><span class="p">)</span>
+    
+    <span class="nb">print</span><span class="p">(</span><span class="n">path</span><span class="p">)</span>
+
+    <span class="n">pathlib</span><span class="o">.</span><span class="n">Path</span><span class="p">(</span><span class="n">path</span><span class="p">)</span><span class="o">.</span><span class="n">mkdir</span><span class="p">(</span><span class="n">parents</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">exist_ok</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span> 
+
+    
+    <span class="k">with</span> <span class="n">warnings</span><span class="o">.</span><span class="n">catch_warnings</span><span class="p">():</span>
+        <span class="n">warnings</span><span class="o">.</span><span class="n">simplefilter</span><span class="p">(</span><span class="s1">&#39;ignore&#39;</span><span class="p">)</span>
+        <span class="n">figs</span> <span class="o">=</span> <span class="n">visualize_md</span><span class="p">(</span><span class="n">p</span><span class="p">)</span>
+    
+        <span class="k">for</span> <span class="n">i</span><span class="p">,</span><span class="n">f</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">figs</span><span class="p">):</span>
+            <span class="n">f</span><span class="o">.</span><span class="n">savefig</span><span class="p">(</span><span class="n">path</span> <span class="o">+</span> <span class="sa">f</span><span class="s1">&#39;/fig</span><span class="si">{</span><span class="n">i</span><span class="si">}</span><span class="s1">.png&#39;</span> <span class="p">,</span> <span class="n">facecolor</span><span class="o">=</span><span class="s1">&#39;white&#39;</span><span class="p">,</span> <span class="n">transparent</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">bbox_inches</span><span class="o">=</span><span class="s2">&quot;tight&quot;</span><span class="p">)</span>
+            <span class="n">f</span><span class="o">.</span><span class="n">clf</span><span class="p">()</span>
+        
+    <span class="c1"># remove figures from memory</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">close</span><span class="p">(</span><span class="s1">&#39;all&#39;</span><span class="p">)</span>
+    <span class="n">gc</span><span class="o">.</span><span class="n">collect</span><span class="p">()</span> 
+    
+    <span class="n">df_stats</span><span class="o">.</span><span class="n">to_csv</span><span class="p">(</span><span class="n">path</span> <span class="o">+</span> <span class="s1">&#39;/stats.csv&#39;</span><span class="p">)</span>
+
+    <span class="n">lines</span> <span class="o">=</span> <span class="p">[</span><span class="sa">f</span><span class="s1">&#39;Window size (m): </span><span class="si">{</span><span class="n">m</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">,</span>
+             <span class="sa">f</span><span class="s1">&#39;Radius: </span><span class="si">{</span><span class="n">radius</span><span class="si">}</span><span class="s1"> (radius * min_dist)&#39;</span><span class="p">,</span>
+             <span class="sa">f</span><span class="s1">&#39;Exclusion zone: </span><span class="si">{</span><span class="n">ez</span><span class="si">}</span><span class="s1"> * window_size&#39;</span><span class="p">,</span>
+             <span class="sa">f</span><span class="s1">&#39;Top k motifs: </span><span class="si">{</span><span class="n">k</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">,</span>
+             <span class="sa">f</span><span class="s1">&#39;Max neighbors: </span><span class="si">{</span><span class="n">max_neighbors</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">]</span>
+
+    <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">path</span><span class="o">+</span><span class="s1">&#39;/info.txt&#39;</span><span class="p">,</span> <span class="s1">&#39;w&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+        <span class="k">for</span> <span class="n">ln</span> <span class="ow">in</span> <span class="n">lines</span><span class="p">:</span>
+            <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">ln</span> <span class="o">+</span> <span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">)</span></div>
+            
+            
+
+<div class="viewcode-block" id="change_points"><a class="viewcode-back" href="../patterns.html#alex.change_points">[docs]</a><span class="k">def</span> <span class="nf">change_points</span><span class="p">(</span><span class="n">mpi</span><span class="p">,</span> <span class="n">L</span><span class="p">,</span> <span class="n">path</span><span class="p">,</span> <span class="n">excl_factor</span><span class="o">=</span><span class="mi">5</span><span class="p">,</span> <span class="n">change_points</span><span class="o">=</span><span class="mi">4</span><span class="p">):</span>
+   
+    <span class="sd">&quot;&quot;&quot; </span>
+<span class="sd">    Calculation of total change points(segments) we want to divide our region with respect to a computed Univariate Matrix Profile. </span>
+<span class="sd">    This procedure is illustated through the Fluss Algorithm (https://stumpy.readthedocs.io/en/latest/_modules/stumpy/floss.html#fluss).</span>
+<span class="sd">    We input a L which is a list of integers. The L is a factor which excludes change point detection. It replaces the Arc Curve with 1 depending </span>
+<span class="sd">    of the size of L multiplied with an exclusion Factor (excl_factor).</span>
+<span class="sd">    This algorithm can work for a multidimensional DataFrames. User need just to specify the column in mpi. eg mpi[3] so we look</span>
+<span class="sd">    for change_points in  the 3rd column.</span>
+<span class="sd">    In return we provide the locations(indexes) of change_points and the arc-curve which are contained in a specific L.</span>
+<span class="sd">    </span>
+<span class="sd">    Args:</span>
+<span class="sd">       mpi: The one-dimensional matrix profile index where the array corresponds to the matrix profile index for a given dimension.</span>
+<span class="sd">       L: The subsequence length that is set roughly to be one period length. This is likely to be the same value as the motif_len, </span>
+<span class="sd">          used to compute the matrix profile and matrix profile index.</span>
+<span class="sd">       excl_factor: The multiplying factor for the regime exclusion zone.       </span>
+<span class="sd">       change_points: Number of segments that our space is going to be divided.</span>
+<span class="sd">       path: Path of the directory where the file will be saved.</span>
+<span class="sd">    </span>
+<span class="sd">    Return:</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">regimes</span> <span class="o">=</span> <span class="p">[</span><span class="n">change_points</span><span class="p">]</span>
+    <span class="n">output</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">()</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Computing regimes..&quot;</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">l</span> <span class="ow">in</span> <span class="n">tqdm</span><span class="p">(</span><span class="n">L</span><span class="p">):</span>
+        <span class="n">output</span><span class="p">[</span><span class="n">l</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="n">fluss</span><span class="p">(</span><span class="n">mpi</span><span class="p">,</span> <span class="n">L</span><span class="o">=</span><span class="nb">int</span><span class="p">(</span><span class="n">l</span><span class="p">),</span> <span class="n">n_regimes</span><span class="o">=</span><span class="nb">int</span><span class="p">(</span><span class="n">r</span><span class="p">),</span> <span class="n">excl_factor</span><span class="o">=</span><span class="n">excl_factor</span><span class="p">)</span> <span class="k">for</span> <span class="n">r</span> <span class="ow">in</span> <span class="n">regimes</span><span class="p">]</span> 
+    <span class="k">if</span><span class="p">(</span><span class="n">path</span><span class="p">):</span>
+        <span class="n">np</span><span class="o">.</span><span class="n">save</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="n">output</span><span class="p">)</span>
+        
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Done&quot;</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">output</span></div>
+  
+<div class="viewcode-block" id="change_points_md"><a class="viewcode-back" href="../patterns.html#alex.change_points_md">[docs]</a><span class="k">def</span> <span class="nf">change_points_md</span><span class="p">(</span><span class="n">mpi</span><span class="p">,</span> <span class="n">k_optimal</span><span class="p">,</span> <span class="n">path</span><span class="p">,</span> <span class="n">L</span><span class="o">=</span><span class="p">[</span><span class="mi">100</span><span class="p">,</span><span class="mi">200</span><span class="p">],</span> <span class="n">change_points</span><span class="o">=</span><span class="mi">4</span><span class="p">,</span> <span class="n">excl_factor</span><span class="o">=</span><span class="mi">5</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot; </span>
+<span class="sd">    Calculation of total change points(segments) we want to divide our region with respect to a computed Multivariate Matrix Profile. </span>
+<span class="sd">    This procedure is illustated through the Modified Fluss Algorithm (https://stumpy.readthedocs.io/en/latest/_modules/stumpy/floss.html#fluss).</span>
+<span class="sd">    We input a L which is a list of integers. The L is a factor which excludes change point detection. It replaces the Arc Curve with 1 depending </span>
+<span class="sd">    of the size of L multiplied with an exclusion Factor (excl_factor). It alterates because we built it through optimal dimensions given from elbow_method.</span>
+<span class="sd">    So in the end we will receive locations(indexes) of change_points and the arc-curve which are contained in a specific L for each column/dimension. </span>
+<span class="sd">     </span>
+<span class="sd">    Args:</span>
+<span class="sd">        mpi: The multi-dimensional matrix profile index where the array corresponds to the matrix profile index for a given dimension.</span>
+<span class="sd">        k_optimal: Choose optimal dimension(s) given from the elbow method. Or all of the DataFrame Dimension</span>
+<span class="sd">        L: The subsequence length that is set roughly to be one period length. This is likely to be the same value as the motif_len, </span>
+<span class="sd">                 used to compute the matrix profile and matrix profile index.</span>
+<span class="sd">        change_points: Number of segments that our space is going to be divided.</span>
+<span class="sd">        excl_factor: The multiplying factor for the regime exclusion zone.</span>
+<span class="sd">        path: Path of the directory where the file will be saved.</span>
+<span class="sd">     </span>
+<span class="sd">    Return:</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c1">#no_cols = np.arange(1, k_optimal + 1,1)</span>
+        
+    <span class="k">if</span><span class="p">(</span><span class="n">L</span> <span class="o">==</span> <span class="kc">None</span><span class="p">):</span>
+        <span class="n">L</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="mi">1000</span><span class="p">,</span><span class="mi">50000</span><span class="p">,</span> <span class="mi">1000</span><span class="p">)</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">int</span><span class="p">)</span>
+    <span class="n">regimes</span> <span class="o">=</span> <span class="p">[</span><span class="n">change_points</span><span class="p">]</span>
+    <span class="n">output</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">()</span>
+    
+    <span class="k">for</span> <span class="n">c</span> <span class="ow">in</span> <span class="n">tqdm</span><span class="p">(</span><span class="n">no_cols</span><span class="p">):</span>
+        <span class="n">output</span><span class="p">[</span><span class="n">c</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="n">fluss</span><span class="p">(</span><span class="n">mpi</span><span class="p">[</span><span class="n">c</span> <span class="o">-</span> <span class="mi">1</span><span class="p">],</span> <span class="n">L</span><span class="o">=</span><span class="nb">int</span><span class="p">(</span><span class="n">l</span><span class="p">),</span> <span class="n">n_regimes</span><span class="o">=</span><span class="nb">int</span><span class="p">(</span><span class="n">r</span><span class="p">),</span> <span class="n">excl_factor</span><span class="o">=</span><span class="n">excl_factor</span><span class="p">)</span> <span class="k">for</span> <span class="n">r</span> <span class="ow">in</span> <span class="n">regimes</span> <span class="k">for</span> <span class="n">l</span> <span class="ow">in</span> <span class="n">L</span><span class="p">]</span>
+    <span class="k">if</span><span class="p">(</span><span class="n">path</span><span class="p">):</span>
+        <span class="n">np</span><span class="o">.</span><span class="n">save</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="n">output</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">output</span></div>
+  
+<span class="c1">#   def compute_regimes_for_optimal_dim(mpi,k_optimal, L=[100,200], change_points=4,path):</span>
+   
+<span class="c1">#     &quot;&quot;&quot; Calculation of total change points we want to divide our region and build it with respect up to *the* optimal dimension given from elbow_method.</span>
+<span class="c1">#         In return we provide the locations(indexes) of change_points and the arc-curve which are contained in a specific L.</span>
+
+<span class="c1">#        :param mpi: The one-dimensional matrix profile index where the array corresponds to the matrix profile index for a given dimension.</span>
+<span class="c1">#        :param k_optimal: Choose *the* optimal dimension from the elbow method</span>
+<span class="c1">#        :param L: The subsequence length that is set roughly to be one period length. This is likely to be the same value as the motif_len, </span>
+<span class="c1">#                  used to compute the matrix profile and matrix profile index.</span>
+<span class="c1">#        :param change_points: Number of segments that our space is going to be divided.</span>
+<span class="c1">#        :param path: Path of the directory where the file will be saved.</span>
+<span class="c1">#     &quot;&quot;&quot;</span>
+   
+<span class="c1">#     if(L == None):</span>
+<span class="c1">#         L = np.arange(1000,50000, 1000).astype(int)</span>
+        
+<span class="c1">#     regimes = [change_points]</span>
+<span class="c1">#     output = dict()</span>
+<span class="c1">#     for l in tqdm(L):</span>
+<span class="c1">#         output[l] = [fluss(mpi[k_optimal - 1], L=int(l), n_regimes=int(r), excl_factor=5) for r in regimes]</span>
+<span class="c1">#     if(path):</span>
+<span class="c1">#         np.save(path, output)</span>
+<span class="c1">#     return output</span>
+</pre></div>
+
+      </div>
+      <div class="bottomnav" role="navigation" aria-label="bottom navigation">
+      
+        <p>
+        <a class="uplink" href="../index.html">Contents</a>
+        </p>
+
+      </div>
+
+    <div class="footer" role="contentinfo">
+        &#169; Copyright 2021, Ioannis.
+      Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 4.2.0.
+    </div>
+  </body>
+</html>

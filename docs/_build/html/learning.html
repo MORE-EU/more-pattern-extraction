@@ -1,0 +1,251 @@
+
+<!DOCTYPE html>
+
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
+    <title>This is the module for Learning &#8212; Moret  documentation</title>
+    <link rel="stylesheet" type="text/css" href="_static/pygments.css" />
+    <link rel="stylesheet" type="text/css" href="_static/nature.css" />
+    <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
+    <script src="_static/jquery.js"></script>
+    <script src="_static/underscore.js"></script>
+    <script src="_static/doctools.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="This is the module for Plotting" href="plots.html" />
+    <link rel="prev" title="This is the module for Patterns" href="patterns.html" /> 
+  </head><body>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="plots.html" title="This is the module for Plotting"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="patterns.html" title="This is the module for Patterns"
+             accesskey="P">previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="index.html">Moret  documentation</a> &#187;</li>
+        <li class="nav-item nav-item-this"><a href="">This is the module for Learning</a></li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <section id="module-learning">
+<span id="this-is-the-module-for-learning"></span><h1>This is the module for Learning<a class="headerlink" href="#module-learning" title="Permalink to this headline">¶</a></h1>
+<dl class="py function">
+<dt class="sig sig-object py" id="learning.changepoint_scores">
+<span class="sig-prename descclassname"><span class="pre">learning.</span></span><span class="sig-name descname"><span class="pre">changepoint_scores</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">df</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">feats</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">target</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">d1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">d2</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">w_train</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">w_val</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">w_test</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/learning.html#changepoint_scores"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#learning.changepoint_scores" title="Permalink to this definition">¶</a></dt>
+<dd><p>Given as input a dataframe and a reference interval where a changepoint may lie, trains a regression model in
+a window before the reference interval, validates the model in a window before the reference interval and tests 
+the model in a window after the reference interval. 
+Args:</p>
+<blockquote>
+<div><p>df: The input dataframe.
+feats: A list of names of columns of df indicating the feature variables.
+target: The name of a column of df indicating the dependent variable.
+d1: The first date in the reference interval.
+d2: The last date in the reference interval.
+w_train: The number of days defining the training set.
+w_val: The number of days defining the validation set.
+w_test: The number of days defining the test set.</p>
+</div></blockquote>
+<dl class="simple">
+<dt>Returns:</dt><dd><p>y_pred_train: The array of predicted values in the training set.
+score_train: An array containing scores for the training set: 
+the coefficient of determination “R squared”, the mean absolute error, the mean error, 
+the mean absolute percentage error, the mean percentage error.
+y_pred_val: The array of predicted values in the validation set.
+score_val: An array containing scores for the validation set: 
+the coefficient of determination “R squared”, the mean absolute error, the mean error, 
+the mean absolute percentage error, the mean percentage error.
+y_pred_test: The array of predicted values in the test set.
+score_test: An array containing scores for the test set: 
+the coefficient of determination “R squared”, the mean absolute error, the mean error, 
+the mean absolute percentage error, the mean percentage error.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="learning.fit_linear_model">
+<span class="sig-prename descclassname"><span class="pre">learning.</span></span><span class="sig-name descname"><span class="pre">fit_linear_model</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">df</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">feats</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">target</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">a</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.0001</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">deg</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">3</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/learning.html#fit_linear_model"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#learning.fit_linear_model" title="Permalink to this definition">¶</a></dt>
+<dd><p>Fits a regression model on a given dataframe, and returns the model, the predicted values and the associated 
+scores. Applies Ridge Regression with polynomial features. 
+Args:</p>
+<blockquote>
+<div><p>df: The input dataframe.
+feats: List of names of columns of df. These are the feature variables.
+target: The name of a column of df corresponding to the dependent variable.
+a: A positive float. Regularization strength parameter for the linear least squares function 
+(the loss function) where regularization is given by the l2-norm. 
+deg: The degree of the regression polynomial.</p>
+</div></blockquote>
+<dl class="simple">
+<dt>Returns:    </dt><dd><p>pipeline: The regression model. This is an instance of Pipeline.
+y_pred: An array with the predicted values.
+r_sq: The coefficient of determination “R squared”.
+mae: The mean absolute error.
+me: The mean error.
+mape: The mean absolute percentage error.
+mpe: The mean percentage error.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="learning.get_line_and_slope">
+<span class="sig-prename descclassname"><span class="pre">learning.</span></span><span class="sig-name descname"><span class="pre">get_line_and_slope</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">values</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/learning.html#get_line_and_slope"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#learning.get_line_and_slope" title="Permalink to this definition">¶</a></dt>
+<dd><p>Fits a line on the 2-dimensional graph of a regular time series, defined by a sequence of real values. 
+Args:</p>
+<blockquote>
+<div><p>values: A list of real values.</p>
+</div></blockquote>
+<dl class="simple">
+<dt>Returns: </dt><dd><p>line: The list of values as predicted by the linear model.
+slope: Slope of the line.
+intercept: Intercept of the line.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="learning.predict">
+<span class="sig-prename descclassname"><span class="pre">learning.</span></span><span class="sig-name descname"><span class="pre">predict</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">df_test</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">model</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">feats</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">target</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/learning.html#predict"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#learning.predict" title="Permalink to this definition">¶</a></dt>
+<dd><p>Applies a regression model to predict values of a dependent variable for a given dataframe and 
+given features.
+Args:</p>
+<blockquote>
+<div><p>df_test: The input dataframe.
+model: The regression model. Instance of Pipeline.
+feats: List of strings: each string is the name of a column of df_test.
+target: The name of the column of df corresponding to the dependent variable.</p>
+</div></blockquote>
+<dl class="simple">
+<dt>Returns:</dt><dd><p>y_pred: Array of predicted values.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="learning.predict_on_sliding_windows">
+<span class="sig-prename descclassname"><span class="pre">learning.</span></span><span class="sig-name descname"><span class="pre">predict_on_sliding_windows</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">df</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">win_size</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">step</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">model</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">feats</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">target</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/learning.html#predict_on_sliding_windows"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#learning.predict_on_sliding_windows" title="Permalink to this definition">¶</a></dt>
+<dd><p>Given a regression model, predicts values on a sliding window in a dataframe 
+and outputs scores, a list of predictions and a list of windows. 
+Args:</p>
+<blockquote>
+<div><p>df: The input dataframe.
+win_size: The size of the sliding window, as a number of days.
+step: The sliding step.
+model: The regression model. 
+feats: A list of names of columns of df indicating the feature variables.
+target: The name of a column of df indicating the dependent variable.</p>
+</div></blockquote>
+<dl class="simple">
+<dt>Returns:</dt><dd><p>scores: An array of arrays of scores: one array for each window containing the coefficient of 
+determination “R squared”, the mean absolute error, the mean error, the mean absolute percentage error, 
+the mean percentage error.
+preds_test: a list of predictions: one list of predicted values for each window.
+windows: A list of starting/ending dates: one for each window.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="learning.train_on_reference_points">
+<span class="sig-prename descclassname"><span class="pre">learning.</span></span><span class="sig-name descname"><span class="pre">train_on_reference_points</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">df</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">w_train</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ref_points</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">feats</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">target</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">random_state</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/learning.html#train_on_reference_points"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#learning.train_on_reference_points" title="Permalink to this definition">¶</a></dt>
+<dd><p>Trains a regression model on a training set defined by segments of a dataframe. 
+These segments are defined by a set of starting points and a parameter indicating their duration. 
+In each segment, one subset of points is randomly chosen as the training set and the remaining points 
+define the validation set.</p>
+<dl class="simple">
+<dt>Args:</dt><dd><p>df: Input dataframe. 
+w_train: The duration, given as a number of days, of the segments where the model is trained.
+ref_points: A list containing the starting date of each segment where the model is trained.
+feats: A list of names of columns of df corresponding to the feature variables.
+target: A name of a column of df corresponding to the dependent variable.
+random_state: Seed for a random number generator, which is used in randomly selecting the validation 
+set among the points in a fixed segment.</p>
+</dd>
+<dt>Returns:</dt><dd><p>model: The regression model. This is an instance of Pipeline.
+training_scores: An array containing scores for the training set. It contains the coefficient 
+of determination “R squared”, the mean absolute error, the mean error, the mean absolute percentage error.
+validation_scores: An array containing scores for the validation set. It contains the coefficient 
+of determination “R squared”, the mean absolute error, the mean error, the mean absolute percentage error.</p>
+</dd>
+</dl>
+</dd></dl>
+
+</section>
+
+
+            <div class="clearer"></div>
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="patterns.html"
+                        title="previous chapter">This is the module for Patterns</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="plots.html"
+                        title="next chapter">This is the module for Plotting</a></p>
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="_sources/learning.rst.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"/>
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script>$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="plots.html" title="This is the module for Plotting"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="patterns.html" title="This is the module for Patterns"
+             >previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="index.html">Moret  documentation</a> &#187;</li>
+        <li class="nav-item nav-item-this"><a href="">This is the module for Learning</a></li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+        &#169; Copyright 2021, Ioannis.
+      Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 4.2.0.
+    </div>
+  </body>
+</html>
