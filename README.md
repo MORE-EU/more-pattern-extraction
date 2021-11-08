@@ -40,7 +40,7 @@ The module consists of the following steps:
   The execution of the project starts with the presentation of some initial tools. Later those tools will become more interactive through visual modules.
 
 1. **Pattern Discovery**
-
+  
   The pattern discovery tool aims to detect interesting patterns in time series with labeled time intervals. In particular, given a time series which is divided into a sequence of discrete segments, each one assigned to one of two classes, the goal is to detect patterns which correspond to distinguishable characteristics of one of the classes. The intuition is that patterns that are representative of their respective class, should mostly appear in the time regions corresponding to that class.
 
 2. **Time Series Segmentation**
@@ -53,7 +53,7 @@ The module consists of the following steps:
   
 4. **Deviation Detection**
 
-   In this section, we present a tool for detecting segments of a time series where the behavior of a given target variable deviates much from the usual. We assume that certain segments of the time series are labelled, representing the usual behavior of the variable in question. Our main ingredient is regression. We fit a regression model on the labelled segments, aiming to capture the “usual” behavior of the target variable. Then, we compare the values of the trained model with the real values.
+  In this section, we present a tool for detecting segments of a time series where the behavior of a given target variable deviates much from the usual. We assume that certain segments of the time series are labelled, representing the usual behavior of the variable in question. Our main ingredient is regression. We fit a regression model on the labelled segments, aiming to capture the “usual” behavior of the target variable. Then, we compare the values of the trained model with the real values.
    
 ## Documentation
 Source code documentation is available from [linkgeoml.github.io]().
