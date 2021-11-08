@@ -49,6 +49,7 @@ The module consists of the following steps:
   The pattern discovery tool aims to detect interesting patterns in time series with labeled time intervals. In particular, given a time series which is divided into a sequence 
   of discrete segments, each one assigned to one of two classes, the goal is to detect patterns which correspond to distinguishable characteristics of one of the classes. The 
   intuition is that patterns that are representative of their respective class, should mostly appear in the time regions corresponding to that class.
+  Link to the notebook: [Interesting Patterns]()
 
 2. **Time Series Segmentation**
 
@@ -56,18 +57,21 @@ The module consists of the following steps:
   segments. The user can specify the number of changepoints/segments which will be returned by the tool. In a scenario where ground truth, labelled, time series exist, the user 
   has the ability to calculate a cost, defined essentially as a distance function between the changepoints returned by the tool and the original changepoints (labels). This 
   allows for optimizing the parameters inherited by the matrix profile library in use cases where labelled data are available. 
+  Link to the notebook: [Semantic Segmentation_v1](https://github.com/MORE-EU/more-pattern-extraction/blob/main/Semantic_detection_v1.ipynb)
 
 3. **Changepoint Detection**
 
   In this section, we present a tool for detecting and recognizing changepoints in a time series. Given a set of segments of the input time series, corresponding to periods of 
   time where a changepoint may occur, our tool essentially ranks those segments with respect to the possibility of containing a changepoint. This can be seen as a classification 
   task, where segments are classified with respect to whether they contain a changepoint or not.
+  Link to the notebook: [Changepoint Detection v1]()
   
 4. **Deviation Detection**
 
   In this section, we present a tool for detecting segments of a time series where the behavior of a given target variable deviates much from the usual. We assume that certain 
   segments of the time series are labelled, representing the usual behavior of the variable in question. Our main ingredient is regression. We fit a regression model on the 
   labelled segments, aiming to capture the “usual” behavior of the target variable. Then, we compare the values of the trained model with the real values.
+  Link to the notebook: [Deviation Detection](https://github.com/MORE-EU/more-pattern-extraction/blob/main/deviation_detection.ipynb)
    
 ## Documentation
 Source code documentation is available from [linkgeoml.github.io]().
