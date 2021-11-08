@@ -27,8 +27,8 @@ The module consists of the following steps:
   
 5. **Basic pattern extraction**
 
-   In this section, we discuss the implementation of functions related to pattern extraction. This includes functions for computing a matrix profile, but also functions related 
-   to the post-processing of a matrix profile. The latter refers to functions for discovering motifs/discords or segmenting a time series.
+  In this section, we discuss the implementation of functions related to pattern extraction. This includes functions for computing a matrix profile, but also functions related 
+  to the post-processing of a matrix profile. The latter refers to functions for discovering motifs/discords or segmenting a time series.
    
 6. **Similarity**
   
