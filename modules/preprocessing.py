@@ -4,8 +4,6 @@ from sklearn.preprocessing import MinMaxScaler
 
 def enumerate2(start, end, step=1):
     """ 
-    
-        
     Args:
         start: starting point
         end: ending point    .
