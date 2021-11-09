@@ -1,3 +1,6 @@
+import numpy as np
+import pandas as pd
+import modules.statistics as st
 from sklearn.linear_model import LinearRegression, Ridge
 from sklearn.pipeline import Pipeline
 from sklearn.preprocessing import PolynomialFeatures
@@ -60,7 +63,7 @@ def fit_linear_model(df, feats, target, a=1e-4, deg=3):
 
     pipeline.fit(X, y)
     y_pred = pipeline.predict(X)
-    r_sq, mae, me, mape, mpe = score(y, y_pred)
+    r_sq, mae, me, mape, mpe = st.score(y, y_pred)
     return pipeline, y_pred, r_sq, mae, me, mape, mpe
 
 def get_line_and_slope(values):
@@ -121,7 +124,7 @@ def train_on_reference_points(df, w_train, ref_points, feats, target, random_sta
 
     model, y_pred_train, r_sq_train, mae_train, me_train, mape_train = fit_linear_model(df_train, feats, target)
     y_pred_val = predict(df_val, model, feats, target)
-    r_sq_val, mae_val, me_val, mape_val, mpe_val = score(df_val[target].values, y_pred_val)
+    r_sq_val, mae_val, me_val, mape_val, mpe_val = st.score(df_val[target].values, y_pred_val)
     training_scores = np.array([r_sq_train, mae_train, me_train, mape_train])
     validation_scores = np.array([r_sq_val, mae_val, me_val, mape_val, mpe_val])
 
@@ -160,7 +163,7 @@ def predict_on_sliding_windows(df, win_size, step, model, feats, target):
         df_test = df.loc[time:window]
         if df_test.shape[0]>0:
             y_pred = predict(df_test, model, feats, target)
-            r_sq, mae, me, mape, mpe = score(df_test[target].values, y_pred)
+            r_sq, mae, me, mape, mpe = st.score(df_test[target].values, y_pred)
             scores_list.append([r_sq, mae, me, mape, mpe])
             preds_test.append(y_pred)
             windows.append((time, window))
@@ -208,8 +211,8 @@ def changepoint_scores(df, feats, target, d1, d2, w_train, w_val, w_test):
         y_pred_val = predict(df_val, model, feats, target)
         y_pred_test = predict(df_test, model, feats, target)
         
-        r_sq_val, mae_val, me_val, mape_val, mpe_val = score(df_val[target].values, y_pred_val)
-        r_sq_test, mae_test, me_test, mape_test, mpe_test = score(df_test[target].values, y_pred_test)
+        r_sq_val, mae_val, me_val, mape_val, mpe_val = st.score(df_val[target].values, y_pred_val)
+        r_sq_test, mae_test, me_test, mape_test, mpe_test = st.score(df_test[target].values, y_pred_test)
         score_train = np.array([-r_sq_train, mae_train, me_train, mape_train, mpe_train])
         score_val = np.array([-r_sq_val, mae_val, me_val, mape_val, mpe_val])
         score_test = np.array([-r_sq_test, mae_test, me_test, mape_test, mpe_test])
