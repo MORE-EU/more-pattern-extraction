@@ -9,11 +9,11 @@ Welcome to Moret's documentation!
 .. toctree::
    :maxdepth: 3
    :caption: Contents:
-   
+  
    preprocessing.rst
    patterns.rst
    learning.rst
-   plots.rst
+   plotfig.rst
    similarity.rst
    statistics.rst
    inpout.rst

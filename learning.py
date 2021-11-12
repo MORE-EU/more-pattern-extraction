@@ -1,6 +1,6 @@
 import numpy as np
 import pandas as pd
-import modules.statistics as st
+import statistics as st
 from sklearn.linear_model import LinearRegression, Ridge
 from sklearn.pipeline import Pipeline
 from sklearn.preprocessing import PolynomialFeatures

@@ -1,5 +1,5 @@
 This is the module for Plotting 
 ===============================
 
-.. automodule:: plots
+.. automodule:: plotfig
     :members:

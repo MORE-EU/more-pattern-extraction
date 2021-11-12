@@ -107,11 +107,15 @@ def find_neighbors(query, ts, w, min_dist, exclusion_zone=None, max_neighbors=10
 
 def pairwise_dist(q1, q2):
     
-    """ Calculates the distance between two time series sequences q1, q2. The distance is calculated based on the multi-dimensional distance profile.
-        This function allows for the comparison of univariate and multi-dimensional sequences.
+    """
+    Calculates the distance between two time series sequences q1, q2. 
+    The distance is calculated based on the multi-dimensional distance profile.
+    This function allows for the comparison of univariate and multi-dimensional sequences.
     :param q1: A time series sequence.
     :param q2: A time series sequence.
+    
     """
+    
     min_dist = float('inf')
     m = len(q1)
     _, nn_dist = find_neighbors(q1, q2, m, exclusion_zone=None, min_dist=min_dist, max_neighbors=1)
