@@ -5,7 +5,7 @@
 
 Welcome to Moret's documentation!
 =================================
-.. include:: README.rst
+.. include:: README.md
 .. toctree::
    :maxdepth: 3
    :caption: Contents:
