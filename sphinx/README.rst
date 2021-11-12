@@ -3,7 +3,10 @@ More-Pattern-Extraction
 =======================
 A python library for timeseries Pattern Extraction and Handling.
 
+<<<<<<< HEAD
 =============================
+=======
+>>>>>>> 3f0ff641367ff853f19f756fff217daf41bdd300
 About More-Pattern-Extraction
 =============================
 
@@ -80,9 +83,15 @@ Pattern extraction tools
   segments of the time series are labelled, representing the usual behavior of the variable in question. Our main ingredient is regression. We fit a regression model on the 
   labelled segments, aiming to capture the “usual” behavior of the target variable. Then, we compare the values of the trained model with the real values.
   Link to the notebook:  `Deviation Detection <https://github.com/MORE-EU/more-pattern-extraction/blob/main/notebooks/deviation_detection.ipynb>`_
+<<<<<<< HEAD
 
 
 Documentation
 =============
 
+=======
+=============  
+Documentation
+=============
+>>>>>>> 3f0ff641367ff853f19f756fff217daf41bdd300
 Source code documentation is available from `GitHub pages <https://more-eu.github.io/more-pattern-extraction/>`_
