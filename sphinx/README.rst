@@ -48,7 +48,8 @@ istics about the dataset, that implement variations of standard error measures, 
   In this set of utilities, we implement functions that build upon standard machine learning algorithms. In particular, functions contained in this module, handle tasks related 
   to approximating a time series by means of a regression model. Those functions are needed, for example, when we are trying to discover trends or changepoints.    
 
-## Pattern extraction tools
+Pattern extraction tools
+========================
   The execution of the project starts with the presentation of some initial tools. Later those tools will become more interactive through visual modules.
 
 1. **Pattern Discovery**
@@ -80,5 +81,6 @@ istics about the dataset, that implement variations of standard error measures, 
   labelled segments, aiming to capture the “usual” behavior of the target variable. Then, we compare the values of the trained model with the real values.
   Link to the notebook: [Deviation Detection](https://github.com/MORE-EU/more-pattern-extraction/blob/main/deviation_detection.ipynb)
    
-## Documentation
+Documentation
+=============
 Source code documentation is available from [.github.io]().
