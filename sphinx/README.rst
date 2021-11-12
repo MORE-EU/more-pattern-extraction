@@ -82,4 +82,4 @@ Pattern extraction tools
    
 Documentation
 =============
-Source code documentation is available from [here](www.gg.gr).
+Source code documentation is available from `GitHub repository <https://github.com/LinkGeoML/LGM-Interlinking.git>`_
