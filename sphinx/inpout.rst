@@ -1,5 +1,5 @@
-This is the module for Input Output 
-===================================
+Input Output 
+============
 
 .. automodule:: inpout
     :members:

@@ -1,5 +1,5 @@
-This is the module for Patterns 
-===============================
+Patterns 
+========
 
 .. automodule:: patterns
     :members:

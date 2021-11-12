@@ -41,8 +41,6 @@ def load_mp(path):
         mp: Matrix profile Distances
         mpi: Matrix profile Indices
     """
-
-
     loaded = np.load(path + ".npz", allow_pickle=True)
     mp = loaded['mp']
     mpi = loaded['mpi']
@@ -50,25 +48,21 @@ def load_mp(path):
 
   
 def save_mdmp_as_h5(dir_path, name, mps, idx, k=0):
-
     """
-    Save a multidimensional matrix profile as a pair of hdf5 files. Input is based on the output
-    of (https://stumpy.readthedocs.io/en/latest/api.html#mstump).
-
+    Save a multidimensional matrix profile as a pair of hdf5 files. Input is based on the output of
     Args:
        dir_path: Path of the directory where the file will be saved.
        name: Name that will be appended to the file after a default prefix. (i.e. mp_multivariate_<name>.h5)
        mps: The multi-dimensional matrix profile. Each row of the array corresponds
-       to each matrix profile for a given dimension
-                   (i.e., the first row is the 1-D matrix profile and the second row is the 2-D matrix profile).
+            to each matrix profile for a given dimension(i.e., the first row is the 1-D matrix profile and the second row is
+            the 2-D matrix profile).
        idx: The multi-dimensional matrix profile index where each row of the array corresponds
        to each matrix profile index for a given dimension.
        k: If mps and idx are one-dimensional k can be used to specify the given dimension of the matrix profile.
-       The default value specifies the 1-D matrix profile. If mps and idx are multi-dimensional, k is ignored.
-
-    Return:
-
+          The default value specifies the 1-D matrix profile. If mps and idx are multi-dimensional, k is ignored.
+     Return:
     """
+    
     if mps.ndim != idx.ndim:
         err = 'Dimensions of mps and idx should match'
         raise ValueError(f"{err}")
@@ -103,17 +97,12 @@ def load_mdmp_from_h5(dir_path, name, k):
     Args:
       dir_path: Path of the directory where the file is located.
       name: Name that follows the default prefix. (i.e. mp_multivariate_<name>.h5)
-      k: Specifies which K-dimensional matrix profile to load.
-                 (i.e. k=2 loads the 2-D matrix profile
+      k: Specifies which K-dimensional matrix profile to load.(i.e. k=2 loads the 2-D matrix profile
     
     Return:
         mp: matrix profile/stumpy distances
         index: matrix profile/stumpy indexes
-            
-          
-        
     """
-    # Load MP from disk
     
     h5f = h5py.File(dir_path + 'mp_multivariate_' + name + '.h5','r')
     mp= h5f[f'mp{k}'][:]
@@ -145,11 +134,7 @@ def save_results(results_dir, sub_dir_name, p, df_stats, m, radius, ez, k, max_n
 
     Return:
         None
-
     """
-
-
-
 
     path = os.path.join(results_dir, sub_dir_name)
 

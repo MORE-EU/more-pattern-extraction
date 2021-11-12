@@ -1,5 +1,5 @@
-This is the module for Learning 
-===============================
+Learning 
+========
 
 .. automodule:: learning
     :members:
