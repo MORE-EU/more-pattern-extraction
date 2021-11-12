@@ -24,8 +24,7 @@ The module consists of the following steps:
   
 3. **Statistics**
 
-   Utilities regarding the computation of useful stat
-istics about the dataset, that implement variations of standard error measures, evaluating the performance of a regression   
+   Utilities regarding the computation of useful statistics about the dataset, that implement variations of standard error measures, evaluating the performance of a regression   
    model, ranking time series.
    
 4. **Plotting**   
@@ -83,4 +82,4 @@ Pattern extraction tools
    
 Documentation
 =============
-Source code documentation is available from [.github.io]().
+Source code documentation is available from [here](www.gg.gr).
