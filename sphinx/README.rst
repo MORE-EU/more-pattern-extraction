@@ -78,8 +78,7 @@ Pattern extraction tools
   In this section, we present a tool for detecting segments of a time series where the behavior of a given target variable deviates much from the usual. We assume that certain 
   segments of the time series are labelled, representing the usual behavior of the variable in question. Our main ingredient is regression. We fit a regression model on the 
   labelled segments, aiming to capture the “usual” behavior of the target variable. Then, we compare the values of the trained model with the real values.
-  Link to the notebook: [Deviation Detection](https://github.com/MORE-EU/more-pattern-extraction/blob/main/deviation_detection.ipynb)
-   
+  Link to the notebook:  `Deviation Detection<https://github.com/MORE-EU/more-pattern-extraction/blob/main/deviation_detection.ipynb>`_
 Documentation
 =============
 Source code documentation is available from `GitHub repository <https://more-eu.github.io/more-pattern-extraction/>`_
