@@ -82,4 +82,4 @@ Pattern extraction tools
 =============  
 Documentation
 =============
-Source code documentation is available from `GitHub repository <https://more-eu.github.io/more-pattern-extraction/>`_
+Source code documentation is available from `GitHub pages <https://more-eu.github.io/more-pattern-extraction/>`_
