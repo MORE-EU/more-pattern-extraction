@@ -17,20 +17,19 @@ The module consists of the following steps:
 
 1. **Input/Output**
 
-  This group of utilities includes all functions which are responsible for loading and storing time series to the disk. Moreover, it includes functions for loading/storing necessary metadata which are produced by any of the methods of this module and can be further processed.
+This group of utilities includes all functions which are responsible for loading and storing time series to the disk. Moreover, it includes functions for loading/storing necessary metadata which are produced by any of the methods of this module and can be further processed.
 
 2. **Preprocessing**
 
-  Utilities regarding the handling and processing of the input data. Such functions handle filtering, resampling, adding noise, normalization and filling out missing values.
+Utilities regarding the handling and processing of the input data. Such functions handle filtering, resampling, adding noise, normalization and filling out missing values.
   
 3. **Statistics**
 
-   Utilities regarding the computation of useful statistics about the dataset, that implement variations of standard error measures, evaluating the performance of a regression   
-   model, ranking time series.
+Utilities regarding the computation of useful statistics about the dataset, that implement variations of standard error measures, evaluating the performance of a regression   model, ranking time series.
    
 4. **Plotting**   
 
- Functions that are used for the plotting of the results are presented, also include functions for plotting auxiliary information and helper functions for switching between        different data formats. 
+Functions that are used for the plotting of the results are presented, also include functions for plotting auxiliary information and helper functions for switching between     different data formats. 
   
 5. **Basic pattern extraction**
 
