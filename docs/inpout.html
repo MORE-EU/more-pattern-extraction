@@ -1,0 +1,189 @@
+
+<!DOCTYPE html>
+
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.17: http://docutils.sourceforge.net/" />
+
+    <title>This is the module for Input Output &#8212; More Pattern Extraction 0.0.1 documentation</title>
+    <link rel="stylesheet" type="text/css" href="_static/pygments.css" />
+    <link rel="stylesheet" type="text/css" href="_static/nature.css" />
+    <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
+    <script src="_static/jquery.js"></script>
+    <script src="_static/underscore.js"></script>
+    <script src="_static/doctools.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="prev" title="This is the module for Statistics" href="statistics.html" /> 
+  </head><body>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="statistics.html" title="This is the module for Statistics"
+             accesskey="P">previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="index.html">More Pattern Extraction 0.0.1 documentation</a> &#187;</li>
+        <li class="nav-item nav-item-this"><a href="">This is the module for Input Output</a></li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <section id="module-inpout">
+<span id="this-is-the-module-for-input-output"></span><h1>This is the module for Input Output<a class="headerlink" href="#module-inpout" title="Permalink to this headline">¶</a></h1>
+<dl class="py function">
+<dt class="sig sig-object py" id="inpout.load_df">
+<span class="sig-prename descclassname"><span class="pre">inpout.</span></span><span class="sig-name descname"><span class="pre">load_df</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">path</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/inpout.html#load_df"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#inpout.load_df" title="Permalink to this definition">¶</a></dt>
+<dd><p>Loading a parquet file to a pandas DataFrame. Return this pandas DataFrame.</p>
+<dl class="simple">
+<dt>Args:</dt><dd><p>path: Path of the under loading DataFrame.</p>
+</dd>
+<dt>Return: </dt><dd><p>pandas DataFrame.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="inpout.load_mdmp_from_h5">
+<span class="sig-prename descclassname"><span class="pre">inpout.</span></span><span class="sig-name descname"><span class="pre">load_mdmp_from_h5</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">dir_path</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">name</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">k</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/inpout.html#load_mdmp_from_h5"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#inpout.load_mdmp_from_h5" title="Permalink to this definition">¶</a></dt>
+<dd><p>Load a multidimensional matrix profile that has been saved as a pair of hdf5 files.</p>
+<dl>
+<dt>Args:</dt><dd><p>dir_path: Path of the directory where the file is located.
+name: Name that follows the default prefix. (i.e. mp_multivariate_&lt;name&gt;.h5)
+k: Specifies which K-dimensional matrix profile to load.</p>
+<blockquote>
+<div><p>(i.e. k=2 loads the 2-D matrix profile</p>
+</div></blockquote>
+</dd>
+<dt>Return:</dt><dd><p>mp: matrix profile/stumpy distances
+index: matrix profile/stumpy indexes</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="inpout.load_mp">
+<span class="sig-prename descclassname"><span class="pre">inpout.</span></span><span class="sig-name descname"><span class="pre">load_mp</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">path</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/inpout.html#load_mp"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#inpout.load_mp" title="Permalink to this definition">¶</a></dt>
+<dd><p>Load the Uni variate/Multivariate Matrix profile which was saved from Create_mp in a .npz file.</p>
+<dl class="simple">
+<dt>Args:</dt><dd><p>path: Path of the directory where the file is saved.</p>
+</dd>
+<dt>Return:</dt><dd><p>mp: Matrix profile Distances
+mpi: Matrix profile Indices</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="inpout.save_mdmp_as_h5">
+<span class="sig-prename descclassname"><span class="pre">inpout.</span></span><span class="sig-name descname"><span class="pre">save_mdmp_as_h5</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">dir_path</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">name</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mps</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">idx</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">k</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/inpout.html#save_mdmp_as_h5"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#inpout.save_mdmp_as_h5" title="Permalink to this definition">¶</a></dt>
+<dd><p>Save a multidimensional matrix profile as a pair of hdf5 files. Input is based on the output
+of (<a class="reference external" href="https://stumpy.readthedocs.io/en/latest/api.html#mstump">https://stumpy.readthedocs.io/en/latest/api.html#mstump</a>).</p>
+<dl>
+<dt>Args:</dt><dd><p>dir_path: Path of the directory where the file will be saved.
+name: Name that will be appended to the file after a default prefix. (i.e. mp_multivariate_&lt;name&gt;.h5)
+mps: The multi-dimensional matrix profile. Each row of the array corresponds
+to each matrix profile for a given dimension</p>
+<blockquote>
+<div><p>(i.e., the first row is the 1-D matrix profile and the second row is the 2-D matrix profile).</p>
+</div></blockquote>
+<p>idx: The multi-dimensional matrix profile index where each row of the array corresponds
+to each matrix profile index for a given dimension.
+k: If mps and idx are one-dimensional k can be used to specify the given dimension of the matrix profile.
+The default value specifies the 1-D matrix profile. If mps and idx are multi-dimensional, k is ignored.</p>
+</dd>
+</dl>
+<p>Return:</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="inpout.save_results">
+<span class="sig-prename descclassname"><span class="pre">inpout.</span></span><span class="sig-name descname"><span class="pre">save_results</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">results_dir</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sub_dir_name</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">p</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">df_stats</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">m</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">radius</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ez</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">k</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">max_neighbors</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/inpout.html#save_results"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#inpout.save_results" title="Permalink to this definition">¶</a></dt>
+<dd><p>Save the results of a specific run in the directory specified by the results_dir and sub_dir_name.
+The results contain some figures that are created with an adaptation of the
+matrix profile foundation visualize() function. The adaptation works for multi dimensional time series
+and can be found at (<a class="reference external" href="https://github.com/MORE-EU/matrixprofile/blob/master/matrixprofile/visualize.py">https://github.com/MORE-EU/matrixprofile/blob/master/matrixprofile/visualize.py</a>)
+as visualize_md().
+Args:</p>
+<blockquote>
+<div><p>results_dir: Path of the directory where the results will be saved.
+sub_dir_name: Path of the sub directory where the results will be saved.
+p: A profile object as it is defined in the matrix profile foundation python library.
+df_stats: DataFrame with the desired statistics that need to be saved.
+m: The subsequence window size.
+ez: The exclusion zone to use.
+radius: The radius to use.
+k: The number of the top motifs that were calculated.
+max_neighbors: The maximum amount of neighbors to find for each of the top k motifs.</p>
+</div></blockquote>
+<dl class="simple">
+<dt>Return:</dt><dd><p>None</p>
+</dd>
+</dl>
+</dd></dl>
+
+</section>
+
+
+            <div class="clearer"></div>
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="statistics.html"
+                        title="previous chapter">This is the module for Statistics</a></p>
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="_sources/inpout.rst.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" />
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script>$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="statistics.html" title="This is the module for Statistics"
+             >previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="index.html">More Pattern Extraction 0.0.1 documentation</a> &#187;</li>
+        <li class="nav-item nav-item-this"><a href="">This is the module for Input Output</a></li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+        &#169; Copyright 2021, Ioannis Psarros.
+      Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 4.0.1.
+    </div>
+  </body>
+</html>

@@ -1,0 +1,286 @@
+
+<!DOCTYPE html>
+
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.17: http://docutils.sourceforge.net/" />
+
+    <title>This is the module for Preprocessing &#8212; More Pattern Extraction 0.0.1 documentation</title>
+    <link rel="stylesheet" type="text/css" href="_static/pygments.css" />
+    <link rel="stylesheet" type="text/css" href="_static/nature.css" />
+    <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
+    <script src="_static/jquery.js"></script>
+    <script src="_static/underscore.js"></script>
+    <script src="_static/doctools.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="This is the module for Patterns" href="patterns.html" />
+    <link rel="prev" title="Welcome to Moret’s documentation!" href="index.html" /> 
+  </head><body>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="patterns.html" title="This is the module for Patterns"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="index.html" title="Welcome to Moret’s documentation!"
+             accesskey="P">previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="index.html">More Pattern Extraction 0.0.1 documentation</a> &#187;</li>
+        <li class="nav-item nav-item-this"><a href="">This is the module for Preprocessing</a></li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <section id="module-preprocessing">
+<span id="this-is-the-module-for-preprocessing"></span><h1>This is the module for Preprocessing<a class="headerlink" href="#module-preprocessing" title="Permalink to this headline">¶</a></h1>
+<dl class="py function">
+<dt class="sig sig-object py" id="preprocessing.add_noise_to_series">
+<span class="sig-prename descclassname"><span class="pre">preprocessing.</span></span><span class="sig-name descname"><span class="pre">add_noise_to_series</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">series</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">noise_max</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">9e-05</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/preprocessing.html#add_noise_to_series"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#preprocessing.add_noise_to_series" title="Permalink to this definition">¶</a></dt>
+<dd><p>Add uniform noise to series.</p>
+<dl class="simple">
+<dt>Args:</dt><dd><p>series: The time series to be added noise.
+noise_max: The upper limit of the amount of noise that can be added to a time series point</p>
+</dd>
+<dt>Return: </dt><dd><p>DataFrame with noise</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="preprocessing.add_noise_to_series_md">
+<span class="sig-prename descclassname"><span class="pre">preprocessing.</span></span><span class="sig-name descname"><span class="pre">add_noise_to_series_md</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">df</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">noise_max</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">9e-05</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/preprocessing.html#add_noise_to_series_md"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#preprocessing.add_noise_to_series_md" title="Permalink to this definition">¶</a></dt>
+<dd><p>Add uniform noise to a multidimensional time series that is given as a pandas DataFrame.</p>
+<dl class="simple">
+<dt>Args:</dt><dd><p>df: The DataFrame that contains the multidimensional time series.
+noise_max: The upper limit of the amount of noise that can be added to a time series point.</p>
+</dd>
+<dt>Return:</dt><dd><p>The DataFrame with noise to all the columns</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="preprocessing.change_granularity">
+<span class="sig-prename descclassname"><span class="pre">preprocessing.</span></span><span class="sig-name descname"><span class="pre">change_granularity</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">df</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">granularity</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'30s'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">size</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">10000000</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">chunk</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/preprocessing.html#change_granularity"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#preprocessing.change_granularity" title="Permalink to this definition">¶</a></dt>
+<dd><p>Changing the offset of a TimeSeries. 
+We do this procedure by using chunk_interpolate. 
+We divide our TimeSeries into pieces in order to interpolate them.</p>
+<dl class="simple">
+<dt>Args:</dt><dd><p>df: Date/Time DataFrame. 
+size: The size/chunks we want to divide our /DataFrame according to the global index of the set.
+The Default price is 10 million.       .
+granularity: The offset user wants to resample the Time Series                  
+chunk: If set True, It applies the chunk_interpolation</p>
+</dd>
+<dt>Return: </dt><dd><p>The interpolated DataFrame/TimeSeries</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="preprocessing.chunk_interpolate">
+<span class="sig-prename descclassname"><span class="pre">preprocessing.</span></span><span class="sig-name descname"><span class="pre">chunk_interpolate</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">df</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">size</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1000000</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">method</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'linear'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">axis</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">limit_direction</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'both'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">limit</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/preprocessing.html#chunk_interpolate"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#preprocessing.chunk_interpolate" title="Permalink to this definition">¶</a></dt>
+<dd><p>After Chunker makes the pieces according to index, we Interpolate them with <em>args</em> of pandas.interpolate() and then we Merge them back together.
+This step is crucial for the complete data interpolation without RAM problems especially in large DataSets.</p>
+<dl class="simple">
+<dt>Args:</dt><dd><p>df: Date/Time DataFrame or any Given DataFrame.
+size: The size/chunks we want to divide our /DataFrame according to the global index of the set. The Default price is 10 million.</p>
+</dd>
+<dt>Return:</dt><dd><p>The Interpolated DataFrame</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="preprocessing.chunker">
+<span class="sig-prename descclassname"><span class="pre">preprocessing.</span></span><span class="sig-name descname"><span class="pre">chunker</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">seq</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">size</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/preprocessing.html#chunker"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#preprocessing.chunker" title="Permalink to this definition">¶</a></dt>
+<dd><p>Dividing a file/DataFrame etc into pieces for better hadling of RAM.</p>
+<dl class="simple">
+<dt>Args:</dt><dd><p>seq: Sequence, Folder, Date/Time DataFrame or any Given DataFrame.
+size: The size/chunks we want to divide our Seq/Folder/DataFrame.</p>
+</dd>
+<dt>Return:</dt><dd><p>The divided groups</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="preprocessing.enumerate2">
+<span class="sig-prename descclassname"><span class="pre">preprocessing.</span></span><span class="sig-name descname"><span class="pre">enumerate2</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">start</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">end</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">step</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/preprocessing.html#enumerate2"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#preprocessing.enumerate2" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="simple">
+<dt>Args:</dt><dd><p>start: starting point
+end: ending point    .
+step: step of the process</p>
+</dd>
+<dt>Return: </dt><dd><p>The interpolated DataFrame/TimeSeries</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="preprocessing.filter_col">
+<span class="sig-prename descclassname"><span class="pre">preprocessing.</span></span><span class="sig-name descname"><span class="pre">filter_col</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">df</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">col</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">less_than</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">bigger_than</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/preprocessing.html#filter_col"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#preprocessing.filter_col" title="Permalink to this definition">¶</a></dt>
+<dd><p>Remove rows of the dataframe that they are under, over/both from a specific/two different input price/prices.</p>
+<dl class="simple">
+<dt>Args:</dt><dd><p>df: Date/Time DataFrame. 
+col: The desired column to work on our DataFrame. 
+less_than: Filtering the column dropping values below that price.
+bigger_than: Filtering the column dropping values above that price.</p>
+</dd>
+<dt>Return: </dt><dd><p>The Filtrated TimeSeries/DataFrame</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="preprocessing.filter_dates">
+<span class="sig-prename descclassname"><span class="pre">preprocessing.</span></span><span class="sig-name descname"><span class="pre">filter_dates</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">df</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">start</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">end</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/preprocessing.html#filter_dates"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#preprocessing.filter_dates" title="Permalink to this definition">¶</a></dt>
+<dd><blockquote>
+<div><p>Remove rows of the dataframe that are not in the [start, end] interval.</p>
+<dl class="simple">
+<dt>Args:</dt><dd><p>df:DataFrame that has a datetime index.
+start: Date that signifies the start of the interval.
+end: Date that signifies the end of the interval.</p>
+</dd>
+</dl>
+</div></blockquote>
+<dl class="simple">
+<dt>Returns:</dt><dd><p>The Filtrared TimeSeries/DataFrame</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="preprocessing.filter_df">
+<span class="sig-prename descclassname"><span class="pre">preprocessing.</span></span><span class="sig-name descname"><span class="pre">filter_df</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">df</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">filter_dict</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/preprocessing.html#filter_df"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#preprocessing.filter_df" title="Permalink to this definition">¶</a></dt>
+<dd><p>Creates a filtered DataFrame with multiple columns.</p>
+<dl class="simple">
+<dt>Args:</dt><dd><p>df: Date/Time DataFrame or any Given DataFrame.
+filter_dict: A dictionary of columns user wants to filter</p>
+</dd>
+<dt>Return: </dt><dd><p>Filtered DataFrame</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="preprocessing.filter_dispersed">
+<span class="sig-prename descclassname"><span class="pre">preprocessing.</span></span><span class="sig-name descname"><span class="pre">filter_dispersed</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">df</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">window</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">eps</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/preprocessing.html#filter_dispersed"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#preprocessing.filter_dispersed" title="Permalink to this definition">¶</a></dt>
+<dd><p>We are looking at windows of consecutive row and calculate the mean and variance. For each window if the index of disperse or given column is in the given threshhold
+then the last row will remain in the data frame.</p>
+<dl class="simple">
+<dt>Args:</dt><dd><p>df: Date/Time DataFrame or any Given DataFrame.
+window: A small value in order to avoid dividing with Zero.
+eps: A small value in order to avoid dividing with Zero (See is_stable)</p>
+</dd>
+</dl>
+<p>Return: The Filtered DataFrame</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="preprocessing.is_stable">
+<span class="sig-prename descclassname"><span class="pre">preprocessing.</span></span><span class="sig-name descname"><span class="pre">is_stable</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">epsilon</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/preprocessing.html#is_stable"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#preprocessing.is_stable" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="simple">
+<dt>Args:</dt><dd><p>epsilon: A small value in order to avoid dividing with Zero.</p>
+</dd>
+<dt>Return: </dt><dd><p>A boolean vector from the division of variance with mean of a column.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="preprocessing.normalize">
+<span class="sig-prename descclassname"><span class="pre">preprocessing.</span></span><span class="sig-name descname"><span class="pre">normalize</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">df</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/preprocessing.html#normalize"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#preprocessing.normalize" title="Permalink to this definition">¶</a></dt>
+<dd><p>This function transforms an input dataframe by rescaling values to the range [0,1].</p>
+<dl class="simple">
+<dt>Args:</dt><dd><p>df: Date/Time DataFrame or any DataFrame given with a specific column to Normalize.</p>
+</dd>
+<dt>Return:</dt><dd><p>Normalized Array</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="preprocessing.scale_df">
+<span class="sig-prename descclassname"><span class="pre">preprocessing.</span></span><span class="sig-name descname"><span class="pre">scale_df</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">df</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/preprocessing.html#scale_df"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#preprocessing.scale_df" title="Permalink to this definition">¶</a></dt>
+<dd><p>Scale each column of a dataframe to the [0, 1] range performing the min max scaling</p>
+<dl class="simple">
+<dt>Args:</dt><dd><p>df: The DataFrame to be scaled.</p>
+</dd>
+</dl>
+<p>Return: Scaled DataFrame</p>
+</dd></dl>
+
+</section>
+
+
+            <div class="clearer"></div>
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="index.html"
+                        title="previous chapter">Welcome to Moret’s documentation!</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="patterns.html"
+                        title="next chapter">This is the module for Patterns</a></p>
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="_sources/preprocessing.rst.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" />
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script>$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="patterns.html" title="This is the module for Patterns"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="index.html" title="Welcome to Moret’s documentation!"
+             >previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="index.html">More Pattern Extraction 0.0.1 documentation</a> &#187;</li>
+        <li class="nav-item nav-item-this"><a href="">This is the module for Preprocessing</a></li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+        &#169; Copyright 2021, Ioannis Psarros.
+      Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 4.0.1.
+    </div>
+  </body>
+</html>

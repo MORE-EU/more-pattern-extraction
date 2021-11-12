@@ -1,0 +1,336 @@
+
+<!DOCTYPE html>
+
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>plotfig &#8212; More Pattern Extraction 0.0.1 documentation</title>
+    <link rel="stylesheet" type="text/css" href="../_static/pygments.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/nature.css" />
+    <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
+    <script src="../_static/jquery.js"></script>
+    <script src="../_static/underscore.js"></script>
+    <script src="../_static/doctools.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" /> 
+  </head><body>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">More Pattern Extraction 0.0.1 documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="index.html" accesskey="U">Module code</a> &#187;</li>
+        <li class="nav-item nav-item-this"><a href="">plotfig</a></li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <h1>Source code for plotfig</h1><div class="highlight"><pre>
+<span></span><span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
+<span class="kn">from</span> <span class="nn">datetime</span> <span class="kn">import</span> <span class="n">datetime</span>
+<span class="kn">import</span> <span class="nn">seaborn</span> <span class="k">as</span> <span class="nn">sns</span>
+<span class="kn">from</span> <span class="nn">dtw</span> <span class="kn">import</span> <span class="n">dtw</span>
+
+
+
+<div class="viewcode-block" id="plot_knee"><a class="viewcode-back" href="../plotfig.html#plotfig.plot_knee">[docs]</a><span class="k">def</span> <span class="nf">plot_knee</span><span class="p">(</span><span class="n">mps</span><span class="p">,</span> <span class="n">save_plot</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">filename</span><span class="o">=</span><span class="s1">&#39;knee.png&#39;</span><span class="p">):</span>
+    
+    <span class="sd">&quot;&quot;&quot; </span>
+<span class="sd">    Plot the minimum value of the matrix profile for each dimension. This plot is used to visually look for</span>
+<span class="sd">    a &#39;knee&#39; or &#39;elbow&#39; that can be used to find the optimal number of dimensions to use.</span>
+<span class="sd">    </span>
+<span class="sd">    Args:</span>
+<span class="sd">        mps: The multi-dimensional matrix profile. Each row of the array corresponds to each matrix profile for a</span>
+<span class="sd">        given dimension (i.e., the first row is the 1-D matrix profile and the second row is the 2-D matrix profile).</span>
+<span class="sd">        save_plot: If save_plot is True then the figure will be saved. Otherwise it will just be shown.</span>
+<span class="sd">        filename: Used if save_plot=True, the name of the file to be saved.</span>
+<span class="sd">    </span>
+<span class="sd">    Return:</span>
+<span class="sd">        Figure</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    
+    <span class="n">motifs_idx</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">argsort</span><span class="p">(</span><span class="n">mps</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)[:,</span> <span class="p">:</span><span class="mi">2</span><span class="p">]</span>
+    <span class="n">mp_len</span> <span class="o">=</span> <span class="n">mps</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">15</span><span class="p">,</span> <span class="mi">5</span><span class="p">),</span> <span class="n">dpi</span><span class="o">=</span><span class="mi">80</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">xlabel</span><span class="p">(</span><span class="s1">&#39;k (Number of dimensions, zero-indexed)&#39;</span><span class="p">,</span> <span class="n">fontsize</span><span class="o">=</span><span class="s1">&#39;20&#39;</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">ylabel</span><span class="p">(</span><span class="s1">&#39;Matrix Profile Min Value&#39;</span><span class="p">,</span> <span class="n">fontsize</span><span class="o">=</span><span class="s1">&#39;20&#39;</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">xticks</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="n">mp_len</span><span class="p">))</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">mps</span><span class="p">[</span><span class="nb">range</span><span class="p">(</span><span class="n">mp_len</span><span class="p">),</span> <span class="n">motifs_idx</span><span class="p">[:</span><span class="n">mp_len</span><span class="p">,</span> <span class="mi">0</span><span class="p">]],</span> <span class="n">c</span><span class="o">=</span><span class="s1">&#39;red&#39;</span><span class="p">,</span> <span class="n">linewidth</span><span class="o">=</span><span class="s1">&#39;4&#39;</span><span class="p">);</span>
+    <span class="k">if</span> <span class="n">save_plot</span><span class="p">:</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">savefig</span><span class="p">(</span><span class="n">filename</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+    <span class="k">return</span></div>
+
+  
+<div class="viewcode-block" id="predefined_labels"><a class="viewcode-back" href="../plotfig.html#plotfig.predefined_labels">[docs]</a><span class="k">def</span> <span class="nf">predefined_labels</span><span class="p">(</span><span class="n">axs</span><span class="p">,</span> <span class="n">df</span><span class="p">,</span> <span class="n">fixed_dates</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Given a df and a list of dates we find the index of those dates in a dataset</span>
+<span class="sd">    </span>
+<span class="sd">    Args:</span>
+<span class="sd">        axs: axes</span>
+<span class="sd">        df: DateTime DataFrame</span>
+<span class="sd">        fixed_dates: a list of dates (sorted)</span>
+<span class="sd">    Return:</span>
+<span class="sd">        ids: indexes of the dates </span>
+<span class="sd">    </span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">ids</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">for</span> <span class="n">d</span> <span class="ow">in</span> <span class="n">fixed_dates</span><span class="p">:</span>
+        <span class="n">axs</span><span class="o">.</span><span class="n">axvline</span><span class="p">(</span><span class="n">x</span><span class="o">=</span><span class="n">df</span><span class="o">.</span><span class="n">index</span><span class="o">.</span><span class="n">get_loc</span><span class="p">(</span><span class="n">d</span><span class="p">),</span> <span class="n">ls</span><span class="o">=</span><span class="s2">&quot;dashed&quot;</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s1">&#39;darkgreen&#39;</span><span class="p">)</span>
+        <span class="n">ids</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">df</span><span class="o">.</span><span class="n">index</span><span class="o">.</span><span class="n">get_loc</span><span class="p">(</span><span class="n">d</span><span class="p">))</span>
+    <span class="k">return</span> <span class="n">ids</span></div>
+
+
+<div class="viewcode-block" id="convert_labels_to_dt"><a class="viewcode-back" href="../plotfig.html#plotfig.convert_labels_to_dt">[docs]</a><span class="k">def</span> <span class="nf">convert_labels_to_dt</span><span class="p">(</span><span class="n">labels</span><span class="p">,</span> <span class="n">df</span><span class="p">):</span> 
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    </span>
+<span class="sd">    Args:</span>
+<span class="sd">    </span>
+<span class="sd">    Returns:</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">l</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">for</span> <span class="n">label</span> <span class="ow">in</span> <span class="n">labels</span><span class="p">:</span>
+        <span class="k">if</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">df</span><span class="p">)</span> <span class="o">&gt;=</span> <span class="nb">round</span><span class="p">(</span><span class="n">label</span><span class="p">)):</span>
+            <span class="n">l</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">df</span><span class="o">.</span><span class="n">index</span><span class="p">[</span><span class="nb">round</span><span class="p">(</span><span class="n">label</span><span class="p">)</span> <span class="p">]</span><span class="o">.</span><span class="n">strftime</span><span class="p">(</span><span class="s2">&quot;%Y-%m-</span><span class="si">%d</span><span class="s2">&quot;</span><span class="p">))</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">l</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="kc">None</span><span class="p">)</span>
+            <span class="c1">#l = [ df.index[round(label)].strftime(&quot;%Y-%m-%d&quot;) for label in labels]</span>
+    <span class="k">return</span> <span class="n">l</span></div>
+
+
+<div class="viewcode-block" id="get_fixed_dates"><a class="viewcode-back" href="../plotfig.html#plotfig.get_fixed_dates">[docs]</a><span class="k">def</span> <span class="nf">get_fixed_dates</span><span class="p">(</span><span class="n">df</span><span class="p">,</span><span class="n">fixed_dates</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    For sorted data we get the array of indexes of those dates</span>
+<span class="sd">    </span>
+<span class="sd">    Args:</span>
+<span class="sd">        df: DateTime dataframe</span>
+<span class="sd">        fixed_dates: a list of dates (sorted)</span>
+<span class="sd">         </span>
+<span class="sd">    Return:</span>
+<span class="sd">        array of indexes of the dates </span>
+<span class="sd">    </span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">dates</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">for</span> <span class="n">date_point</span> <span class="ow">in</span> <span class="n">fixed_dates</span><span class="p">:</span>
+        <span class="n">date_point</span> <span class="o">=</span> <span class="n">datetime</span><span class="o">.</span><span class="n">strptime</span><span class="p">(</span><span class="n">date_point</span><span class="p">,</span> <span class="s1">&#39;%Y-%m-</span><span class="si">%d</span><span class="s1"> %H:%M:%S&#39;</span><span class="p">)</span>
+        <span class="n">start_date_d</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">index</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="n">end_date_d</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">index</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+        <span class="k">if</span> <span class="p">(</span><span class="n">date_point</span> <span class="o">&gt;=</span> <span class="n">start_date_d</span><span class="p">)</span> <span class="ow">and</span> <span class="p">(</span><span class="n">date_point</span> <span class="o">&lt;=</span> <span class="n">end_date_d</span><span class="p">):</span>
+            <span class="n">dates</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">df</span><span class="o">.</span><span class="n">index</span><span class="o">.</span><span class="n">get_loc</span><span class="p">(</span><span class="n">date_point</span><span class="p">))</span>
+    <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">dates</span><span class="p">)</span></div>
+
+  
+<div class="viewcode-block" id="plot_profile"><a class="viewcode-back" href="../plotfig.html#plotfig.plot_profile">[docs]</a><span class="k">def</span> <span class="nf">plot_profile</span><span class="p">(</span><span class="n">df</span><span class="p">,</span> <span class="n">mp</span><span class="p">,</span> <span class="n">col_name</span><span class="p">):</span> 
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Plot the &#39;Column_name&#39; graph and the corresponding MatrixProfile.</span>
+<span class="sd">    We denote with the black arrow to top motif in our set</span>
+<span class="sd">    </span>
+<span class="sd">    Args:</span>
+<span class="sd">        df : A pandas DataFrame/Time Series</span>
+<span class="sd">        mp : matrix profile distances</span>
+<span class="sd">        col_name: name of a column</span>
+<span class="sd">    </span>
+<span class="sd">    Returns:</span>
+<span class="sd">        list : figures</span>
+<span class="sd">        A list of matplotlib figures.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">motifs_idx</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">argsort</span><span class="p">(</span><span class="n">mp</span><span class="p">)[:</span><span class="mi">2</span><span class="p">]</span>
+    <span class="n">mp_len</span> <span class="o">=</span> <span class="n">mp</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+    <span class="k">with</span> <span class="n">sns</span><span class="o">.</span><span class="n">axes_style</span><span class="p">(</span><span class="s1">&#39;ticks&#39;</span><span class="p">):</span>
+        <span class="n">fig1</span><span class="p">,</span> <span class="n">axs1</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">sharex</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">gridspec_kw</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;hspace&#39;</span><span class="p">:</span> <span class="mi">0</span><span class="p">},</span> <span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">20</span><span class="p">,</span> <span class="mi">6</span><span class="p">))</span>
+        <span class="n">df</span><span class="o">.</span><span class="n">iloc</span><span class="p">[</span><span class="s1">&#39;col_name&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">ax</span><span class="o">=</span><span class="n">axs1</span><span class="p">,</span> <span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">20</span><span class="p">,</span> <span class="mi">6</span><span class="p">))</span>
+
+        <span class="n">fig2</span><span class="p">,</span> <span class="n">axs2</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">sharex</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">gridspec_kw</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;hspace&#39;</span><span class="p">:</span> <span class="mi">0</span><span class="p">},</span> <span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">20</span><span class="p">,</span> <span class="mi">6</span><span class="p">))</span>
+
+
+        <span class="n">axs2</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;MP-&#39;</span><span class="p">,</span> <span class="n">fontsize</span><span class="o">=</span><span class="s1">&#39;20&#39;</span><span class="p">)</span>
+        <span class="n">axs2</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">mp</span><span class="p">,</span> <span class="n">c</span><span class="o">=</span><span class="s1">&#39;orange&#39;</span><span class="p">)</span>
+        <span class="n">axs2</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="s1">&#39;Time&#39;</span><span class="p">,</span> <span class="n">fontsize</span> <span class="o">=</span><span class="s1">&#39;20&#39;</span><span class="p">)</span>
+
+        <span class="n">axs2</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">motifs_idx</span><span class="p">,</span> <span class="n">mp</span><span class="p">[</span><span class="n">motifs_idx</span><span class="p">]</span> <span class="o">+</span> <span class="mi">1</span><span class="p">,</span> <span class="n">marker</span><span class="o">=</span><span class="s2">&quot;v&quot;</span><span class="p">,</span> <span class="n">markersize</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s1">&#39;black&#39;</span><span class="p">)</span>
+        <span class="n">axs2</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">motifs_idx</span><span class="p">,</span> <span class="n">mp</span><span class="p">[</span><span class="n">motifs_idx</span><span class="p">]</span> <span class="o">+</span> <span class="mi">1</span><span class="p">,</span> <span class="n">marker</span><span class="o">=</span><span class="s2">&quot;v&quot;</span><span class="p">,</span> <span class="n">markersize</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s1">&#39;black&#39;</span><span class="p">)</span></div>
+        
+        
+<div class="viewcode-block" id="plot_profile_md"><a class="viewcode-back" href="../plotfig.html#plotfig.plot_profile_md">[docs]</a><span class="k">def</span> <span class="nf">plot_profile_md</span><span class="p">(</span><span class="n">df</span><span class="p">,</span><span class="n">column_name</span><span class="p">,</span><span class="n">mp</span><span class="p">):</span> 
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Plot the &#39;Column_name&#39; graph and the corresponding Profile. We denote with the black arrow to top motif in our set.</span>
+<span class="sd">    </span>
+<span class="sd">    Args:</span>
+<span class="sd">        df : A pandas DataFrame/Time Series</span>
+<span class="sd">        mp : matrix profile distances</span>
+<span class="sd">        column_name: name of the column</span>
+<span class="sd">        </span>
+<span class="sd">    Returns:</span>
+<span class="sd">        list : figures</span>
+<span class="sd">        A list of matplotlib figures.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    
+    <span class="n">motifs_idx</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">argsort</span><span class="p">(</span><span class="n">mp</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)[:,</span> <span class="p">:</span><span class="mi">2</span><span class="p">]</span>
+    <span class="k">with</span> <span class="n">sns</span><span class="o">.</span><span class="n">axes_style</span><span class="p">(</span><span class="s1">&#39;ticks&#39;</span><span class="p">):</span>
+        <span class="n">fig1</span><span class="p">,</span> <span class="n">axs1</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">sharex</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">gridspec_kw</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;hspace&#39;</span><span class="p">:</span> <span class="mi">0</span><span class="p">},</span> <span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">20</span><span class="p">,</span> <span class="mi">12</span><span class="p">))</span>
+        <span class="n">df</span><span class="p">[</span><span class="s1">&#39;col_name&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">ax</span><span class="o">=</span><span class="n">axs1</span><span class="p">,</span> <span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">20</span><span class="p">,</span> <span class="mi">2</span><span class="p">))</span>
+
+        <span class="n">fig2</span><span class="p">,</span> <span class="n">axs2</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">(</span><span class="n">mp</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">sharex</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">gridspec_kw</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;hspace&#39;</span><span class="p">:</span> <span class="mi">0</span><span class="p">},</span> <span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">20</span><span class="p">,</span> <span class="mi">12</span><span class="p">))</span>
+        <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">dim_name</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">cols</span><span class="p">):</span>
+            <span class="k">if</span> <span class="n">np</span><span class="o">.</span><span class="n">all</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">isinf</span><span class="p">(</span><span class="n">mp</span><span class="p">[</span><span class="n">k</span><span class="p">])):</span> <span class="k">continue</span>
+
+            <span class="n">axs2</span><span class="p">[</span><span class="n">k</span><span class="p">]</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;MP-</span><span class="si">{</span><span class="n">dim_name</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">,</span> <span class="n">fontsize</span><span class="o">=</span><span class="s1">&#39;10&#39;</span><span class="p">)</span>
+            <span class="n">axs2</span><span class="p">[</span><span class="n">k</span><span class="p">]</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">mp</span><span class="p">[</span><span class="n">k</span><span class="p">],</span> <span class="n">c</span><span class="o">=</span><span class="s1">&#39;orange&#39;</span><span class="p">)</span>
+            <span class="n">axs2</span><span class="p">[</span><span class="n">k</span><span class="p">]</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="s1">&#39;Time&#39;</span><span class="p">,</span> <span class="n">fontsize</span> <span class="o">=</span><span class="s1">&#39;20&#39;</span><span class="p">)</span>
+
+        <span class="n">axs2</span><span class="p">[</span><span class="n">k</span><span class="p">]</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">motifs_idx</span><span class="p">[</span><span class="n">k</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span> <span class="n">mp</span><span class="p">[</span><span class="n">k</span><span class="p">,</span> <span class="n">motifs_idx</span><span class="p">[</span><span class="n">k</span><span class="p">,</span> <span class="mi">0</span><span class="p">]]</span> <span class="o">+</span> <span class="mi">1</span><span class="p">,</span> <span class="n">marker</span><span class="o">=</span><span class="s2">&quot;v&quot;</span><span class="p">,</span> <span class="n">markersize</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s1">&#39;black&#39;</span><span class="p">)</span>
+        <span class="n">axs2</span><span class="p">[</span><span class="n">k</span><span class="p">]</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">motifs_idx</span><span class="p">[</span><span class="n">k</span><span class="p">,</span> <span class="mi">1</span><span class="p">],</span> <span class="n">mp</span><span class="p">[</span><span class="n">k</span><span class="p">,</span> <span class="n">motifs_idx</span><span class="p">[</span><span class="n">k</span><span class="p">,</span> <span class="mi">1</span><span class="p">]]</span> <span class="o">+</span> <span class="mi">1</span><span class="p">,</span> <span class="n">marker</span><span class="o">=</span><span class="s2">&quot;v&quot;</span><span class="p">,</span> <span class="n">markersize</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s1">&#39;black&#39;</span><span class="p">)</span></div>
+        
+        
+<div class="viewcode-block" id="plot_segmentation_multi"><a class="viewcode-back" href="../plotfig.html#plotfig.plot_segmentation_multi">[docs]</a><span class="k">def</span> <span class="nf">plot_segmentation_multi</span><span class="p">(</span><span class="n">df</span><span class="p">,</span><span class="n">output</span><span class="p">,</span><span class="n">column_name</span><span class="p">):</span> 
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Plotting the ChangePoints/ Regimes that we precomputed from change_points_md. </span>
+<span class="sd">    The result would be multiple graphs up to the number of columns(dimensions) </span>
+<span class="sd">    with subplots up to the number of L( subsquence list).  </span>
+<span class="sd">    </span>
+<span class="sd">    Args:</span>
+<span class="sd">        df: DateTime DataFrame</span>
+<span class="sd">        outpout: output from change_points_md</span>
+<span class="sd">        column_name: Specific column name </span>
+<span class="sd">    </span>
+<span class="sd">    Return:</span>
+<span class="sd">        list of Figures</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">with</span> <span class="n">sns</span><span class="o">.</span><span class="n">axes_style</span><span class="p">(</span><span class="s1">&#39;ticks&#39;</span><span class="p">):</span>
+        <span class="n">fig</span><span class="p">,</span> <span class="n">axs</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">sharex</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">gridspec_kw</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;hspace&#39;</span><span class="p">:</span> <span class="mi">0</span><span class="p">},</span> <span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">20</span><span class="p">,</span> <span class="mi">3</span><span class="p">))</span>
+        <span class="n">df</span><span class="p">[</span><span class="s1">&#39;column_name&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">ax</span><span class="o">=</span><span class="n">axs</span><span class="p">,</span> <span class="n">x_compat</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+        <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">val</span> <span class="ow">in</span> <span class="n">output</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+            <span class="n">fig</span><span class="p">,</span> <span class="n">axs</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">L</span><span class="p">),</span> <span class="n">sharex</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">gridspec_kw</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;hspace&#39;</span><span class="p">:</span> <span class="mf">0.1</span><span class="p">},</span> <span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">20</span><span class="p">,</span> <span class="mi">3</span> <span class="o">*</span> <span class="nb">len</span><span class="p">(</span><span class="n">L</span><span class="p">)))</span>    
+            <span class="k">for</span> <span class="n">idx</span><span class="p">,</span> <span class="p">(</span><span class="n">cac</span><span class="p">,</span> <span class="n">regime_locations</span><span class="p">)</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">val</span><span class="p">):</span>
+                <span class="n">axs</span><span class="p">[</span><span class="n">idx</span><span class="p">]</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">cac</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]),</span> <span class="n">cac</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s1">&#39;C1&#39;</span><span class="p">)</span>
+
+                <span class="n">axs</span><span class="p">[</span><span class="n">idx</span><span class="p">]</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="nb">str</span><span class="p">(</span><span class="n">L</span><span class="p">[</span><span class="n">idx</span><span class="p">])</span><span class="si">}</span><span class="s1"> &#39;</span><span class="p">,</span> <span class="n">fontsize</span><span class="o">=</span><span class="mi">18</span><span class="p">)</span>
+                <span class="k">for</span> <span class="n">regime</span> <span class="ow">in</span> <span class="n">regime_locations</span><span class="p">:</span>
+                    <span class="n">axs</span><span class="p">[</span><span class="n">idx</span><span class="p">]</span><span class="o">.</span><span class="n">axvline</span><span class="p">(</span><span class="n">x</span><span class="o">=</span><span class="n">regime</span><span class="p">,</span> <span class="n">linestyle</span><span class="o">=</span><span class="s2">&quot;:&quot;</span><span class="p">)</span>
+
+                <span class="n">plt</span><span class="o">.</span><span class="n">minorticks_on</span><span class="p">()</span>
+
+                <span class="n">predefined_labels</span><span class="p">(</span><span class="n">axs</span><span class="p">[</span><span class="n">idx</span><span class="p">],</span> <span class="n">df</span><span class="p">)</span>
+
+            <span class="n">labels</span> <span class="o">=</span> <span class="p">[</span><span class="n">item</span> <span class="k">for</span> <span class="n">item</span> <span class="ow">in</span> <span class="n">axs</span><span class="p">[</span><span class="nb">len</span><span class="p">(</span><span class="n">L</span><span class="p">)</span> <span class="o">-</span> <span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">get_xticks</span><span class="p">()]</span>
+            <span class="c1">#visible = convert_labels_to_dt(labels[1:-1], df[start_date:end_date].resample(offset).mean())</span>
+            <span class="n">locs</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">xticks</span><span class="p">()</span>
+            <span class="c1">#plt.xticks(ticks=locs[1:-1], labels=visible, rotation=30)</span>
+            <span class="c1">#ax.set_xticklabels(labels)</span>
+
+            <span class="n">plt</span><span class="o">.</span><span class="n">suptitle</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">k</span><span class="si">}</span><span class="s1">-dimension&#39;</span><span class="p">,</span> <span class="n">fontsize</span><span class="o">=</span><span class="mi">20</span><span class="p">)</span></div>
+      
+        
+<div class="viewcode-block" id="plot_segmentation"><a class="viewcode-back" href="../plotfig.html#plotfig.plot_segmentation">[docs]</a><span class="k">def</span> <span class="nf">plot_segmentation</span><span class="p">(</span><span class="n">df</span><span class="p">,</span> <span class="n">path</span><span class="p">,</span> <span class="n">output</span><span class="p">,</span> <span class="n">fixed_dates</span><span class="p">,</span> <span class="n">file_name</span><span class="p">,</span> <span class="n">top_seg</span><span class="o">=</span><span class="mi">3</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Plotting the ChangePoints/ Regimes that we precomputed from change_points. </span>
+<span class="sd">    The result would be multiple graphs up to the number of L ( subsquence list).  </span>
+<span class="sd">    Later we use the dtw in order to find a generalized distance between a list of dates and the</span>
+<span class="sd">    precomputed change points/regimes.</span>
+<span class="sd">    In the end we save the ones that have the minimum distance up to a number the user wishes.</span>
+<span class="sd">    </span>
+<span class="sd">    Args:</span>
+<span class="sd">        df: DateTime DataFrame</span>
+<span class="sd">        path: path to be saved the figures</span>
+<span class="sd">        output: output from change_points</span>
+<span class="sd">        top_seg: number of the best plots we want to save</span>
+<span class="sd">        fixed_dates: list of sorted dates</span>
+<span class="sd">    </span>
+<span class="sd">    Return:</span>
+<span class="sd">        List of figures, we are saving up to top_seg</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">best</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">with</span> <span class="n">sns</span><span class="o">.</span><span class="n">axes_style</span><span class="p">(</span><span class="s1">&#39;ticks&#39;</span><span class="p">):</span> 
+        <span class="n">figs</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">l</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">output</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+            <span class="n">sz</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">df</span><span class="p">)</span>
+            <span class="n">threshold</span> <span class="o">=</span> <span class="n">sz</span> <span class="o">/</span> <span class="mi">1000</span>
+            <span class="n">ids</span> <span class="o">=</span> <span class="n">get_fixed_dates</span><span class="p">(</span><span class="n">df</span><span class="p">)</span>
+            <span class="n">fig</span><span class="p">,</span> <span class="n">axs</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">sharex</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">gridspec_kw</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;hspace&#39;</span><span class="p">:</span> <span class="mf">0.1</span><span class="p">},</span> <span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">20</span><span class="p">,</span> <span class="mi">3</span><span class="p">))</span>
+            <span class="n">diff</span> <span class="o">=</span> <span class="mi">0</span>
+            <span class="k">for</span> <span class="n">idx</span><span class="p">,</span> <span class="p">(</span><span class="n">cac</span><span class="p">,</span> <span class="n">regime_locations</span><span class="p">)</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">v</span><span class="p">):</span>
+                <span class="n">axs</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">cac</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]),</span> <span class="n">cac</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s1">&#39;C1&#39;</span><span class="p">)</span>
+                <span class="n">filtered_regimes</span> <span class="o">=</span> <span class="n">regime_locations</span><span class="p">[(</span><span class="n">regime_locations</span> <span class="o">&gt;</span> <span class="n">ids</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">-</span> <span class="n">threshold</span><span class="p">)</span> <span class="o">&amp;</span> <span class="p">(</span><span class="n">regime_locations</span> <span class="o">&lt;</span> <span class="n">ids</span><span class="p">[</span><span class="o">-</span> <span class="mi">1</span><span class="p">]</span> <span class="o">+</span> <span class="n">threshold</span><span class="p">)]</span>
+                <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">filtered_regimes</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+                    <span class="n">filtered_regimes</span> <span class="o">=</span> <span class="n">regime_locations</span>
+                <span class="n">manhattan_distance</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">x</span> <span class="o">-</span> <span class="n">y</span><span class="p">)</span>
+                <span class="n">diff</span> <span class="o">=</span> <span class="n">dtw</span><span class="p">(</span> <span class="n">regime_locations</span><span class="p">,</span> <span class="n">ids</span><span class="p">,</span> <span class="n">dist</span><span class="o">=</span><span class="n">manhattan_distance</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+                <span class="n">axs</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;L:</span><span class="si">{</span><span class="nb">str</span><span class="p">(</span><span class="n">l</span><span class="p">)</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">,</span> <span class="n">fontsize</span><span class="o">=</span><span class="mi">18</span><span class="p">)</span>
+                <span class="n">axs</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">file_name</span><span class="si">}</span><span class="s1">-</span><span class="si">{</span><span class="n">diff</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>
+                <span class="k">for</span> <span class="n">regime</span> <span class="ow">in</span> <span class="n">regime_locations</span><span class="p">:</span>
+                    <span class="n">axs</span><span class="o">.</span><span class="n">axvline</span><span class="p">(</span><span class="n">x</span><span class="o">=</span><span class="n">regime</span><span class="p">,</span> <span class="n">linestyle</span><span class="o">=</span><span class="s2">&quot;:&quot;</span><span class="p">)</span>
+                <span class="n">plt</span><span class="o">.</span><span class="n">minorticks_on</span><span class="p">()</span>
+                
+            <span class="n">ids</span> <span class="o">=</span> <span class="n">predefined_labels</span><span class="p">(</span><span class="n">axs</span><span class="p">,</span> <span class="n">df</span><span class="p">)</span>
+            <span class="n">labels</span> <span class="o">=</span> <span class="p">[</span><span class="n">item</span> <span class="k">for</span> <span class="n">item</span> <span class="ow">in</span> <span class="n">axs</span><span class="o">.</span><span class="n">get_xticks</span><span class="p">()]</span>
+            <span class="c1">#visible = convert_labels_to_dt(labels[-1:1], df)</span>
+            <span class="n">locs</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">xticks</span><span class="p">()</span>
+            <span class="n">plt</span><span class="o">.</span><span class="n">xticks</span><span class="p">(</span><span class="n">ticks</span><span class="o">=</span><span class="n">locs</span><span class="p">[</span><span class="mi">1</span><span class="p">:</span><span class="o">-</span><span class="mi">1</span><span class="p">],</span> <span class="n">rotation</span><span class="o">=</span><span class="mi">30</span><span class="p">)</span>
+            <span class="n">name</span> <span class="o">=</span> <span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">path</span><span class="si">}</span><span class="s1">segmentation-</span><span class="si">{</span><span class="nb">str</span><span class="p">(</span><span class="n">l</span><span class="p">)</span><span class="si">}</span><span class="s1">-&#39;</span>
+            <span class="n">config</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;L&quot;</span><span class="p">:</span> <span class="n">l</span><span class="p">,</span> <span class="s2">&quot;regime&quot;</span><span class="p">:</span> <span class="p">{</span><span class="n">regime</span><span class="p">}}</span>
+            <span class="n">figs</span><span class="o">.</span><span class="n">append</span><span class="p">([</span><span class="n">fig</span><span class="p">,</span> <span class="n">diff</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">config</span><span class="p">])</span>
+        <span class="n">sorted_figs</span> <span class="o">=</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">figs</span><span class="p">,</span> <span class="n">key</span><span class="o">=</span><span class="k">lambda</span> <span class="n">tup</span><span class="p">:</span> <span class="n">tup</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
+        <span class="k">if</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">sorted_figs</span><span class="p">)</span> <span class="o">&lt;</span> <span class="n">top_seg</span><span class="p">):</span>
+            <span class="n">top_seg</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">sorted_figs</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">top_seg</span><span class="p">,</span> <span class="mi">1</span><span class="p">):</span>
+            <span class="n">fig</span><span class="p">,</span> <span class="n">diff</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">config</span> <span class="o">=</span> <span class="n">sorted_figs</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
+            <span class="n">best</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">config</span><span class="p">)</span>
+            <span class="n">fig</span><span class="o">.</span><span class="n">savefig</span><span class="p">(</span><span class="n">name</span> <span class="o">+</span> <span class="s2">&quot;_&quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">i</span><span class="p">))</span>
+    <span class="k">return</span> <span class="n">best</span></div>
+</pre></div>
+
+            <div class="clearer"></div>
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" />
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script>$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">More Pattern Extraction 0.0.1 documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="index.html" >Module code</a> &#187;</li>
+        <li class="nav-item nav-item-this"><a href="">plotfig</a></li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+        &#169; Copyright 2021, Ioannis Psarros.
+      Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 4.0.1.
+    </div>
+  </body>
+</html>
