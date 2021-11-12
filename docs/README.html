@@ -6,7 +6,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.17: http://docutils.sourceforge.net/" />
 
-    <title>&lt;no title&gt; &#8212; More Pattern Extraction  documentation</title>
+    <title>More-Pattern-Extraction &#8212; More Pattern Extraction  documentation</title>
     <link rel="stylesheet" type="text/css" href="_static/pygments.css" />
     <link rel="stylesheet" type="text/css" href="_static/nature.css" />
     <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
@@ -26,7 +26,7 @@
           <a href="py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
         <li class="nav-item nav-item-0"><a href="index.html">More Pattern Extraction  documentation</a> &#187;</li>
-        <li class="nav-item nav-item-this"><a href="">&lt;no title&gt;</a></li> 
+        <li class="nav-item nav-item-this"><a href="">More-Pattern-Extraction</a></li> 
       </ul>
     </div>  
 
@@ -36,14 +36,19 @@
         <div class="bodywrapper">
           <div class="body" role="main">
             
-  <p># More-Pattern-Extraction
-A python library for timeseries Pattern Extraction and Handling.</p>
-<dl class="simple">
-<dt>## About More-Pattern-Extraction</dt><dd><p>More-Pattern-Extraction is a python library for implementing utilities which aim to fulfill a full Pattern Extraction workflow for analysing timeseries data and extracting meaningful patterns in the form of motifs, discords, changepoints, etc. More-Pattern-Extraction implements a series of training features, for the input time series, running variations of motif discovery algorithms in order to identify different types of patterns, including motifs, discords and changepoints, in order to find the most fitting model for the data at hand. Further, it it encapsulates input/output utilities which assist in storing or loading the output of the aforementioned processing steps, and utilities for plotting the output or depicting intermediate computations.</p>
-</dd>
-</dl>
-<p>## Description
-For the development process, several python libraries will be used. In particular:  [STUMPY](<a class="reference external" href="https://stumpy.readthedocs.io/en/latest/">https://stumpy.readthedocs.io/en/latest/</a>), [MatrixProfile](<a class="reference external" href="https://matrixprofile.docs.matrixprofile.org/">https://matrixprofile.docs.matrixprofile.org/</a>) and [pyscamp](<a class="reference external" href="https://pypi.org/project/pyscamp/">https://pypi.org/project/pyscamp/</a>). The aforementioned libraries are implemented in python3 (or provide python3 bindings to C++ code), thus the Pattern Extraction module will adopt the same programming language. An installation of the CUDA toolkit8 is necessary for deploying the GPU-accelerated versions of the aforementioned libraries.
+  <section id="more-pattern-extraction">
+<h1>More-Pattern-Extraction<a class="headerlink" href="#more-pattern-extraction" title="Permalink to this headline">¶</a></h1>
+<p>A python library for timeseries Pattern Extraction and Handling.</p>
+</section>
+<section id="about-more-pattern-extraction">
+<h1>About More-Pattern-Extraction<a class="headerlink" href="#about-more-pattern-extraction" title="Permalink to this headline">¶</a></h1>
+<blockquote>
+<div><p>More-Pattern-Extraction is a python library for implementing utilities which aim to fulfill a full Pattern Extraction workflow for analysing timeseries data and extracting meaningful patterns in the form of motifs, discords, changepoints, etc. More-Pattern-Extraction implements a series of training features, for the input time series, running variations of motif discovery algorithms in order to identify different types of patterns, including motifs, discords and changepoints, in order to find the most fitting model for the data at hand. Further, it it encapsulates input/output utilities which assist in storing or loading the output of the aforementioned processing steps, and utilities for plotting the output or depicting intermediate computations.</p>
+</div></blockquote>
+</section>
+<section id="description">
+<h1>Description<a class="headerlink" href="#description" title="Permalink to this headline">¶</a></h1>
+<p>For the development process, several python libraries will be used. In particular: <a class="reference external" href="https://stumpy.readthedocs.io/en/latest/">STUMPY</a>, <a class="reference external" href="https://matrixprofile.docs.matrixprofile.org/">MatrixProfile</a>  and <a class="reference external" href="https://pypi.org/project/pyscamp/">Pyscamp</a>. The aforementioned libraries are implemented in python3 (or provide python3 bindings to C++ code), thus the Pattern Extraction module will adopt the same programming language. An installation of the CUDA toolkit8 is necessary for deploying the GPU-accelerated versions of the aforementioned libraries.
 The module consists of the following steps:</p>
 <ol class="arabic simple">
 <li><p><strong>Input/Output</strong></p></li>
@@ -59,14 +64,9 @@ The module consists of the following steps:</p>
 </div></blockquote>
 <ol class="arabic" start="3">
 <li><p><strong>Statistics</strong></p>
-<p>Utilities regarding the computation of useful stat</p>
+<p>Utilities regarding the computation of useful statistics about the dataset, that implement variations of standard error measures, evaluating the performance of a regression
+model, ranking time series.</p>
 </li>
-</ol>
-<dl class="simple">
-<dt>istics about the dataset, that implement variations of standard error measures, evaluating the performance of a regression</dt><dd><p>model, ranking time series.</p>
-</dd>
-</dl>
-<ol class="arabic simple" start="4">
 <li><p><strong>Plotting</strong></p></li>
 </ol>
 <blockquote>
@@ -94,10 +94,11 @@ series, among all (or a subset of) subsequences in the same time series.</p>
 <div><p>In this set of utilities, we implement functions that build upon standard machine learning algorithms. In particular, functions contained in this module, handle tasks related
 to approximating a time series by means of a regression model. Those functions are needed, for example, when we are trying to discover trends or changepoints.</p>
 </div></blockquote>
-<dl class="simple">
-<dt>## Pattern extraction tools</dt><dd><p>The execution of the project starts with the presentation of some initial tools. Later those tools will become more interactive through visual modules.</p>
-</dd>
-</dl>
+<section id="pattern-extraction-tools">
+<h2>Pattern extraction tools<a class="headerlink" href="#pattern-extraction-tools" title="Permalink to this headline">¶</a></h2>
+<blockquote>
+<div><p>The execution of the project starts with the presentation of some initial tools. Later those tools will become more interactive through visual modules.</p>
+</div></blockquote>
 <ol class="arabic simple">
 <li><p><strong>Pattern Discovery</strong></p></li>
 </ol>
@@ -105,7 +106,7 @@ to approximating a time series by means of a regression model. Those functions a
 <div><p>The pattern discovery tool aims to detect interesting patterns in time series with labeled time intervals. In particular, given a time series which is divided into a sequence
 of discrete segments, each one assigned to one of two classes, the goal is to detect patterns which correspond to distinguishable characteristics of one of the classes. The
 intuition is that patterns that are representative of their respective class, should mostly appear in the time regions corresponding to that class.
-Link to the notebook: [Interesting Patterns]()</p>
+Link to the notebook: <a class="reference external" href="https://github.com/MORE-EU/more-pattern-extraction/blob/main/notebooks/interesting_patterns.ipynb">Pattern Discovery</a></p>
 </div></blockquote>
 <ol class="arabic simple" start="2">
 <li><p><strong>Time Series Segmentation</strong></p></li>
@@ -115,7 +116,7 @@ Link to the notebook: [Interesting Patterns]()</p>
 segments. The user can specify the number of changepoints/segments which will be returned by the tool. In a scenario where ground truth, labelled, time series exist, the user
 has the ability to calculate a cost, defined essentially as a distance function between the changepoints returned by the tool and the original changepoints (labels). This
 allows for optimizing the parameters inherited by the matrix profile library in use cases where labelled data are available.
-Link to the notebook: [Semantic Segmentation_v1](<a class="reference external" href="https://github.com/MORE-EU/more-pattern-extraction/blob/main/Semantic_detection_v1.ipynb">https://github.com/MORE-EU/more-pattern-extraction/blob/main/Semantic_detection_v1.ipynb</a>)</p>
+Link to the notebook: <a class="reference external" href="https://github.com/MORE-EU/more-pattern-extraction/blob/main/notebooks/semantic_detection.ipynb">Time Series Segmentation</a></p>
 </div></blockquote>
 <ol class="arabic simple" start="3">
 <li><p><strong>Changepoint Detection</strong></p></li>
@@ -124,7 +125,7 @@ Link to the notebook: [Semantic Segmentation_v1](<a class="reference external" h
 <div><p>In this section, we present a tool for detecting and recognizing changepoints in a time series. Given a set of segments of the input time series, corresponding to periods of
 time where a changepoint may occur, our tool essentially ranks those segments with respect to the possibility of containing a changepoint. This can be seen as a classification
 task, where segments are classified with respect to whether they contain a changepoint or not.
-Link to the notebook: [Changepoint Detection v1]()</p>
+Link to the notebook: <a class="reference external" href="https://github.com/MORE-EU/more-pattern-extraction/blob/main/notebooks/changepoint_detection.ipynb">ChangePoint Detection</a></p>
 </div></blockquote>
 <ol class="arabic simple" start="4">
 <li><p><strong>Deviation Detection</strong></p></li>
@@ -133,10 +134,14 @@ Link to the notebook: [Changepoint Detection v1]()</p>
 <div><p>In this section, we present a tool for detecting segments of a time series where the behavior of a given target variable deviates much from the usual. We assume that certain
 segments of the time series are labelled, representing the usual behavior of the variable in question. Our main ingredient is regression. We fit a regression model on the
 labelled segments, aiming to capture the “usual” behavior of the target variable. Then, we compare the values of the trained model with the real values.
-Link to the notebook: [Deviation Detection](<a class="reference external" href="https://github.com/MORE-EU/more-pattern-extraction/blob/main/deviation_detection.ipynb">https://github.com/MORE-EU/more-pattern-extraction/blob/main/deviation_detection.ipynb</a>)</p>
+Link to the notebook:  <a class="reference external" href="https://github.com/MORE-EU/more-pattern-extraction/blob/main/notebooks/deviation_detection.ipynb">Deviation Detection</a></p>
 </div></blockquote>
-<p>## Documentation
-Source code documentation is available from [.github.io]().</p>
+</section>
+<section id="documentation">
+<h2>Documentation<a class="headerlink" href="#documentation" title="Permalink to this headline">¶</a></h2>
+<p>Source code documentation is available from <a class="reference external" href="https://more-eu.github.io/more-pattern-extraction/">GitHub pages</a></p>
+</section>
+</section>
 
 
             <div class="clearer"></div>
@@ -149,6 +154,17 @@ Source code documentation is available from [.github.io]().</p>
 
       <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
         <div class="sphinxsidebarwrapper">
+  <h3><a href="index.html">Table of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">More-Pattern-Extraction</a></li>
+<li><a class="reference internal" href="#about-more-pattern-extraction">About More-Pattern-Extraction</a></li>
+<li><a class="reference internal" href="#description">Description</a><ul>
+<li><a class="reference internal" href="#pattern-extraction-tools">Pattern extraction tools</a></li>
+<li><a class="reference internal" href="#documentation">Documentation</a></li>
+</ul>
+</li>
+</ul>
+
   <div role="note" aria-label="source link">
     <h3>This Page</h3>
     <ul class="this-page-menu">
@@ -180,7 +196,7 @@ Source code documentation is available from [.github.io]().</p>
           <a href="py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
         <li class="nav-item nav-item-0"><a href="index.html">More Pattern Extraction  documentation</a> &#187;</li>
-        <li class="nav-item nav-item-this"><a href="">&lt;no title&gt;</a></li> 
+        <li class="nav-item nav-item-this"><a href="">More-Pattern-Extraction</a></li> 
       </ul>
     </div>
     <div class="footer" role="contentinfo">

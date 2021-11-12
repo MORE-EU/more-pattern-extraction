@@ -1,5 +1,5 @@
-This is the module for Statistics 
-=================================
+Statistics 
+==========
 
 .. automodule:: statistics
     :members:

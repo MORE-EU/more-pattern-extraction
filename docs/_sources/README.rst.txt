@@ -1,11 +1,18 @@
-# More-Pattern-Extraction
+=======================
+More-Pattern-Extraction
+=======================
 A python library for timeseries Pattern Extraction and Handling.
 
-## About More-Pattern-Extraction
-  More-Pattern-Extraction is a python library for implementing utilities which aim to fulfill a full Pattern Extraction workflow for analysing timeseries data and extracting meaningful patterns in the form of motifs, discords, changepoints, etc. More-Pattern-Extraction implements a series of training features, for the input time series, running variations of motif discovery algorithms in order to identify different types of patterns, including motifs, discords and changepoints, in order to find the most fitting model for the data at hand. Further, it it encapsulates input/output utilities which assist in storing or loading the output of the aforementioned processing steps, and utilities for plotting the output or depicting intermediate computations. 
+=============================
+About More-Pattern-Extraction
+=============================
 
-## Description
-For the development process, several python libraries will be used. In particular:  [STUMPY](https://stumpy.readthedocs.io/en/latest/), [MatrixProfile](https://matrixprofile.docs.matrixprofile.org/) and [pyscamp](https://pypi.org/project/pyscamp/). The aforementioned libraries are implemented in python3 (or provide python3 bindings to C++ code), thus the Pattern Extraction module will adopt the same programming language. An installation of the CUDA toolkit8 is necessary for deploying the GPU-accelerated versions of the aforementioned libraries. 
+  More-Pattern-Extraction is a python library for implementing utilities which aim to fulfill a full Pattern Extraction workflow for analysing timeseries data and extracting meaningful patterns in the form of motifs, discords, changepoints, etc. More-Pattern-Extraction implements a series of training features, for the input time series, running variations of motif discovery algorithms in order to identify different types of patterns, including motifs, discords and changepoints, in order to find the most fitting model for the data at hand. Further, it it encapsulates input/output utilities which assist in storing or loading the output of the aforementioned processing steps, and utilities for plotting the output or depicting intermediate computations. 
+  
+===========
+Description
+===========
+For the development process, several python libraries will be used. In particular: `STUMPY <https://stumpy.readthedocs.io/en/latest/>`_, `MatrixProfile <https://matrixprofile.docs.matrixprofile.org/>`_  and `Pyscamp <https://pypi.org/project/pyscamp/>`_. The aforementioned libraries are implemented in python3 (or provide python3 bindings to C++ code), thus the Pattern Extraction module will adopt the same programming language. An installation of the CUDA toolkit8 is necessary for deploying the GPU-accelerated versions of the aforementioned libraries. 
 The module consists of the following steps:
 
 1. **Input/Output**
@@ -18,8 +25,7 @@ The module consists of the following steps:
   
 3. **Statistics**
 
-   Utilities regarding the computation of useful stat
-istics about the dataset, that implement variations of standard error measures, evaluating the performance of a regression   
+   Utilities regarding the computation of useful statistics about the dataset, that implement variations of standard error measures, evaluating the performance of a regression   
    model, ranking time series.
    
 4. **Plotting**   
@@ -42,7 +48,8 @@ istics about the dataset, that implement variations of standard error measures, 
   In this set of utilities, we implement functions that build upon standard machine learning algorithms. In particular, functions contained in this module, handle tasks related 
   to approximating a time series by means of a regression model. Those functions are needed, for example, when we are trying to discover trends or changepoints.    
 
-## Pattern extraction tools
+Pattern extraction tools
+========================
   The execution of the project starts with the presentation of some initial tools. Later those tools will become more interactive through visual modules.
 
 1. **Pattern Discovery**
@@ -50,7 +57,7 @@ istics about the dataset, that implement variations of standard error measures, 
   The pattern discovery tool aims to detect interesting patterns in time series with labeled time intervals. In particular, given a time series which is divided into a sequence 
   of discrete segments, each one assigned to one of two classes, the goal is to detect patterns which correspond to distinguishable characteristics of one of the classes. The 
   intuition is that patterns that are representative of their respective class, should mostly appear in the time regions corresponding to that class.
-  Link to the notebook: [Interesting Patterns]()
+  Link to the notebook: `Pattern Discovery <https://github.com/MORE-EU/more-pattern-extraction/blob/main/notebooks/interesting_patterns.ipynb>`_
 
 2. **Time Series Segmentation**
 
@@ -58,21 +65,24 @@ istics about the dataset, that implement variations of standard error measures, 
   segments. The user can specify the number of changepoints/segments which will be returned by the tool. In a scenario where ground truth, labelled, time series exist, the user 
   has the ability to calculate a cost, defined essentially as a distance function between the changepoints returned by the tool and the original changepoints (labels). This 
   allows for optimizing the parameters inherited by the matrix profile library in use cases where labelled data are available. 
-  Link to the notebook: [Semantic Segmentation_v1](https://github.com/MORE-EU/more-pattern-extraction/blob/main/Semantic_detection_v1.ipynb)
+  Link to the notebook: `Time Series Segmentation <https://github.com/MORE-EU/more-pattern-extraction/blob/main/notebooks/semantic_detection.ipynb>`_
 
 3. **Changepoint Detection**
 
   In this section, we present a tool for detecting and recognizing changepoints in a time series. Given a set of segments of the input time series, corresponding to periods of 
   time where a changepoint may occur, our tool essentially ranks those segments with respect to the possibility of containing a changepoint. This can be seen as a classification 
   task, where segments are classified with respect to whether they contain a changepoint or not.
-  Link to the notebook: [Changepoint Detection v1]()
+  Link to the notebook: `ChangePoint Detection <https://github.com/MORE-EU/more-pattern-extraction/blob/main/notebooks/changepoint_detection.ipynb>`_
   
 4. **Deviation Detection**
 
   In this section, we present a tool for detecting segments of a time series where the behavior of a given target variable deviates much from the usual. We assume that certain 
   segments of the time series are labelled, representing the usual behavior of the variable in question. Our main ingredient is regression. We fit a regression model on the 
   labelled segments, aiming to capture the “usual” behavior of the target variable. Then, we compare the values of the trained model with the real values.
-  Link to the notebook: [Deviation Detection](https://github.com/MORE-EU/more-pattern-extraction/blob/main/deviation_detection.ipynb)
-   
-## Documentation
-Source code documentation is available from [.github.io]().
+  Link to the notebook:  `Deviation Detection <https://github.com/MORE-EU/more-pattern-extraction/blob/main/notebooks/deviation_detection.ipynb>`_
+
+
+Documentation
+=============
+
+Source code documentation is available from `GitHub pages <https://more-eu.github.io/more-pattern-extraction/>`_

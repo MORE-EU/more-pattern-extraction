@@ -1,5 +1,5 @@
-This is the module for Preprocessing
-====================================
+Preprocessing
+=============
 
 .. automodule:: preprocessing
     :members:

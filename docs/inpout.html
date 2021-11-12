@@ -6,7 +6,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.17: http://docutils.sourceforge.net/" />
 
-    <title>This is the module for Input Output &#8212; More Pattern Extraction  documentation</title>
+    <title>Input Output &#8212; More Pattern Extraction  documentation</title>
     <link rel="stylesheet" type="text/css" href="_static/pygments.css" />
     <link rel="stylesheet" type="text/css" href="_static/nature.css" />
     <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
@@ -15,7 +15,7 @@
     <script src="_static/doctools.js"></script>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
-    <link rel="prev" title="This is the module for Statistics" href="statistics.html" /> 
+    <link rel="prev" title="Statistics" href="statistics.html" /> 
   </head><body>
     <div class="related" role="navigation" aria-label="related navigation">
       <h3>Navigation</h3>
@@ -27,10 +27,10 @@
           <a href="py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
         <li class="right" >
-          <a href="statistics.html" title="This is the module for Statistics"
+          <a href="statistics.html" title="Statistics"
              accesskey="P">previous</a> |</li>
         <li class="nav-item nav-item-0"><a href="index.html">More Pattern Extraction  documentation</a> &#187;</li>
-        <li class="nav-item nav-item-this"><a href="">This is the module for Input Output</a></li> 
+        <li class="nav-item nav-item-this"><a href="">Input Output</a></li> 
       </ul>
     </div>  
 
@@ -41,7 +41,7 @@
           <div class="body" role="main">
             
   <section id="module-inpout">
-<span id="this-is-the-module-for-input-output"></span><h1>This is the module for Input Output<a class="headerlink" href="#module-inpout" title="Permalink to this headline">¶</a></h1>
+<span id="input-output"></span><h1>Input Output<a class="headerlink" href="#module-inpout" title="Permalink to this headline">¶</a></h1>
 <dl class="py function">
 <dt class="sig sig-object py" id="inpout.load_df">
 <span class="sig-prename descclassname"><span class="pre">inpout.</span></span><span class="sig-name descname"><span class="pre">load_df</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">path</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/inpout.html#load_df"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#inpout.load_df" title="Permalink to this definition">¶</a></dt>
@@ -58,13 +58,10 @@
 <dt class="sig sig-object py" id="inpout.load_mdmp_from_h5">
 <span class="sig-prename descclassname"><span class="pre">inpout.</span></span><span class="sig-name descname"><span class="pre">load_mdmp_from_h5</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">dir_path</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">name</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">k</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/inpout.html#load_mdmp_from_h5"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#inpout.load_mdmp_from_h5" title="Permalink to this definition">¶</a></dt>
 <dd><p>Load a multidimensional matrix profile that has been saved as a pair of hdf5 files.</p>
-<dl>
+<dl class="simple">
 <dt>Args:</dt><dd><p>dir_path: Path of the directory where the file is located.
 name: Name that follows the default prefix. (i.e. mp_multivariate_&lt;name&gt;.h5)
-k: Specifies which K-dimensional matrix profile to load.</p>
-<blockquote>
-<div><p>(i.e. k=2 loads the 2-D matrix profile</p>
-</div></blockquote>
+k: Specifies which K-dimensional matrix profile to load.(i.e. k=2 loads the 2-D matrix profile</p>
 </dd>
 <dt>Return:</dt><dd><p>mp: matrix profile/stumpy distances
 index: matrix profile/stumpy indexes</p>
@@ -88,23 +85,26 @@ mpi: Matrix profile Indices</p>
 <dl class="py function">
 <dt class="sig sig-object py" id="inpout.save_mdmp_as_h5">
 <span class="sig-prename descclassname"><span class="pre">inpout.</span></span><span class="sig-name descname"><span class="pre">save_mdmp_as_h5</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">dir_path</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">name</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mps</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">idx</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">k</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/inpout.html#save_mdmp_as_h5"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#inpout.save_mdmp_as_h5" title="Permalink to this definition">¶</a></dt>
-<dd><p>Save a multidimensional matrix profile as a pair of hdf5 files. Input is based on the output
-of (<a class="reference external" href="https://stumpy.readthedocs.io/en/latest/api.html#mstump">https://stumpy.readthedocs.io/en/latest/api.html#mstump</a>).</p>
-<dl>
-<dt>Args:</dt><dd><p>dir_path: Path of the directory where the file will be saved.
-name: Name that will be appended to the file after a default prefix. (i.e. mp_multivariate_&lt;name&gt;.h5)
-mps: The multi-dimensional matrix profile. Each row of the array corresponds
-to each matrix profile for a given dimension</p>
+<dd><p>Save a multidimensional matrix profile as a pair of hdf5 files. Input is based on the output of
+Args:</p>
 <blockquote>
-<div><p>(i.e., the first row is the 1-D matrix profile and the second row is the 2-D matrix profile).</p>
+<div><blockquote>
+<div><p>dir_path: Path of the directory where the file will be saved.
+name: Name that will be appended to the file after a default prefix. (i.e. mp_multivariate_&lt;name&gt;.h5)
+mps: The multi-dimensional matrix profile. Each row of the array corresponds</p>
+<blockquote>
+<div><p>to each matrix profile for a given dimension(i.e., the first row is the 1-D matrix profile and the second row is
+the 2-D matrix profile).</p>
 </div></blockquote>
 <p>idx: The multi-dimensional matrix profile index where each row of the array corresponds
 to each matrix profile index for a given dimension.
-k: If mps and idx are one-dimensional k can be used to specify the given dimension of the matrix profile.
-The default value specifies the 1-D matrix profile. If mps and idx are multi-dimensional, k is ignored.</p>
-</dd>
-</dl>
+k: If mps and idx are one-dimensional k can be used to specify the given dimension of the matrix profile.</p>
+<blockquote>
+<div><p>The default value specifies the 1-D matrix profile. If mps and idx are multi-dimensional, k is ignored.</p>
+</div></blockquote>
+</div></blockquote>
 <p>Return:</p>
+</div></blockquote>
 </dd></dl>
 
 <dl class="py function">
@@ -148,7 +148,7 @@ max_neighbors: The maximum amount of neighbors to find for each of the top k mot
         <div class="sphinxsidebarwrapper">
   <h4>Previous topic</h4>
   <p class="topless"><a href="statistics.html"
-                        title="previous chapter">This is the module for Statistics</a></p>
+                        title="previous chapter">Statistics</a></p>
   <div role="note" aria-label="source link">
     <h3>This Page</h3>
     <ul class="this-page-menu">
@@ -180,10 +180,10 @@ max_neighbors: The maximum amount of neighbors to find for each of the top k mot
           <a href="py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
         <li class="right" >
-          <a href="statistics.html" title="This is the module for Statistics"
+          <a href="statistics.html" title="Statistics"
              >previous</a> |</li>
         <li class="nav-item nav-item-0"><a href="index.html">More Pattern Extraction  documentation</a> &#187;</li>
-        <li class="nav-item nav-item-this"><a href="">This is the module for Input Output</a></li> 
+        <li class="nav-item nav-item-this"><a href="">Input Output</a></li> 
       </ul>
     </div>
     <div class="footer" role="contentinfo">

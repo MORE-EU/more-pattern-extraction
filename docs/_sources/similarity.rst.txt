@@ -1,5 +1,5 @@
-This is the module for Similarity Search 
-========================================
+Similarity
+==========
 
 .. automodule:: similarity
     :members:
