@@ -1,10 +1,16 @@
-# More-Pattern-Extraction
+=======================
+More-Pattern-Extraction
+=======================
 A python library for timeseries Pattern Extraction and Handling.
 
-## About More-Pattern-Extraction
-  More-Pattern-Extraction is a python library for implementing utilities which aim to fulfill a full Pattern Extraction workflow for analysing timeseries data and extracting meaningful patterns in the form of motifs, discords, changepoints, etc. More-Pattern-Extraction implements a series of training features, for the input time series, running variations of motif discovery algorithms in order to identify different types of patterns, including motifs, discords and changepoints, in order to find the most fitting model for the data at hand. Further, it it encapsulates input/output utilities which assist in storing or loading the output of the aforementioned processing steps, and utilities for plotting the output or depicting intermediate computations. 
+About More-Pattern-Extraction
+=============================
 
-## Description
+  More-Pattern-Extraction is a python library for implementing utilities which aim to fulfill a full Pattern Extraction workflow for analysing timeseries data and extracting meaningful patterns in the form of motifs, discords, changepoints, etc. More-Pattern-Extraction implements a series of training features, for the input time series, running variations of motif discovery algorithms in order to identify different types of patterns, including motifs, discords and changepoints, in order to find the most fitting model for the data at hand. Further, it it encapsulates input/output utilities which assist in storing or loading the output of the aforementioned processing steps, and utilities for plotting the output or depicting intermediate computations. 
+  
+===========
+Description
+===========
 For the development process, several python libraries will be used. In particular:  [STUMPY](https://stumpy.readthedocs.io/en/latest/), [MatrixProfile](https://matrixprofile.docs.matrixprofile.org/) and [pyscamp](https://pypi.org/project/pyscamp/). The aforementioned libraries are implemented in python3 (or provide python3 bindings to C++ code), thus the Pattern Extraction module will adopt the same programming language. An installation of the CUDA toolkit8 is necessary for deploying the GPU-accelerated versions of the aforementioned libraries. 
 The module consists of the following steps:
 
