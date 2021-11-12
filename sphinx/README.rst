@@ -11,7 +11,7 @@ About More-Pattern-Extraction
 ===========
 Description
 ===========
-For the development process, several python libraries will be used. In particular:  [STUMPY](https://stumpy.readthedocs.io/en/latest/), [MatrixProfile](https://matrixprofile.docs.matrixprofile.org/) and [pyscamp](https://pypi.org/project/pyscamp/). The aforementioned libraries are implemented in python3 (or provide python3 bindings to C++ code), thus the Pattern Extraction module will adopt the same programming language. An installation of the CUDA toolkit8 is necessary for deploying the GPU-accelerated versions of the aforementioned libraries. 
+For the development process, several python libraries will be used. In particular: `STUMPY <https://stumpy.readthedocs.io/en/latest/>`_, `MatrixProfile <https://matrixprofile.docs.matrixprofile.org/>`_  and `Pyscamp <https://pypi.org/project/pyscamp/>`_. The aforementioned libraries are implemented in python3 (or provide python3 bindings to C++ code), thus the Pattern Extraction module will adopt the same programming language. An installation of the CUDA toolkit8 is necessary for deploying the GPU-accelerated versions of the aforementioned libraries. 
 The module consists of the following steps:
 
 1. **Input/Output**
@@ -56,7 +56,7 @@ Pattern extraction tools
   The pattern discovery tool aims to detect interesting patterns in time series with labeled time intervals. In particular, given a time series which is divided into a sequence 
   of discrete segments, each one assigned to one of two classes, the goal is to detect patterns which correspond to distinguishable characteristics of one of the classes. The 
   intuition is that patterns that are representative of their respective class, should mostly appear in the time regions corresponding to that class.
-  Link to the notebook: [Interesting Patterns]()
+  Link to the notebook: `Pattern Discovery <https://github.com/MORE-EU/more-pattern-extraction/blob/main/notebooks/interesting_patterns.ipynb>`_
 
 2. **Time Series Segmentation**
 
@@ -64,21 +64,22 @@ Pattern extraction tools
   segments. The user can specify the number of changepoints/segments which will be returned by the tool. In a scenario where ground truth, labelled, time series exist, the user 
   has the ability to calculate a cost, defined essentially as a distance function between the changepoints returned by the tool and the original changepoints (labels). This 
   allows for optimizing the parameters inherited by the matrix profile library in use cases where labelled data are available. 
-  Link to the notebook: [Semantic Segmentation_v1](https://github.com/MORE-EU/more-pattern-extraction/blob/main/Semantic_detection_v1.ipynb)
+  Link to the notebook: `Time Series Segmentation <https://github.com/MORE-EU/more-pattern-extraction/blob/main/notebooks/semantic_detection.ipynb>`_
 
 3. **Changepoint Detection**
 
   In this section, we present a tool for detecting and recognizing changepoints in a time series. Given a set of segments of the input time series, corresponding to periods of 
   time where a changepoint may occur, our tool essentially ranks those segments with respect to the possibility of containing a changepoint. This can be seen as a classification 
   task, where segments are classified with respect to whether they contain a changepoint or not.
-  Link to the notebook: [Changepoint Detection v1]()
+  Link to the notebook: `ChangePoint Detection <https://github.com/MORE-EU/more-pattern-extraction/blob/main/notebooks/changepoint_detection.ipynb>`_
   
 4. **Deviation Detection**
 
   In this section, we present a tool for detecting segments of a time series where the behavior of a given target variable deviates much from the usual. We assume that certain 
   segments of the time series are labelled, representing the usual behavior of the variable in question. Our main ingredient is regression. We fit a regression model on the 
   labelled segments, aiming to capture the “usual” behavior of the target variable. Then, we compare the values of the trained model with the real values.
-  Link to the notebook:  `Deviation Detection <https://github.com/MORE-EU/more-pattern-extraction/blob/main/deviation_detection.ipynb>`_
+  Link to the notebook:  `Deviation Detection <https://github.com/MORE-EU/more-pattern-extraction/blob/main/notebooks/deviation_detection.ipynb>`_
+=============  
 Documentation
 =============
-Source code documentation is available from `GitHub repository <https://more-eu.github.io/more-pattern-extraction/>`_
+Source code documentation is available from ` GitHub repository <https://more-eu.github.io/more-pattern-extraction/>`_
