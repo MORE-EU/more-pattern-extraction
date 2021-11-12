@@ -8,10 +8,8 @@ def get_top_k_motifs(df, mp, index, m, ez, radius, k, max_neighbors=50):
 
     """ Given a matrix profile, a matrix profile index, the window size and the DataFrame that contains a multi-dimensional timeseries,
         Find the top k motifs in the timeseries, as well as neighbors that are within the range <radius * min_mp_value> of each of the top k motifs.
-        Uses an extended version of the top_k_motifs function from matrixprofile foundation library that is compatible with multi-dimensional
-        timeseries The implementation can be found here
-        (https://github.com/MORE-EU/matrixprofile/blob/master/matrixprofile/algorithms/top_k_motifs.py)
-
+        Uses an extended version of the top_k_motifs function from matrixprofile foundation library that is compatible with multi-dimensional                 timeseries.
+        The implementation can be found here (https://github.com/MORE-EU/matrixprofile/blob/master/matrixprofile/algorithms/top_k_motifs.py)
     :param df: DataFrame that contains the multi-dimensional timeseries that was used to calculate the matrix profile.
     :param mp: A multi-dimensional matrix profile.
     :param index: The matrix profile index that accompanies the matrix profile.
@@ -107,15 +105,11 @@ def find_neighbors(query, ts, w, min_dist, exclusion_zone=None, max_neighbors=10
 
 def pairwise_dist(q1, q2):
     
-    """
-    Calculates the distance between two time series sequences q1, q2. 
-    The distance is calculated based on the multi-dimensional distance profile.
-    This function allows for the comparison of univariate and multi-dimensional sequences.
+    """ Calculates the distance between two time series sequences q1, q2. The distance is calculated based on the multi-dimensional distance profile.
+        This function allows for the comparison of univariate and multi-dimensional sequences.
     :param q1: A time series sequence.
     :param q2: A time series sequence.
-    
     """
-    
     min_dist = float('inf')
     m = len(q1)
     _, nn_dist = find_neighbors(q1, q2, m, exclusion_zone=None, min_dist=min_dist, max_neighbors=1)

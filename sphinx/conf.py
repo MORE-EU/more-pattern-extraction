@@ -18,11 +18,12 @@ sys.path.insert(0, os.path.abspath('..'))
 # -- Project information -----------------------------------------------------
 
 project = 'More Pattern Extraction'
-copyright = '2021, Ioannis Psarros'
-author = 'Ioannis Psarros'
+copyright = '2021, Ioannis Psarros, Alexandros Kalimeris, Panagiotis Gidarakos'
+author = 'Ioannis Psarros, Alexandros Kalimeris, Panagiotis Gidarakos'
 
 # The full version, including alpha/beta/rc tags
-release = '0.0.1'
+version = u''
+release = u''
 
 
 # -- General configuration ---------------------------------------------------
@@ -42,6 +43,12 @@ templates_path = ['_templates']
 # directories to ignore when looking for source files.
 # This pattern also affects html_static_path and html_extra_path.
 exclude_patterns = ['_build', 'Thumbs.db', '.DS_Store', '.ipynb_checkpoints']
+
+# source_suffix = ['.rst', '.md']
+source_suffix = '.rst'
+
+# The master toctree document.
+master_doc = 'index'
 
 
 # -- Options for HTML output -------------------------------------------------

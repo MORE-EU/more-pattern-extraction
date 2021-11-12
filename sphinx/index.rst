@@ -9,6 +9,7 @@ Welcome to Moret's documentation!
 .. toctree::
    :maxdepth: 3
    :caption: Contents:
+   :name: mastertoc
   
    preprocessing.rst
    patterns.rst
