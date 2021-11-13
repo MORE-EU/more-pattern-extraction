@@ -3,7 +3,7 @@
    You can adapt this file completely to your liking, but it should at least
    contain the root `toctree` directive.
 
-Welcome to Moret's documentation!
+Welcome to the documentation for the Pattern Extraction module of MORE!
 =================================
 .. include:: README.rst
 .. toctree::
