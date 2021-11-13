@@ -7,7 +7,7 @@ A python library for timeseries Pattern Extraction and Handling.
 About More-Pattern-Extraction
 =============================
 
-  More-Pattern-Extraction is a python library for implementing utilities which aim to fulfill a full Pattern Extraction workflow for analysing timeseries data and extracting meaningful patterns in the form of motifs, discords, changepoints, etc. More-Pattern-Extraction implements a series of training features, for the input time series, running variations of motif discovery algorithms in order to identify different types of patterns, including motifs, discords and changepoints, in order to find the most fitting model for the data at hand. Further, it it encapsulates input/output utilities which assist in storing or loading the output of the aforementioned processing steps, and utilities for plotting the output or depicting intermediate computations. 
+More-Pattern-Extraction is a python library for implementing utilities which aim to fulfill a full Pattern Extraction workflow for analysing timeseries data and extracting meaningful patterns in the form of motifs, discords, changepoints, etc. More-Pattern-Extraction implements a series of training features, for the input time series, running variations of motif discovery algorithms in order to identify different types of patterns, including motifs, discords and changepoints, in order to find the most fitting model for the data at hand. Further, it it encapsulates input/output utilities which assist in storing or loading the output of the aforementioned processing steps, and utilities for plotting the output or depicting intermediate computations. 
   
 ===========
 Description
