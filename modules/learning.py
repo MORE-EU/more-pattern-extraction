@@ -122,7 +122,7 @@ def train_on_reference_points(df, w_train, ref_points, feats, target, random_sta
         df_train = df_train.append(df_tmp2[:size_train])
         df_val = df_val.append(df_tmp2[size_train:])
 
-    model, y_pred_train, r_sq_train, mae_train, me_train, mape_train = fit_linear_model(df_train, feats, target)
+    model, y_pred_train, r_sq_train, mae_train, me_train, mape_train, mpe_train = fit_linear_model(df_train, feats, target)
     y_pred_val = predict(df_val, model, feats, target)
     r_sq_val, mae_val, me_val, mape_val, mpe_val = st.score(df_val[target].values, y_pred_val)
     training_scores = np.array([r_sq_train, mae_train, me_train, mape_train])
