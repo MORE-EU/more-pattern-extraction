@@ -207,7 +207,7 @@ def changepoint_scores(df, feats, target, d1, d2, w_train, w_val, w_test):
     df_val = df.loc[str(d_train_stop):str(d1)]
     df_test = df.loc[str(d2):str(d_test_stop)]
     if len(df_train) > 0 and len(df_test) > 0:
-        model, y_pred_train, r_sq_train, mae_train, me_train, mape_train, mpe_train = fit_linear_model(df_train, ['irradiance', 'mod_temp'], 'power')
+        model, y_pred_train, r_sq_train, mae_train, me_train, mape_train, mpe_train = fit_linear_model(df_train, feats, target)
         y_pred_val = predict(df_val, model, feats, target)
         y_pred_test = predict(df_test, model, feats, target)
         
