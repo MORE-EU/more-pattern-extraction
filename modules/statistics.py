@@ -78,7 +78,7 @@ def get_top_deviations(scores, metric='mpe', n=5):
             
         
     """
-    metrics = {'mpe': 4, 'me': 2}
+    metrics = {'mpe': 4, 'me': 2, 'mpe_slope':5}
     score_column = metrics[metric]
     indices = np.argsort(scores[:, score_column])[:n]
     return indices

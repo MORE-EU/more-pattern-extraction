@@ -5,6 +5,7 @@ from sklearn.linear_model import LinearRegression, Ridge
 from sklearn.pipeline import Pipeline
 from sklearn.preprocessing import PolynomialFeatures
 from sklearn import metrics
+from modules.preprocessing import enumerate2
 
 def predict(df_test, model, feats, target):
     """
