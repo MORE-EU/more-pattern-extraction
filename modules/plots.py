@@ -4,7 +4,6 @@ import pandas as pd
 from datetime import datetime
 import seaborn as sns
 from dtw import dtw
-%matplotlib inline 
 
 def plot_knee(mps, save_plot=False, filename='knee.png'):
     
