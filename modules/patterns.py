@@ -1,7 +1,8 @@
 import numpy as np
 import pandas as pd
 import matrixprofile
-from stumpy import stump, stumped, mstump, mstumped, fluss
+import matrixprofile as mpf
+from stumpy import stump, fluss, gpu_stump, mstumped, mstump, subspace
 
 def pick_subspace_columns(df, mps, idx, k, m, include):
     

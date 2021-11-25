@@ -2,6 +2,7 @@ import numpy as np
 from matrixprofile import core
 from matrixprofile.algorithms import top_k_motifs
 from matrixprofile.algorithms.mass2 import mass2
+from modules.patterns import to_mpf
 
 
 def get_top_k_motifs(df, mp, index, m, ez, radius, k, max_neighbors=50):
