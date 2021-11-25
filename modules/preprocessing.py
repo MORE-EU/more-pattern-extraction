@@ -236,7 +236,6 @@ def filter_dispersed(df, window, eps):
     df_tmp = df[rolling_apply(is_stable, window, *df.transpose().values, epsilon= eps)]
     return df_tmp[window:]
   
-  
 def scale_df(df):
     """ 
     Scale each column of a dataframe to the [0, 1] range performing the min max scaling
