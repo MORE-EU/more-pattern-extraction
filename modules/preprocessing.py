@@ -43,7 +43,6 @@ def change_granularity(df,granularity='30s',size=10**7,chunk=True):
         print('Interpolate Complete')
     return df
   
-  
 def filter_col(df, col, less_than=None, bigger_than=None): 
     """ 
     Remove rows of the dataframe that they are under, over/both from a specific/two different input price/prices.
