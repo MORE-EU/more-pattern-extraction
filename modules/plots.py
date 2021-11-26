@@ -155,52 +155,13 @@ def plot_profile_md(df,column_name,mp):
         axs2[k].plot(motifs_idx[k, 1], mp[k, motifs_idx[k, 1]] + 1, marker="v", markersize=10, color='black')
         
         
-def plot_segmentation_multi(df,output,column_name): 
-    """
-    Plotting the ChangePoints/ Regimes that we precomputed from change_points_md. 
-    The result would be multiple graphs up to the number of columns(dimensions) 
-    with subplots up to the number of L( subsquence list).  
-    
-    Args:
-        df: DateTime DataFrame
-        outpout: output from change_points_md
-        column_name: Specific column name 
-    
-    Return:
-        list of Figures
-    """
-    with sns.axes_style('ticks'):
-        fig, axs = plt.subplots(1, sharex=True, gridspec_kw={'hspace': 0}, figsize=(20, 3))
-        df['column_name'].plot(ax=axs, x_compat=True)
-
-        for k, val in output.items():
-            fig, axs = plt.subplots(len(L), sharex=True, gridspec_kw={'hspace': 0.1}, figsize=(20, 3 * len(L)))    
-            for idx, (cac, regime_locations) in enumerate(val):
-                axs[idx].plot(np.arange(0, cac.shape[0]), cac, color='C1')
-
-                axs[idx].set_ylabel(f'{str(L[idx])} ', fontsize=18)
-                for regime in regime_locations:
-                    axs[idx].axvline(x=regime, linestyle=":")
-
-                plt.minorticks_on()
-
-                predefined_labels(axs[idx], df)
-
-            labels = [item for item in axs[len(L) - 1].get_xticks()]
-            #visible = convert_labels_to_dt(labels[1:-1], df[start_date:end_date].resample(offset).mean())
-            locs, _ = plt.xticks()
-            #plt.xticks(ticks=locs[1:-1], labels=visible, rotation=30)
-            #ax.set_xticklabels(labels)
-
-            plt.suptitle(f'{k}-dimension', fontsize=20)
-      
-        
 def plot_segmentation(df, path, output, fixed_dates, file_name, top_seg=3):
     """
     Plotting the ChangePoints/ Regimes that we precomputed from change_points. 
     The result would be multiple graphs up to the number of L ( subsquence list).  
-    Later we use the dtw in order to find a generalized distance between a list of dates and the precomputed change points/regimes. 
-    In the end we save the ones that have the minimum distance up to a number the user wishes. 
+    Later we use the dtw in order to find a generalized distance between a list of dates and the
+    precomputed change points/regimes.
+    In the end we save the ones that have the minimum distance up to a number the user wishes.
     
     Args:
         df: DateTime DataFrame
@@ -212,15 +173,26 @@ def plot_segmentation(df, path, output, fixed_dates, file_name, top_seg=3):
     Return:
         List of figures, we are saving up to top_seg
     """
+    
     best = []
+    
+    diff1=[]
+    dloc=[]
+    lam=[]
+    model=[]
     with sns.axes_style('ticks'): 
         figs = []
+        
         for l, v in output.items():
+            lam.append(l)
+            dloc.append(convert_labels_to_dt(v[0][1],df))
+            
             sz = len(df)
             threshold = sz / 1000
-            ids = get_fixed_dates(df)
+            ids = get_fixed_dates(df,fixed_dates)
             fig, axs = plt.subplots(1, sharex=True, gridspec_kw={'hspace': 0.1}, figsize=(20, 3))
             diff = 0
+        
             for idx, (cac, regime_locations) in enumerate(v):
                 axs.plot(np.arange(0, cac.shape[0]), cac, color='C1')
                 filtered_regimes = regime_locations[(regime_locations > ids[0] - threshold) & (regime_locations < ids[- 1] + threshold)]
@@ -233,20 +205,23 @@ def plot_segmentation(df, path, output, fixed_dates, file_name, top_seg=3):
                 for regime in regime_locations:
                     axs.axvline(x=regime, linestyle=":")
                 plt.minorticks_on()
-                
-            ids = predefined_labels(axs, df)
+                diff1.append(diff)
+              
+            ids = predefined_labels(axs, df,fixed_dates)
             labels = [item for item in axs.get_xticks()]
-            #visible = convert_labels_to_dt(labels[-1:1], df)
+            visible = convert_labels_to_dt(labels[-1:1], df)
             locs, _ = plt.xticks()
             plt.xticks(ticks=locs[1:-1], rotation=30)
             name = f'{path}segmentation-{str(l)}-'
-            config = {"L": l, "regime": {regime}}
+            config = {"L": l, "regime": regime, 'diff': diff}
             figs.append([fig, diff, name, config])
         sorted_figs = sorted(figs, key=lambda tup: tup[1])
+       
         if(len(sorted_figs) < top_seg):
             top_seg = len(sorted_figs)
         for i in range(0, top_seg, 1):
             fig, diff, name, config = sorted_figs[i]
             best.append(config)
             fig.savefig(name + "_" + str(i))
-    return best
+    model = pd.DataFrame.from_dict({"L": lam, "Segment Locations": dloc, "Distance": (diff1-np.min(diff1))/(np.max(diff1) - np.min(diff1))})
+    return best, model
