@@ -173,13 +173,15 @@ def plot_segmentation(df, path, output, fixed_dates, file_name, top_seg=3):
     Return:
         List of figures, we are saving up to top_seg
     """
+
     
     best = []
     
     diff1=[]
     dloc=[]
-    lam=[]
+    regi=[]
     model=[]
+    lam=[]
     with sns.axes_style('ticks'): 
         figs = []
         
@@ -203,9 +205,11 @@ def plot_segmentation(df, path, output, fixed_dates, file_name, top_seg=3):
                 axs.set_ylabel(f'L:{str(l)}', fontsize=18)
                 axs.set_title(f'{file_name}-{diff}')
                 for regime in regime_locations:
+                    
                     axs.axvline(x=regime, linestyle=":")
                 plt.minorticks_on()
                 diff1.append(diff)
+                regi.append(regime_locations)
               
             ids = predefined_labels(axs, df,fixed_dates)
             labels = [item for item in axs.get_xticks()]
@@ -223,5 +227,5 @@ def plot_segmentation(df, path, output, fixed_dates, file_name, top_seg=3):
             fig, diff, name, config = sorted_figs[i]
             best.append(config)
             fig.savefig(name + "_" + str(i))
-    model = pd.DataFrame.from_dict({"L": lam, "Segment Locations": dloc, "Distance": (diff1-np.min(diff1))/(np.max(diff1) - np.min(diff1))})
+    model = pd.DataFrame.from_dict({"L": lam,'Changepoints indexes': regi, "Changepoints Dates": dloc, "Normalized Distance": (diff1-np.min(diff1))/(np.max(diff1) - np.min(diff1))})
     return best, model
