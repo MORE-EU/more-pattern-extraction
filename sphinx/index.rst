@@ -14,7 +14,7 @@ Welcome to the documentation for the Pattern Extraction module of MORE!
    preprocessing.rst
    patterns.rst
    learning.rst
-   plotfig.rst
+   plots.rst
    similarity.rst
    statistics.rst
    inpout.rst

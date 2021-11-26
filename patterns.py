@@ -368,9 +368,13 @@ def calculate_motif_stats(p, mask, k, m, ez, radius, segment_labels):
             print('Multivariate without Dask')
             return mps, indices
 
+<<<<<<< HEAD
 
         
  
+=======
+      
+>>>>>>> 0ff25122effd3876aa344389b1114b39f20ecf70
     def segment_ts(mpi, k_optimal, path, L=None, change_points=4, excl_factor=5):
         """ 
         Calculation of total change points(segments) we want to divide our region with respect to a
