@@ -1,5 +1,5 @@
 Plotting 
 ========
 
-.. automodule:: plotfig
+.. automodule:: plots
     :members:
