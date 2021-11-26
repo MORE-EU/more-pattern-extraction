@@ -310,14 +310,16 @@ def calculate_nn_stats(nn, mask, m, ez, segment_labels, maj_other):
     return [nn, cls1_count, cls2_count, ez, cost, matching_maj]
 
 
-def create_mp(df, motif_len, column, path, dask=True):
+def create_mp(df, motif_len, column, path, include, dask=True):
     """
-       Create and Save a univariate/multidimensional matrix profile as a pair of npz files. Input is based on the output of (https://stumpy.readthedocs.io/en/latest/api.html#mstump)
+       Create and Save a univariate/multidimensional matrix profile as a pair of npz files. Input is based on the
+       output of (https://stumpy.readthedocs.io/en/latest/api.html#mstump)
 
        Args:
           df: The DataFrame that contains the multidimensional time series. 
           motif_len: The subsequence window size. 
-          columns: A list of the column indexes that are included in the comptutation univariate/multidimensional profile.
+          columns: A list of the column indexes that are included in the comptutation univariate/multidimensional
+          profile.
           path: Path of the directory where the file will be saved.
           dask: A Dask Distributed client that is connected to a Dask scheduler and Dask workers
 
@@ -329,14 +331,15 @@ def create_mp(df, motif_len, column, path, dask=True):
     if len(column1)<2:
         if dask==True:
             from dask.distributed import Client, LocalCluster
-            with Client(scheduler_port=8782, dashboard_address=None, processes=False, n_workers=4, threads_per_worker=2, memory_limit='50GB') as dask_client:
-                mps=stumped(dask_client, df.iloc[:,column], motif_len)# Note that a dask client is needed
+            with Client(scheduler_port=8782, dashboard_address=None, processes=False,
+                        n_workers=4, threads_per_worker=2, memory_limit='50GB') as dask_client:
+                mps=stumped(dask_client, df.iloc[:,column], motif_len, include)# Note that a dask client is needed
                 if(path):
                     np.savez_compressed(path,mp=mps[:,0],mpi=mps[:,1] )
                 print('Univariate with Dask')
                 return mps[:,0],mps[:,1]
 
-        mps = stump(df.iloc[:,column], motif_len)
+        mps = stump(df.iloc[:,column], motif_len, include)
         if(path):
             np.savez_compressed(path, mp=mps[:,0],mpi=mps[:,1])
         print('Uvivariate without Dask')
@@ -345,14 +348,15 @@ def create_mp(df, motif_len, column, path, dask=True):
     else:
         if dask==True:
             from dask.distributed import Client, LocalCluster
-            with Client(scheduler_port=8782, dashboard_address=None, processes=False, n_workers=4, threads_per_worker=2, memory_limit='50GB') as dask_client:
-                mps,indices = mstumped(dask_client, df.iloc[:,column], motif_len)  # Note that a dask client is needed
+            with Client(scheduler_port=8782, dashboard_address=None,
+                        processes=False, n_workers=4, threads_per_worker=2, memory_limit='50GB') as dask_client:
+                mps,indices = mstumped(dask_client, df.iloc[:,column], motif_len, include)  # Note that a dask client needed
                 if(path):
                     np.savez_compressed(path, mp=mps, mpi=indices)
             print('Multivariate with Dask')
             return mps, indices
 
-        mps,indices = mstump(df.iloc[:,column], motif_len) 
+        mps,indices = mstump(df.iloc[:,column], motif_len, include) 
         if(path):
             np.savez_compressed(path, mp=mps, mpi=indices)
         print('Multivariate without Dask')
