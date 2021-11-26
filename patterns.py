@@ -368,9 +368,10 @@ def calculate_motif_stats(p, mask, k, m, ez, radius, segment_labels):
             print('Multivariate without Dask')
             return mps, indices
 
-      
-    def change_points(mpi, L, path, excl_factor=5, change_points=4):
-   
+
+        
+ 
+    def segment_ts(mpi, k_optimal, path, L=None, change_points=4, excl_factor=5):
         """ 
         Calculation of total change points(segments) we want to divide our region with respect to a
         computed Univariate Matrix Profile. This procedure is illustated through the Fluss Algorithm
@@ -393,53 +394,17 @@ def calculate_motif_stats(p, mask, k, m, ez, radius, segment_labels):
 
         Return: The locations(indexes) of change_points and the arc-curve which are contained in a specific L.
         """
+    
+        lam=[]
         regimes = [change_points]
         output = dict()
-        print("Computing regimes..")
+
         for l in tqdm(L):
-            output[l] = [fluss(mpi, L=int(l), n_regimes=int(r), excl_factor=excl_factor) for r in regimes] 
+            lam.append(l)
+            output[l] = [fluss(mpi[k_optimal - 1], L=int(l), n_regimes=int(r), excl_factor=excl_factor) for r in regimes]
+            
         if(path):
             np.save(path, output)
-
-        print("Done")
-        return output
-  
- 
-    def change_points_md(mpi, k_optimal, path, L=None, change_points=4, excl_factor=5):
-        """ 
-        Calculation of total change points(segments) we want to divide our region with respect to a computed
-        Multivariate Matrix Profile.This procedure is illustated through the Modified Fluss Algorithm
-        (https://stumpy.readthedocs.io/en/latest/_modules/stumpy/floss.html#fluss). We input a L which is a list of
-        integers. The L is a factor which excludes change point detection. It replaces the Arc Curve with 1 depending
-        of the size of L multiplied with an exclusion Factor (excl_factor). It alterates because we built it through
-        optimal dimensions given from elbow_method. So in the end we will receive locations(indexes) of change_points
-        and the arc-curve which are contained in a specific L for each column/dimension.
-
-         Args:
-            mpi: The multi-dimensional matrix profile index where the array corresponds to the
-            matrix profile index for a given dimension.
-            k_optimal: Choose optimal dimension(s) given from the elbow method. Or all of the DataFrame Dimension
-            L: The subsequence length that is set roughly to be one period length. This is likely to be the same
-            value as the motif_len,used to compute the matrix profile and matrix profile index.
-            change_points: Number of segments that our space is going to be divided.
-            excl_factor: The multiplying factor for the regime exclusion zone.
-            path: Path of the directory where the file will be saved.
-
-         Return:
-            The locations(indexes) of change_points and the arc-curve which are contained in a specific L
-            for each dimension of the DataFrame
-         """
+        return output, lam
         
-        no_cols = np.arange(1, k_optimal + 1, 1)
-        if(L == None):
-            L = np.arange(1000,50000, 1000).astype(int)
-        regimes = [change_points]
-        output = dict()
-        for c in tqdm(no_cols):
-            output[c]= dict()
-            for l in L:
-                output[c][l] = [fluss(mpi[c - 1], L=int(l), n_regimes=int(r), excl_factor=excl_factor) for r in regimes]
-        if(path):
-            np.save(path, output)
-        return output
   
