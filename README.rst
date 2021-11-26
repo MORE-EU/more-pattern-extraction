@@ -61,7 +61,7 @@ Pattern extraction tools
   segments. The user can specify the number of changepoints/segments which will be returned by the tool. In a scenario where ground truth, labelled, time series exist, the user 
   has the ability to calculate a cost, defined essentially as a distance function between the changepoints returned by the tool and the original changepoints (labels). This 
   allows for optimizing the parameters inherited by the matrix profile library in use cases where labelled data are available. 
-  Link to the notebook: `Time Series Segmentation <https://github.com/MORE-EU/more-pattern-extraction/blob/main/notebooks/semantic_detection.ipynb>`_
+  Link to the notebook: `Time Series Segmentation <https://github.com/MORE-EU/more-pattern-extraction/blob/main/notebooks/semantic_segmentation.ipynb>`_
 
 3. **Changepoint Detection**
 
