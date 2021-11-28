@@ -363,7 +363,6 @@ def create_mp(df, motif_len, column, path, include, dask=True):
         return mps, indices
 
 
-
      
 def segment_ts(mpi, k_optimal, path, L=None, change_points=4, excl_factor=5):
         """ 
