@@ -365,7 +365,7 @@ def create_mp(df, motif_len, column, path, include, dask=True):
 
 
      
-def segment_ts(mpi, k_optimal, path, L=None, change_points=4, excl_factor=5):
+def segment_ts(mpi, k_optimal, path, L=None, regions=4, excl_factor=5):
         """ 
         Calculation of total change points(segments) we want to divide our region with respect to a
         computed Univariate Matrix Profile. This procedure is illustated through the Fluss Algorithm
