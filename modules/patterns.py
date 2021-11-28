@@ -383,14 +383,14 @@ def segment_ts(mpi, k_optimal, path, L=None, change_points=4, excl_factor=5):
            This is likely to be the same value as the motif_len, used to compute the matrix profile
            and matrix profile index.
            excl_factor: The multiplying factor for the regime exclusion zone.       
-           change_points: Number of segments that our space is going to be divided.
+           regions: Number of segments that our space is going to be divided.
            path: Path of the directory where the file will be saved.
 
         Return: The locations(indexes) of change_points and the arc-curve which are contained in a specific L.
         """
     
         lam=[]
-        regimes = [change_points]
+        regimes = [regions]
         output = dict()
 
         for l in tqdm(L):
