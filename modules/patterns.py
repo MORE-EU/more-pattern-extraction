@@ -322,6 +322,7 @@ def create_mp(df, motif_len, column, path, include, dask=True):
           profile.
           path: Path of the directory where the file will be saved.
           dask: A Dask Distributed client that is connected to a Dask scheduler and Dask workers
+          include: A list of the column names that must be included in the constrained multidimensional motif search
 
        Return: 
            Matrix profile distances, matrix profile indexes
