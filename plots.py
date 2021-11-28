@@ -60,9 +60,9 @@ def predefined_labels(axs, df, fixed_dates):
 def convert_labels_to_dt(labels, df): 
     """
     
-    Args:
+    Args: convert indexes date time indexes
     
-    Returns:
+    Returns: Dates
     """
     l = []
     for label in labels:
