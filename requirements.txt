@@ -1,0 +1,9 @@
+h5py==3.7.0
+matplotlib==3.5.1
+matrixprofile==1.1.10
+modules==1.0.0
+numba==0.56.2
+numpy==1.22.3
+pandas==1.4.4
+scikit_learn==1.1.2
+tqdm==4.64.1
