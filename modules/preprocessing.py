@@ -248,3 +248,120 @@ def scale_df(df):
     min_max_scaler = MinMaxScaler()
     df[df.columns] = min_max_scaler.fit_transform(df)
     return df
+
+def soiling_dates(df,y=0.992,plot=True):
+    """
+    df:pandas dataframe with soiling column
+    y: the depth of soiling period we are seeking
+    plot:True/False to plot the derate
+    Returns:a dataframe of dates of soiling start and soiling period ends
+    """
+    soil = pd.concat([pd.Series({f'{df.index[0]}': 1}),df.soiling_derate])
+    soil.index = pd.to_datetime(soil.index)
+    df_dates = pd.DataFrame(index = soil.index)
+    df_dates["soil_start"] = soil[(soil == 1) & (soil.shift(-1) < 1)] # compare current to next
+    df_dates["soil_stop"] = soil[(soil == 1) & (soil.shift(1) < 1)] # compare current to prev
+    dates_soil_start = pd.Series(df_dates.soil_start.index[df_dates.soil_start.notna()])
+    dates_soil_stop = pd.Series(df_dates.soil_stop.index[df_dates.soil_stop.notna()])
+
+    #Filter significant rains with more than 'x' percipitation
+    ids = []
+    x=y
+    for idx in range(dates_soil_start.size):
+        d1 = dates_soil_start[idx]
+        d2 = dates_soil_stop[idx]
+        if np.min(soil.loc[d1:d2]) <= x:
+            ids.append(idx)
+    dates_soil_start_filtered = dates_soil_start[ids]
+    dates_soil_stop_filtered = dates_soil_stop[ids]
+
+    #df forsignificant rains.
+    df_soil_output = pd.DataFrame.from_dict({"SoilStart": dates_soil_start_filtered, "SoilStop": dates_soil_stop_filtered})
+    df_soil_output=df_soil_output.reset_index(drop='index')
+    df_soil_output.reset_index(drop='index',inplace=True)
+    print(f"We found {df_soil_output.shape[0]} Soiling Events with decay less than {x} ")
+
+    if plot:
+        print('The indication of the start of a Soil is presented with Bold line')
+        print('The indication of the end of a Soil is presented with Uncontinious line')
+        ax=df.soiling_derate.plot(figsize=(20,10),label='Soil Derate',color='green')
+        for d in df_soil_output.SoilStart:
+            ax.axvline(x=d, color='grey', linestyle='-')
+        for d in df_soil_output.SoilStop:
+            ax.axvline(x=d, color='grey', linestyle=':') 
+        ax.set_title('Power Output', fontsize=8)
+        plt.legend(fontsize=8)
+        plt.show()
+        
+    return df_soil_output
+
+
+
+
+def list_of_soil_index(df,df_soil_output,days):
+    """
+    Creates a list with discrete indexes from soiling events
+    df: pandas dataframe
+    df_soil_output: pandas dataframe of soiling events
+    days: integer. shift in the index of soiling events by days
+    """
+    temp=df.reset_index()
+    list_soil_index=[]
+    for i in range(len(df_soil_output)):
+        list_soil_index.append(list(range(temp[temp.timestamp==df_soil_output.SoilStart[i]].index[0]-days,
+                                          temp[temp.timestamp==df_soil_output.SoilStop[i]].index[0])))
+    lista_me_ta_index_apo_soil=[]
+    for i in range(len(list_soil_index)):
+        for j in range(len(list_soil_index[i])):
+            lista_me_ta_index_apo_soil.append(list_soil_index[i][j])
+    return lista_me_ta_index_apo_soil
+    
+def list_of_all_motifs_indexes(mi,new_population,row):
+    """
+    Creates a list with discrete indexes from our found motifs
+    mi: motif indexes
+    new_population: population of individuals
+    row: the index of each individual
+    """
+    lista_listwn=[]
+    for mtyp in range(len(mi)):
+        try1=[]
+        for i in mi[mtyp]:
+            try1.append(list(range(i,i+int(new_population[row,5]))))
+        listamot=[]
+        for i in range(len(try1)):
+            for j in range(len(try1[i])):
+                listamot.append(try1[i][j])
+
+        lista_listwn.append(listamot)
+    return lista_listwn
+
+def list_of_soil_index_start(df,df_soil_output,days):
+    """
+    Creates a list with discrete indexes from soiling events
+    df: pandas dataframe
+    df_soil_output: pandas dataframe of soiling events
+    days: integer. shift in the index of soiling events by days
+    """
+    temp=df.reset_index()
+    list_soil_index=[]
+    for i in range(len(df_soil_output)):
+        list_soil_index.append(temp[temp.timestamp==df_soil_output.SoilStart[i]].index[0]-days)
+    return list_soil_index
+     
+def list_of_all_motifs_indexes_start(mi):
+    """
+    Creates a list with discrete indexes from our found motifs
+    mi: motif indexes
+    new_population: population of individuals
+    row: the index of each individual
+    """
+    lista_listwn=[]
+    for mtyp in range(len(mi)):
+        try1=[]
+        for i in mi[mtyp]:
+            try1.append(i)
+       
+        lista_listwn.append(try1)
+
+    return lista_listwn
